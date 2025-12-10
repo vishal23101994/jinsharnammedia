@@ -5,7 +5,6 @@ export const audios = [
   { title: "Muniwara Muniwara", artist: "Acharya Pulak Sagar Ji", src: "/audio/006  muniwara muniwara.mp3", },
   { title: "Mahima Teri Itani Badi", artist: "Acharya Pulak Sagar Ji", src: "/audio/007 mahima teri itani badi.mp3", },
   { title: "Tuzame Prabhu Dikhata Hai", artist: "Acharya Pulak Sagar Ji", src: "/audio/008 tuzame prabhu dikhata hai.mp3", },
-  { title: "Deva Ho Deva", artist: "Acharya Pulak Sagar Ji", src: "/audio/009 deva ho deva.mp3", },
   { title: "Mumbai Chaturmas", artist: "Acharya Pulak Sagar Ji", src: "/audio/01 Mumbai chaturmas.mp3", },
   { title: "Namo Dev Devam Gurudev Pulak Sagaram", artist: "Acharya Pulak Sagar Ji", src: "/audio/01 Namo Dev Devam Gurudev Pulak Sagaram.mp3", },
   { title: "Jag Me Mila Thre", artist: "Acharya Pulak Sagar Ji", src: "/audio/02 Jag Me mila thre.mp3", },
