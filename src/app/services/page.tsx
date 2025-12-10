@@ -35,7 +35,7 @@ export default function ServicesPage() {
     },
 
     {
-      image: "/images/our services/7.jpg",
+      image: "/images/our services/7.JPG",
       title: "Spiritual Live Broadcasting",
       desc: "Delivering sacred discourses and live Pravachans from Jain saints worldwide through professional HD streaming.",
     },
