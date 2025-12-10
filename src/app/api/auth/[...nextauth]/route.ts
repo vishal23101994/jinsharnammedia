@@ -8,9 +8,7 @@ import bcrypt from "bcryptjs";
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
 
-  session: {
-    strategy: "jwt",
-  },
+  session: { strategy: "jwt" },
 
   providers: [
     GoogleProvider({
@@ -35,10 +33,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("User not found");
         }
 
-        // ⭐ If user came from Google, they won't have a password yet
+        // Google users don’t have passwords initially
         if (!user.password) {
           throw new Error(
-            "This account was created with Google. Please login with Google or set a password first."
+            "This account was created with Google. Please login with Google or set a password."
           );
         }
 
@@ -51,12 +49,13 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Incorrect password");
         }
 
+        // ⭐ FIX — NextAuth requires id as STRING
         return {
-          id: user.id,
+          id: String(user.id),
           name: user.name,
           email: user.email,
           role: user.role,
-          image: user.image, // make sure image is included
+          image: user.image,
         };
       },
     }),
@@ -68,21 +67,17 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, user, account, profile }) {
-      // When user just signed in
       if (user) {
-        // @ts-ignore
-        token.id = user.id;
-        // @ts-ignore
+        token.id = user.id;          // already a string now
         token.role = (user as any).role ?? token.role;
 
-        // Prefer DB image (Prisma user.image), then provider profile picture
-        const userImage =
+        const profileImage =
           (user as any).image ||
           (profile as any)?.picture ||
-          (token as any).picture;
+          (token as any)?.picture ||
+          null;
 
-        // @ts-ignore
-        token.picture = userImage || null;
+        token.picture = profileImage;
       }
 
       return token;
@@ -90,13 +85,9 @@ export const authOptions: NextAuthOptions = {
 
     async session({ session, token }) {
       if (session.user) {
-        // @ts-ignore
-        session.user.id = token.id;
-        // @ts-ignore
-        session.user.role = token.role;
-        // @ts-ignore
-        session.user.image =
-          (token as any).picture || session.user.image || null;
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+        session.user.image = (token as any)?.picture || null;
       }
       return session;
     },
@@ -106,5 +97,4 @@ export const authOptions: NextAuthOptions = {
 };
 
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST };

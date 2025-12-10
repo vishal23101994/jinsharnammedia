@@ -1,17 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, ChangeEvent } from "react";
 import { motion } from "framer-motion";
 import {
-  Play, Pause, Download, SkipBack, SkipForward,
-  RotateCcw, RotateCw, Search, Repeat
+  Play,
+  Pause,
+  Download,
+  SkipBack,
+  SkipForward,
+  RotateCcw,
+  RotateCw,
+  Search,
+  Repeat,
 } from "lucide-react";
-import { audios } from "@/data/audio.ts"; // <- make sure this file exists
+// no .ts extension in import
+import { audios } from "@/data/audio";
 
 type Track = {
   title: string;
   artist?: string;
-  album?: string;
   src: string;
 };
 
@@ -25,14 +32,14 @@ export default function AudioPage() {
   const [currentTime, setCurrentTime] = useState(0);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const rowRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const rowRefs = useRef<Record<number, HTMLLIElement | null>>({});
 
   // --- derived data
   const filtered: Track[] = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return audios;
-    return audios.filter(t =>
-      [t.title, t.artist ?? "", t.album ?? ""]
+    return audios.filter((t) =>
+      [t.title, t.artist ?? ""]
         .join(" | ")
         .toLowerCase()
         .includes(q)
@@ -55,7 +62,7 @@ export default function AudioPage() {
     const onEnded = () => {
       if (loop) {
         audio.currentTime = 0;
-        audio.play();
+        void audio.play();
         setIsPlaying(true);
         return;
       }
@@ -111,7 +118,7 @@ export default function AudioPage() {
         audio.pause();
         setIsPlaying(false);
       } else {
-        audio.play();
+        void audio.play();
         setIsPlaying(true);
       }
       return;
@@ -119,7 +126,7 @@ export default function AudioPage() {
 
     // start a new track
     audio.src = filtered[idx].src;
-    audio.play();
+    void audio.play();
     setCurrentIndex(idx);
     setIsPlaying(true);
   };
@@ -147,10 +154,13 @@ export default function AudioPage() {
   const skip = (seconds: number) => {
     const audio = audioRef.current;
     if (!audio) return;
-    audio.currentTime = Math.min(Math.max(0, (audio.currentTime || 0) + seconds), duration || 0);
+    audio.currentTime = Math.min(
+      Math.max(0, (audio.currentTime || 0) + seconds),
+      duration || 0
+    );
   };
 
-  const onSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onSeek = (e: ChangeEvent<HTMLInputElement>) => {
     const audio = audioRef.current;
     if (!audio) return;
     const pct = Number(e.target.value);
@@ -162,7 +172,6 @@ export default function AudioPage() {
   const onDownload = (track: Track) => {
     const a = document.createElement("a");
     a.href = track.src;
-    // keep original extension from path
     const parts = track.src.split("/");
     a.download = parts[parts.length - 1];
     a.click();
@@ -220,7 +229,10 @@ export default function AudioPage() {
               return (
                 <motion.li
                   key={`${t.src}-${i}`}
-                  ref={(el) => (rowRefs.current[i] = el)}
+                  ref={(el) => {
+                    rowRefs.current[i] = el;
+                  }}
+
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-20% 0px -10% 0px" }}
@@ -250,10 +262,9 @@ export default function AudioPage() {
                       >
                         {t.title}
                       </div>
-                      {(t.artist || t.album) && (
+                      {t.artist && (
                         <div className="truncate text-xs text-[#6B3E00]/70">
-                          {t.artist || "Jinsharnam Media"}
-                          {t.album ? ` • ${t.album}` : ""}
+                          {t.artist}
                         </div>
                       )}
                     </div>
@@ -296,7 +307,7 @@ export default function AudioPage() {
       {/* global audio */}
       <audio ref={audioRef} />
 
-      {/* floating mini-player (raised so it won't overlap your back-to-top) */}
+      {/* floating mini-player */}
       {currentTrack && (
         <motion.div
           initial={{ y: 80, opacity: 0 }}
@@ -319,13 +330,15 @@ export default function AudioPage() {
               {/* controls */}
               <div className="flex items-center gap-2 sm:gap-3">
                 <button
-                  onClick={() => setLoop(v => !v)}
+                  onClick={() => setLoop((v) => !v)}
                   className={`p-2 rounded-full transition ${
                     loop ? "bg-white/40" : "hover:bg-white/30"
                   }`}
                   title={loop ? "Loop: On" : "Loop: Off"}
                 >
-                  <Repeat className={`w-5 h-5 ${loop ? "text-[#8B0000]" : ""}`} />
+                  <Repeat
+                    className={`w-5 h-5 ${loop ? "text-[#8B0000]" : ""}`}
+                  />
                 </button>
 
                 <button
@@ -352,7 +365,11 @@ export default function AudioPage() {
                   className="flex items-center justify-center w-12 h-12 rounded-full bg-white text-[#C45A00] border border-[#FFD97A]/60 shadow-md hover:scale-110 transition"
                   title={isPlaying ? "Pause" : "Play"}
                 >
-                  {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                  {isPlaying ? (
+                    <Pause className="w-5 h-5" />
+                  ) : (
+                    <Play className="w-5 h-5" />
+                  )}
                 </button>
 
                 <button
@@ -374,39 +391,55 @@ export default function AudioPage() {
 
               {/* time + seek */}
               <div className="hidden md:flex items-center gap-3 w-[35%]">
-                <span className="text-xs tabular-nums">{formatTime(currentTime)}</span>
+                <span className="text-xs tabular-nums">
+                  {formatTime(currentTime)}
+                </span>
                 <input
                   type="range"
                   min={0}
                   max={100}
-                  value={duration ? Math.min(100, (currentTime / duration) * 100) : 0}
+                  value={
+                    duration
+                      ? Math.min(100, (currentTime / duration) * 100)
+                      : 0
+                  }
                   onChange={onSeek}
                   className="w-full accent-[#8B0000]"
                 />
-                <span className="text-xs tabular-nums">{formatTime(duration)}</span>
+                <span className="text-xs tabular-nums">
+                  {formatTime(duration)}
+                </span>
               </div>
             </div>
 
             {/* mobile seek */}
             <div className="md:hidden px-4 pb-3 -mt-1">
               <div className="flex items-center gap-3">
-                <span className="text-[11px] tabular-nums">{formatTime(currentTime)}</span>
+                <span className="text-[11px] tabular-nums">
+                  {formatTime(currentTime)}
+                </span>
                 <input
                   type="range"
                   min={0}
                   max={100}
-                  value={duration ? Math.min(100, (currentTime / duration) * 100) : 0}
+                  value={
+                    duration
+                      ? Math.min(100, (currentTime / duration) * 100)
+                      : 0
+                  }
                   onChange={onSeek}
                   className="w-full accent-[#8B0000]"
                 />
-                <span className="text-[11px] tabular-nums">{formatTime(duration)}</span>
+                <span className="text-[11px] tabular-nums">
+                  {formatTime(duration)}
+                </span>
               </div>
             </div>
           </div>
         </motion.div>
       )}
 
-      {/* bottom spacer so floating bar doesn't overlap page content or your back-to-top */}
+      {/* bottom spacer */}
       <div className="h-24" />
     </section>
   );

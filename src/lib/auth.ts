@@ -25,10 +25,23 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email },
         });
 
-        if (!user) throw new Error("No user found with that email");
+        if (!user) {
+          throw new Error("No user found with that email");
+        }
 
-        const isValid = await bcrypt.compare(credentials.password, user.password);
-        if (!isValid) throw new Error("Invalid password");
+        // ✅ Guard against null password from DB
+        if (!user.password) {
+          throw new Error("This account does not have a password set.");
+        }
+
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
+
+        if (!isValid) {
+          throw new Error("Invalid password");
+        }
 
         // ✅ Convert ID to string (NextAuth requires string IDs)
         return {
@@ -46,15 +59,17 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.role = (user as any).role;
+        // token is a generic object; we extend it here
+        (token as any).id = (user as any).id;
+        (token as any).role = (user as any).role;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as Role;
+      if (token && session.user) {
+        // we assume you've extended Session in next-auth.d.ts
+        (session.user as any).id = (token as any).id as string;
+        (session.user as any).role = (token as any).role as Role;
       }
       return session;
     },

@@ -75,7 +75,9 @@ export default function DirectoryPage() {
             /* try next */
           }
         }
-        const arr: Member[] = Array.isArray(respData) ? respData : respData?.data ?? [];
+        const arr: Member[] = Array.isArray(respData)
+          ? respData
+          : respData?.data ?? [];
         const normalized = arr.map((m) => ({
           id: m.id ?? m.ID ?? undefined,
           state: m.state ?? m.State ?? m.location ?? null,
@@ -86,7 +88,8 @@ export default function DirectoryPage() {
           branch: m.branch ?? m.Branch ?? null,
           mobile: m.mobile ?? m.Mobile ?? m.phone ?? m.Phone ?? null,
           date_of_birth: m.dateOfBirth ?? m.date_of_birth ?? m.dob ?? null,
-          date_of_marriage: m.dateOfMarriage ?? m.date_of_marriage ?? m.dom ?? null,
+          date_of_marriage:
+            m.dateOfMarriage ?? m.date_of_marriage ?? m.dom ?? null,
           // sanitize temp / placeholder emails
           email: (() => {
             const e = m.email ?? m.Email ?? null;
@@ -94,7 +97,10 @@ export default function DirectoryPage() {
             const es = String(e).trim();
             if (!es) return null;
             // treat temp / @local addresses as "no email"
-            if (es.toLowerCase().startsWith("temp") || es.toLowerCase().includes("@local")) {
+            if (
+              es.toLowerCase().startsWith("temp") ||
+              es.toLowerCase().includes("@local")
+            ) {
               return null;
             }
             return es;
@@ -119,31 +125,67 @@ export default function DirectoryPage() {
   };
 
   const stateOptions = useMemo(
-    () => Array.from(new Set(allMembers.map((m) => m.state).filter(Boolean))).sort(),
+    () =>
+      Array.from(
+        new Set(
+          allMembers
+            .map((m) => m.state)
+            .filter((s): s is string => Boolean(s))
+        )
+      ).sort(),
     [allMembers]
   );
+
   const branchOptions = useMemo(() => {
-    const src = filterState ? allMembers.filter((m) => m.state === filterState) : allMembers;
-    return Array.from(new Set(src.map((m) => m.branch).filter(Boolean))).sort();
+    const src = filterState
+      ? allMembers.filter((m) => m.state === filterState)
+      : allMembers;
+    return Array.from(
+      new Set(
+        src
+          .map((m) => m.branch)
+          .filter((b): b is string => Boolean(b))
+      )
+    ).sort();
   }, [allMembers, filterState]);
+
   const positionOptions = useMemo(() => {
     let src = allMembers;
     if (filterState) src = src.filter((m) => m.state === filterState);
     if (filterBranch) src = src.filter((m) => m.branch === filterBranch);
-    return Array.from(new Set(src.map((m) => m.position).filter(Boolean))).sort();
+    return Array.from(
+      new Set(
+        src
+          .map((m) => m.position)
+          .filter((p): p is string => Boolean(p))
+      )
+    ).sort();
   }, [allMembers, filterState, filterBranch]);
+
   const organizationOptions = useMemo(() => {
     let src = allMembers;
     if (filterState) src = src.filter((m) => m.state === filterState);
     if (filterBranch) src = src.filter((m) => m.branch === filterBranch);
     if (filterPosition) src = src.filter((m) => m.position === filterPosition);
-    return Array.from(new Set(src.map((m) => m.organization).filter(Boolean))).sort();
+    return Array.from(
+      new Set(
+        src
+          .map((m) => m.organization)
+          .filter((o): o is string => Boolean(o))
+      )
+    ).sort();
   }, [allMembers, filterState, filterBranch, filterPosition]);
 
   useEffect(() => {
-    if (filterBranch && !branchOptions.includes(filterBranch)) setFilterBranch("");
-    if (filterPosition && !positionOptions.includes(filterPosition)) setFilterPosition("");
-    if (filterOrganization && !organizationOptions.includes(filterOrganization)) setFilterOrganization("");
+    if (filterBranch && !branchOptions.includes(filterBranch))
+      setFilterBranch("");
+    if (filterPosition && !positionOptions.includes(filterPosition))
+      setFilterPosition("");
+    if (
+      filterOrganization &&
+      !organizationOptions.includes(filterOrganization)
+    )
+      setFilterOrganization("");
   }, [filterState, branchOptions, positionOptions, organizationOptions]);
 
   const filtered = useMemo(() => {
@@ -152,7 +194,8 @@ export default function DirectoryPage() {
       if (filterState && m.state !== filterState) return false;
       if (filterBranch && m.branch !== filterBranch) return false;
       if (filterPosition && m.position !== filterPosition) return false;
-      if (filterOrganization && m.organization !== filterOrganization) return false;
+      if (filterOrganization && m.organization !== filterOrganization)
+        return false;
       if (!q) return true;
       return (
         String(m.name || "").toLowerCase().includes(q) ||
@@ -162,7 +205,14 @@ export default function DirectoryPage() {
         String(m.address || "").toLowerCase().includes(q)
       );
     });
-  }, [allMembers, searchQuery, filterState, filterBranch, filterPosition, filterOrganization]);
+  }, [
+    allMembers,
+    searchQuery,
+    filterState,
+    filterBranch,
+    filterPosition,
+    filterOrganization,
+  ]);
 
   // sorting helper
   function parseSortable(value: any, key: SortKey) {
@@ -227,7 +277,9 @@ export default function DirectoryPage() {
   return (
     <section className="min-h-screen py-10 px-4 bg-[#FBF5EE] text-[#2f1a00]">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-serif mb-6 text-[#6A0000]">Jinsharnam Directory</h1>
+        <h1 className="text-4xl font-serif mb-6 text-[#6A0000]">
+          Jinsharnam Directory
+        </h1>
 
         {/* Controls */}
         <div className="mb-6 grid gap-3 md:grid-cols-4 items-center">
@@ -326,7 +378,9 @@ export default function DirectoryPage() {
                   >
                     <div className="flex items-center gap-2">
                       <span>State</span>
-                      <span className="text-xs text-[#7a5a3a]">{sortIcon("state")}</span>
+                      <span className="text-xs text-[#7a5a3a]">
+                        {sortIcon("state")}
+                      </span>
                     </div>
                   </th>
 
@@ -338,7 +392,9 @@ export default function DirectoryPage() {
                   >
                     <div className="flex items-center gap-2">
                       <span>Name</span>
-                      <span className="text-xs text-[#7a5a3a]">{sortIcon("name")}</span>
+                      <span className="text-xs text-[#7a5a3a]">
+                        {sortIcon("name")}
+                      </span>
                     </div>
                   </th>
 
@@ -350,7 +406,9 @@ export default function DirectoryPage() {
                   >
                     <div className="flex items-center gap-2">
                       <span>Position</span>
-                      <span className="text-xs text-[#7a5a3a]">{sortIcon("position")}</span>
+                      <span className="text-xs text-[#7a5a3a]">
+                        {sortIcon("position")}
+                      </span>
                     </div>
                   </th>
 
@@ -362,7 +420,9 @@ export default function DirectoryPage() {
                   >
                     <div className="flex items-center gap-2">
                       <span>Organization</span>
-                      <span className="text-xs text-[#7a5a3a]">{sortIcon("organization")}</span>
+                      <span className="text-xs text-[#7a5a3a]">
+                        {sortIcon("organization")}
+                      </span>
                     </div>
                   </th>
 
@@ -374,7 +434,9 @@ export default function DirectoryPage() {
                   >
                     <div className="flex items-center gap-2">
                       <span>Address</span>
-                      <span className="text-xs text-[#7a5a3a]">{sortIcon("address")}</span>
+                      <span className="text-xs text-[#7a5a3a]">
+                        {sortIcon("address")}
+                      </span>
                     </div>
                   </th>
 
@@ -386,7 +448,9 @@ export default function DirectoryPage() {
                   >
                     <div className="flex items-center gap-2">
                       <span>Branch</span>
-                      <span className="text-xs text-[#7a5a3a]">{sortIcon("branch")}</span>
+                      <span className="text-xs text-[#7a5a3a]">
+                        {sortIcon("branch")}
+                      </span>
                     </div>
                   </th>
 
@@ -398,7 +462,9 @@ export default function DirectoryPage() {
                   >
                     <div className="flex items-center gap-2">
                       <span>Mobile</span>
-                      <span className="text-xs text-[#7a5a3a]">{sortIcon("mobile")}</span>
+                      <span className="text-xs text-[#7a5a3a]">
+                        {sortIcon("mobile")}
+                      </span>
                     </div>
                   </th>
 
@@ -410,7 +476,9 @@ export default function DirectoryPage() {
                   >
                     <div className="flex items-center gap-2">
                       <span>Date of Birth</span>
-                      <span className="text-xs text-[#7a5a3a]">{sortIcon("date_of_birth")}</span>
+                      <span className="text-xs text-[#7a5a3a]">
+                        {sortIcon("date_of_birth")}
+                      </span>
                     </div>
                   </th>
 
@@ -422,7 +490,9 @@ export default function DirectoryPage() {
                   >
                     <div className="flex items-center gap-2">
                       <span>Date of Marriage</span>
-                      <span className="text-xs text-[#7a5a3a]">{sortIcon("date_of_marriage")}</span>
+                      <span className="text-xs text-[#7a5a3a]">
+                        {sortIcon("date_of_marriage")}
+                      </span>
                     </div>
                   </th>
 
@@ -434,7 +504,9 @@ export default function DirectoryPage() {
                   >
                     <div className="flex items-center gap-2">
                       <span>Email</span>
-                      <span className="text-xs text-[#7a5a3a]">{sortIcon("email")}</span>
+                      <span className="text-xs text-[#7a5a3a]">
+                        {sortIcon("email")}
+                      </span>
                     </div>
                   </th>
                 </tr>
@@ -482,7 +554,10 @@ export default function DirectoryPage() {
                       <td className="px-3 py-2 border-r border-[#e5ded3] min-w-0 break-words">
                         <span
                           dangerouslySetInnerHTML={{
-                            __html: highlight(m.organization || "-", searchQuery),
+                            __html: highlight(
+                              m.organization || "-",
+                              searchQuery
+                            ),
                           }}
                         />
                       </td>
@@ -547,7 +622,8 @@ export default function DirectoryPage() {
         </div>
 
         <div className="mt-4 text-xs text-[#8b6f50]">
-          Showing <strong>{sorted.length}</strong> of <strong>{allMembers.length}</strong> members.
+          Showing <strong>{sorted.length}</strong> of{" "}
+          <strong>{allMembers.length}</strong> members.
         </div>
 
         {/* Mobile stacked rows fallback */}
@@ -566,7 +642,9 @@ export default function DirectoryPage() {
                       }}
                     />
                   </div>
-                  <div className="text-xs text-[#6b4b2b] mt-1">{m.position}</div>
+                  <div className="text-xs text-[#6b4b2b] mt-1">
+                    {m.position}
+                  </div>
                 </div>
                 <div className="text-sm text-right">{m.state}</div>
               </div>

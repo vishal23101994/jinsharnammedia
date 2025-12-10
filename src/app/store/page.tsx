@@ -54,7 +54,9 @@ function loadRazorpayScript(): Promise<boolean> {
 export default function StorePage() {
   const [items, setItems] = useState<Product[]>([]);
   const [filtered, setFiltered] = useState<Product[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [selectedCategory, setSelectedCategory] = useState<
+    "All" | "Book" | "Calendar" | "Poster"
+  >("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -70,9 +72,9 @@ export default function StorePage() {
         const res = await fetch("/api/products");
         const data = await res.json();
         const products = Array.isArray(data)
-          ? data
+          ? (data as Product[])
           : Array.isArray(data.products)
-          ? data.products
+          ? (data.products as Product[])
           : [];
         setItems(products);
         setFiltered(products);
@@ -98,24 +100,16 @@ export default function StorePage() {
 
   // Filter & search
   useEffect(() => {
-    const safeItems = items.map((i) => ({
-      ...i,
-      category: i.category ? i.category.trim().toLowerCase() : "uncategorized",
-    }));
-
-    let result = [...safeItems];
+    let result: Product[] = [...items];
 
     if (selectedCategory !== "All") {
-      result = result.filter(
-        (i) =>
-          i.category &&
-          i.category.toLowerCase() === selectedCategory.toLowerCase()
-      );
+      result = result.filter((i) => i.category === selectedCategory);
     }
 
     if (searchTerm.trim()) {
+      const q = searchTerm.trim().toLowerCase();
       result = result.filter((i) =>
-        i.title?.toLowerCase().includes(searchTerm.toLowerCase())
+        i.title?.toLowerCase().includes(q)
       );
     }
 
@@ -322,7 +316,7 @@ export default function StorePage() {
       <section id="products" className="max-w-7xl mx-auto px-4 py-10">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div className="flex flex-wrap justify-center gap-3">
-            {["All", "Book", "Calendar", "Poster"].map((cat) => (
+            {(["All", "Book", "Calendar", "Poster"] as const).map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}

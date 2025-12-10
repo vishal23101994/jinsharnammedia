@@ -7,13 +7,19 @@ export async function POST(req: Request) {
     const { name, email, password } = await req.json();
 
     if (!name || !email || !password) {
-      return NextResponse.json({ error: "All fields required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "All fields required" },
+        { status: 400 }
+      );
     }
 
     const existing = await prisma.user.findUnique({ where: { email } });
 
     if (existing) {
-      return NextResponse.json({ error: "Email already registered." }, { status: 409 });
+      return NextResponse.json(
+        { error: "Email already registered." },
+        { status: 409 }
+      );
     }
 
     const hashed = await bcrypt.hash(password, 10);
@@ -23,12 +29,16 @@ export async function POST(req: Request) {
         name,
         email,
         password: hashed,
-        emailVerified: false,
+        // ⭐ FIX: emailVerified is DateTime? → use null (or omit line)
+        emailVerified: null,
         role: "USER",
       },
     });
 
-    return NextResponse.json({ success: true, message: "Account created" });
+    return NextResponse.json({
+      success: true,
+      message: "Account created",
+    });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

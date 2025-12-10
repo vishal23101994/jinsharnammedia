@@ -5,7 +5,9 @@ import Image from "next/image";
 import { Download, X, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function GalleryPage() {
-  const categories = {
+
+  // ✅ FIX: Add type so TS allows dynamic indexing
+  const categories: Record<string, string[]> = {
     "Pulak Sagar Ji": [
       "/images/gallery/maharaj/1.jpeg", "/images/gallery/maharaj/2.jpg",
       "/images/gallery/maharaj/3.jpg", "/images/gallery/maharaj/4.jpg",
@@ -42,7 +44,6 @@ export default function GalleryPage() {
     ],
 
     "Motivational Thoughts": [
-      // 🟡 Column 1
       "/images/gallery/thoughts/1.jpg", "/images/gallery/thoughts/2.jpg", "/images/gallery/thoughts/3.jpg",
       "/images/gallery/thoughts/4.jpg", "/images/gallery/thoughts/5.jpg", "/images/gallery/thoughts/6.jpg",
       "/images/gallery/thoughts/7.jpg", "/images/gallery/thoughts/8.jpg", "/images/gallery/thoughts/9.jpg",
@@ -54,7 +55,6 @@ export default function GalleryPage() {
       "/images/gallery/thoughts/25.jpg", "/images/gallery/thoughts/26.jpg", "/images/gallery/thoughts/27.jpg",
       "/images/gallery/thoughts/28.jpg", "/images/gallery/thoughts/29.jpg", "/images/gallery/thoughts/30.jpg",
 
-      // 🟢 Column 2
       "/images/gallery/thoughts/31.jpg", "/images/gallery/thoughts/32.jpg", "/images/gallery/thoughts/33.jpg",
       "/images/gallery/thoughts/34.jpg", "/images/gallery/thoughts/35.jpg", "/images/gallery/thoughts/36.jpg",
       "/images/gallery/thoughts/37.jpg", "/images/gallery/thoughts/38.jpg", "/images/gallery/thoughts/39.jpg",
@@ -66,7 +66,6 @@ export default function GalleryPage() {
       "/images/gallery/thoughts/55.jpg", "/images/gallery/thoughts/56.jpg", "/images/gallery/thoughts/57.jpg",
       "/images/gallery/thoughts/58.jpg", "/images/gallery/thoughts/59.jpg", "/images/gallery/thoughts/60.jpg",
 
-      // 🔵 Column 3
       "/images/gallery/thoughts/61.jpg", "/images/gallery/thoughts/62.jpg", "/images/gallery/thoughts/63.jpg",
       "/images/gallery/thoughts/64.jpg", "/images/gallery/thoughts/65.jpg", "/images/gallery/thoughts/66.jpg",
       "/images/gallery/thoughts/67.jpg", "/images/gallery/thoughts/68.jpg", "/images/gallery/thoughts/69.jpg",
@@ -85,6 +84,7 @@ export default function GalleryPage() {
       "/images/gallery/tirth/img2.jpeg",
       "/images/gallery/tirth/img3.jpg",
     ],
+
     "Logos & Identity": [
       "/images/gallery/logo/logo.jpg",
     ],
@@ -124,10 +124,9 @@ export default function GalleryPage() {
 
   return (
     <section className="relative min-h-screen py-24 bg-gradient-to-b from-[#FFF6D8] via-[#FFE8A3] to-[#FFF1D0] overflow-hidden text-center">
-      {/* Background pattern */}
-      <div className="absolute inset-0 bg-[url('/swastik-pattern.png')] opacity-10 bg-cover bg-center"></div>
+      
+      <div className="absolute inset-0 bg-[url('/swastik-pattern.png')] opacity-10 bg-cover bg-center" />
 
-      {/* Header */}
       <motion.h1
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -155,6 +154,7 @@ export default function GalleryPage() {
         ))}
       </div>
 
+      {/* Image grid */}
       <motion.div
         key={activeCategory}
         initial={{ opacity: 0, y: 30 }}
@@ -181,7 +181,7 @@ export default function GalleryPage() {
             </div>
           </motion.div>
         ))}
-      </motion.div>    
+      </motion.div>
 
       {/* Lightbox */}
       <AnimatePresence>
@@ -212,32 +212,31 @@ export default function GalleryPage() {
                 <button
                   onClick={downloadImage}
                   className="p-2 bg-white/20 rounded-full hover:bg-white/40 transition"
-                  title="Download Image"
                 >
                   <Download className="text-white w-5 h-5" />
                 </button>
                 <button
                   onClick={closeLightbox}
                   className="p-2 bg-white/20 rounded-full hover:bg-white/40 transition"
-                  title="Close"
                 >
                   <X className="text-white w-5 h-5" />
                 </button>
               </div>
 
-              {/* Navigation */}
               <button
                 onClick={prevImage}
                 className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/20 rounded-full hover:bg-white/40 transition"
               >
                 <ChevronLeft className="text-white w-6 h-6" />
               </button>
+
               <button
                 onClick={nextImage}
                 className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/20 rounded-full hover:bg-white/40 transition"
               >
                 <ChevronRight className="text-white w-6 h-6" />
               </button>
+
             </motion.div>
           </motion.div>
         )}

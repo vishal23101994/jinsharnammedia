@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 function safeDate(s?: string | null) {
@@ -8,13 +8,17 @@ function safeDate(s?: string | null) {
   return d;
 }
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const id = Number(params.id);
+    const { id } = await params; // params is now a Promise
+    const numericId = Number(id);
     const body = await req.json();
 
     const updated = await prisma.directoryMember.update({
-      where: { id },
+      where: { id: numericId },
       data: {
         name: body.name ?? undefined,
         email: body.email ?? undefined,

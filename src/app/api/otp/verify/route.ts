@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     await prisma.user.update({
       where: { id: user.id },
       data: {
-        emailVerified: true,
+        emailVerified: new Date(),
         otp: null,
         otpExpiresAt: null,
       },

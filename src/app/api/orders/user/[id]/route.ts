@@ -5,14 +5,17 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params; // required for Next.js 15
+  const requestedId = parseInt(id, 10);
+
   const session: any = await getServerSession(authOptions);
+
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const requestedId = parseInt(params.id, 10);
   if (isNaN(requestedId)) {
     return NextResponse.json({ error: "Invalid user id" }, { status: 400 });
   }
@@ -20,7 +23,7 @@ export async function GET(
   const isAdmin =
     session.user.role === "ADMIN" || session.user.role === "admin";
 
-  // non-admin can only see their own orders
+  // non-admin users can only fetch their own orders
   if (!isAdmin && requestedId !== Number(session.user.id)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }

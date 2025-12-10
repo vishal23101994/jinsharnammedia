@@ -55,12 +55,13 @@ export default function JinsharnamTirthPage() {
 
   // gentle preview flip
   useEffect(() => {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       if (bookRef.current) {
         bookRef.current.pageFlip().flipNext();
         setTimeout(() => bookRef.current.pageFlip().flipPrev(), 1200);
       }
     }, 1000);
+    return () => clearTimeout(timeout);
   }, []);
 
   // dynamic trustees
@@ -111,14 +112,28 @@ export default function JinsharnamTirthPage() {
         >
           <HTMLFlipBook
             ref={bookRef}
-            width={isMobile ? 400 : 700}  // 🟢 widened width
-            height={isMobile ? 460 : 520} // 🟢 proportional height
+            width={isMobile ? 400 : 700}
+            height={isMobile ? 460 : 520}
+            // 🔹 Required props from IProps typing:
+            startPage={0}
+            size="stretch"
+            minWidth={300}
+            maxWidth={1400}
+            minHeight={400}
+            maxHeight={800}
+            maxShadowOpacity={0.3}
             showCover
             mobileScrollSupport
             flippingTime={900}
             drawShadow={false}
-            usePortraitMode={isMobile}
+            usePortrait={isMobile}
             showPageCorners
+            disableFlipByClick={false}
+            autoSize
+            clickEventForward={true}
+            useMouseEvents={true}
+            swipeDistance={30}
+            startZIndex={0}
             className="bg-transparent border-none shadow-none"
             style={{
               background: "transparent",
@@ -161,7 +176,6 @@ export default function JinsharnamTirthPage() {
           )}
         </div>
       </div>
-
 
       {/* 📍 Location Section */}
       <div className="bg-gradient-to-b from-[#FFF8E7] to-[#FFECC7] py-16 border-t border-amber-200">
@@ -305,25 +319,24 @@ export default function JinsharnamTirthPage() {
       {/* 🙏 Donation Section */}
       <div className="bg-gradient-to-b from-amber-50 to-white py-20 border-t border-amber-300">
         <div className="max-w-7xl mx-auto px-6">
-
           {/* Heading */}
           <h2 className="text-4xl font-serif text-[#4B1E00] font-semibold mb-4 text-center flex justify-center items-center gap-3">
             Support Jinsharnam Tirth Trust
           </h2>
 
           <p className="text-lg text-[#4B1E00]/90 text-center leading-relaxed max-w-3xl mx-auto mb-14">
-            Your generous donation supports the maintenance and development of the sacred 
-            <strong> Jinsharnam Tirth</strong>. Every contribution is deeply appreciated.
+            Your generous donation supports the maintenance and development of
+            the sacred
+            <strong> Jinsharnam Tirth</strong>. Every contribution is deeply
+            appreciated.
           </p>
 
           {/* SIDE-BY-SIDE Sections */}
           <div className="grid md:grid-cols-2 gap-12">
-
             {/* LEFT — Bank Transfer */}
             <div className="bg-white p-10 rounded-2xl shadow-xl border border-amber-200">
-
               <h3 className="text-2xl font-serif text-[#4B1E00] font-semibold mb-6 flex items-center gap-2">
-                <span className="text-xl"></span> Bank Transfer
+                <span className="text-xl" /> Bank Transfer
               </h3>
 
               <p className="text-lg font-semibold text-[#4B1E00] mb-8">
@@ -338,9 +351,10 @@ export default function JinsharnamTirthPage() {
                   <p className="font-mono text-xl font-bold">2565201000951</p>
 
                   <button
-                    onClick={() => navigator.clipboard.writeText("2565201000951")}
-                    className="bg-amber-100 hover:bg-amber-200 transition px-4 py-1.5 rounded-lg 
-                               text-sm font-medium text-[#4B1E00] shadow-sm"
+                    onClick={() =>
+                      navigator.clipboard.writeText("2565201000951")
+                    }
+                    className="bg-amber-100 hover:bg-amber-200 transition px-4 py-1.5 rounded-lg text-sm font-medium text-[#4B1E00] shadow-sm"
                   >
                     📋 Copy
                   </button>
@@ -355,9 +369,10 @@ export default function JinsharnamTirthPage() {
                   <p className="font-mono text-xl font-bold">CNRB0002565</p>
 
                   <button
-                    onClick={() => navigator.clipboard.writeText("CNRB0002565")}
-                    className="bg-amber-100 hover:bg-amber-200 transition px-4 py-1.5 rounded-lg 
-                               text-sm font-medium text-[#4B1E00] shadow-sm"
+                    onClick={() =>
+                      navigator.clipboard.writeText("CNRB0002565")
+                    }
+                    className="bg-amber-100 hover:bg-amber-200 transition px-4 py-1.5 rounded-lg text-sm font-medium text-[#4B1E00] shadow-sm"
                   >
                     📋 Copy
                   </button>
@@ -372,12 +387,10 @@ export default function JinsharnamTirthPage() {
               <p className="text-base">
                 <span className="font-semibold">Branch:</span> Silvassa (DN)
               </p>
-
             </div>
 
             {/* RIGHT — QR Code */}
             <div className="bg-white p-10 rounded-2xl shadow-xl border border-amber-200 flex flex-col items-center">
-              
               <h3 className="text-2xl font-serif text-[#4B1E00] font-semibold mb-6">
                 UPI / QR Donation
               </h3>
@@ -393,13 +406,10 @@ export default function JinsharnamTirthPage() {
               <p className="text-[#4B1E00]/80 text-center mt-4 text-sm">
                 Scan using GPay / PhonePe / Paytm / BHIM
               </p>
-
             </div>
           </div>
         </div>
       </div>
-
-
     </section>
   );
 }

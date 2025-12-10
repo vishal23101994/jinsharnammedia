@@ -4,7 +4,22 @@ const API_KEY = process.env.YOUTUBE_API_KEY!;
 const CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID!;
 
 const YT = (path: string) =>
-  `https://www.googleapis.com/youtube/v3/${path}${path.includes("?") ? "&" : "?"}key=${API_KEY}`;
+  `https://www.googleapis.com/youtube/v3/${path}${
+    path.includes("?") ? "&" : "?"
+  }key=${API_KEY}`;
+
+// Basic type for YouTube playlist items we use
+type PlaylistItem = {
+  contentDetails?: {
+    videoId?: string;
+    duration?: string;
+  };
+  snippet?: {
+    publishedAt?: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+};
 
 const parseISODurationToSeconds = (iso?: string) => {
   if (!iso) return 0;
@@ -24,7 +39,11 @@ async function getChannel() {
   return json.items?.[0];
 }
 
-async function getUploadsPlaylistItems(playlistId: string, pageToken?: string, max = 12) {
+async function getUploadsPlaylistItems(
+  playlistId: string,
+  pageToken?: string,
+  max = 12
+): Promise<{ items: PlaylistItem[]; nextPageToken: string | null }> {
   const res = await fetch(
     YT(
       `playlistItems?part=snippet,contentDetails&playlistId=${playlistId}&maxResults=${max}${
@@ -34,31 +53,46 @@ async function getUploadsPlaylistItems(playlistId: string, pageToken?: string, m
     { cache: "no-store" }
   );
   const json = await res.json();
-  return { items: json.items || [], nextPageToken: json.nextPageToken || null };
+  return {
+    items: (json.items || []) as PlaylistItem[],
+    nextPageToken: json.nextPageToken || null,
+  };
 }
 
 async function getVideoDetails(ids: string[]) {
-  if (!ids.length) return { byId: {}, items: [] as any[] };
+  if (!ids.length) return { byId: {} as Record<string, any>, items: [] as any[] };
+
   const batched: string[][] = [];
-  for (let i = 0; i < ids.length; i += 50) batched.push(ids.slice(i, i + 50));
+  for (let i = 0; i < ids.length; i += 50) {
+    batched.push(ids.slice(i, i + 50));
+  }
+
   const all: any[] = [];
   for (const batch of batched) {
     const res = await fetch(
-      YT(`videos?part=snippet,contentDetails,statistics&id=${batch.join(",")}`),
+      YT(
+        `videos?part=snippet,contentDetails,statistics&id=${batch.join(",")}`
+      ),
       { cache: "no-store" }
     );
     const json = await res.json();
     all.push(...(json.items || []));
   }
-  const byId = Object.fromEntries(all.map((v) => [v.id, v]));
+
+  const byId: Record<string, any> = Object.fromEntries(
+    all.map((v) => [v.id, v])
+  );
   return { byId, items: all };
 }
 
-function mergePlaylistSnippetsWithDetails(playlistItems: any[], detailsById: Record<string, any>) {
+function mergePlaylistSnippetsWithDetails(
+  playlistItems: PlaylistItem[],
+  detailsById: Record<string, any>
+) {
   return playlistItems
     .map((pi) => {
       const id = pi.contentDetails?.videoId;
-      const d = detailsById[id];
+      const d = id ? detailsById[id] : null;
       if (!id || !d) return null;
       return {
         id,
@@ -67,7 +101,7 @@ function mergePlaylistSnippetsWithDetails(playlistItems: any[], detailsById: Rec
         statistics: d.statistics,
       };
     })
-    .filter(Boolean);
+    .filter(Boolean) as any[];
 }
 
 export async function GET(req: Request) {
@@ -94,19 +128,30 @@ export async function GET(req: Request) {
 
     // HOME
     if (tab === "home") {
-      const { items: plItems } = await getUploadsPlaylistItems(uploadsId, "", 50);
-      const ids = plItems.map((p) => p.contentDetails.videoId);
+      const { items: plItems } = await getUploadsPlaylistItems(
+        uploadsId,
+        "",
+        50
+      );
+      const ids = plItems
+        .map((p: PlaylistItem) => p.contentDetails?.videoId)
+        .filter(Boolean) as string[];
       const { byId } = await getVideoDetails(ids);
       const merged = mergePlaylistSnippetsWithDetails(plItems, byId);
 
       const shorts = merged
-        .filter((v) => parseISODurationToSeconds(v.contentDetails?.duration) < 60)
+        .filter(
+          (v: any) =>
+            parseISODurationToSeconds(v.contentDetails?.duration) < 60
+        )
         .slice(0, 6);
       const latest = [...merged].sort(sorters.latest).slice(0, 6);
       const popular = [...merged].sort(sorters.popular).slice(0, 6);
 
       const plsRes = await fetch(
-        YT(`playlists?part=snippet,contentDetails&channelId=${CHANNEL_ID}&maxResults=6`),
+        YT(
+          `playlists?part=snippet,contentDetails&channelId=${CHANNEL_ID}&maxResults=6`
+        ),
         { cache: "no-store" }
       );
       const plsData = await plsRes.json();
@@ -114,29 +159,56 @@ export async function GET(req: Request) {
       return NextResponse.json({
         tab,
         channel,
-        sections: { shorts, latest, popular, playlists: plsData.items || [] },
+        sections: {
+          shorts,
+          latest,
+          popular,
+          playlists: plsData.items || [],
+        },
       });
     }
 
     // VIDEOS
     if (tab === "videos") {
-      const { items, nextPageToken } = await getUploadsPlaylistItems(uploadsId, pageToken, 12);
-      const ids = items.map((p) => p.contentDetails.videoId);
+      const { items, nextPageToken } = await getUploadsPlaylistItems(
+        uploadsId,
+        pageToken,
+        12
+      );
+      const ids = items
+        .map((p: PlaylistItem) => p.contentDetails?.videoId)
+        .filter(Boolean) as string[];
       const { byId } = await getVideoDetails(ids);
-      const merged = mergePlaylistSnippetsWithDetails(items, byId).sort(sorters[sort]);
+      const merged = mergePlaylistSnippetsWithDetails(items, byId).sort(
+        sorters[sort]
+      );
       return NextResponse.json({ tab, channel, data: merged, nextPageToken });
     }
 
     // SHORTS
     if (tab === "shorts") {
-      const { items, nextPageToken } = await getUploadsPlaylistItems(uploadsId, pageToken, 30);
-      const ids = items.map((p) => p.contentDetails.videoId);
+      const { items, nextPageToken } = await getUploadsPlaylistItems(
+        uploadsId,
+        pageToken,
+        30
+      );
+      const ids = items
+        .map((p: PlaylistItem) => p.contentDetails?.videoId)
+        .filter(Boolean) as string[];
       const { byId } = await getVideoDetails(ids);
       const merged = mergePlaylistSnippetsWithDetails(items, byId);
       const onlyShorts = merged
-        .filter((v) => parseISODurationToSeconds(v.contentDetails?.duration) < 60)
+        .filter(
+          (v: any) =>
+            parseISODurationToSeconds(v.contentDetails?.duration) < 60
+        )
         .sort(sorters[sort]);
-      return NextResponse.json({ tab, channel, data: onlyShorts, nextPageToken });
+      return NextResponse.json({
+        tab,
+        channel,
+        data: onlyShorts,
+        nextPageToken,
+      });
     }
 
     // LIVE
@@ -153,14 +225,17 @@ export async function GET(req: Request) {
         const j = await r.json();
         combined.push(...(j.items || []));
       }
-      const ids = combined.map((i: any) => i.id.videoId).filter(Boolean);
+      const ids = combined
+        .map((i: any) => i?.id?.videoId)
+        .filter(Boolean) as string[];
       const { byId } = await getVideoDetails(ids);
       const withStats = combined
         .map((i: any) => {
-          const d = byId[i.id.videoId];
-          if (!d) return null;
+          const vid = i?.id?.videoId;
+          const d = vid ? byId[vid] : null;
+          if (!vid || !d) return null;
           return {
-            id: i.id.videoId,
+            id: vid,
             snippet: i.snippet,
             contentDetails: d.contentDetails,
             statistics: d.statistics,
@@ -193,6 +268,9 @@ export async function GET(req: Request) {
     return NextResponse.json({ tab, channel, data: [] });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: "Failed to fetch YouTube data" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch YouTube data" },
+      { status: 500 }
+    );
   }
 }
