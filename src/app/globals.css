@@ -1,0 +1,234 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 6px rgba(255, 165, 0, 0.4), 0 0 10px rgba(255, 200, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(255, 165, 0, 0.8), 0 0 24px rgba(255, 200, 0, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 6px rgba(255, 165, 0, 0.4), 0 0 10px rgba(255, 200, 0, 0.3);
+  }
+}
+
+.animate-glow {
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes bellSwing {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(10deg);
+  }
+  75% {
+    transform: rotate(-10deg);
+  }
+}
+
+/* Reusable Tailwind class for bells */
+@layer utilities {
+  .animate-bellSwing {
+    animation: bellSwing 3s ease-in-out infinite;
+    transform-origin: top center;
+  }
+}
+
+/* === 🔔 Elegant Hanging Temple Bells === */
+
+@keyframes bellSwing {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(8deg);
+  }
+  75% {
+    transform: rotate(-8deg);
+  }
+}
+
+/* Container for each bell */
+.bell-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: bellSwing 4s ease-in-out infinite;
+  transform-origin: top center;
+  z-index: 20;
+}
+
+/* Slight offset for right bell for realism */
+.bell-wrapper.right {
+  animation-delay: 2s;
+}
+
+/* Hanging chain */
+.bell-chain {
+  width: 3px;
+  height: 60px;
+  background: repeating-linear-gradient(
+    to bottom,
+    #b8860b 0,
+    #ffd700 5px,
+    #b8860b 10px
+  );
+  border-radius: 3px;
+}
+
+/* Bell body (main dome) */
+.bell-body {
+  width: 42px;
+  height: 35px;
+  background: linear-gradient(145deg, #ffcc33, #d4af37);
+  border-radius: 50% 50% 10% 10%;
+  position: relative;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), inset 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+/* Bell clapper */
+.bell-clapper {
+  width: 10px;
+  height: 10px;
+  background: #5a3e1b;
+  border-radius: 50%;
+  margin-top: -3px;
+}
+
+/* Add shimmer reflection on the bell */
+.bell-body::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  width: 25px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  filter: blur(1px);
+}
+
+/* --- News Ticker --- */
+@keyframes jm-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* shift by half because we duplicate content */
+}
+
+/* Speed is adjustable via animation-duration */
+.animate-jm-marquee {
+  animation: jm-marquee 60s linear infinite;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-jm-marquee { animation: none; transform: none; }
+}
+
+/* === Jinsharnam Media Translator Widget Styling === */
+#google_translate_element select {
+  background-color: #400101 !important;
+  color: #ffd97a !important;
+  border: 1px solid rgba(255, 217, 122, 0.4) !important;
+  border-radius: 4px !important;
+  padding: 3px 6px !important;
+  font-family: "Poppins", sans-serif !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+}
+
+#google_translate_element select:hover {
+  background-color: #5c0a0a !important;
+  border-color: rgba(255, 217, 122, 0.8) !important;
+}
+
+/* Remove Google logos and banners */
+.goog-logo-link,
+.goog-te-banner-frame.skiptranslate,
+.goog-te-gadget-icon {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+}
+
+.goog-te-gadget {
+  color: #ffd97a !important;
+  font-family: "Poppins", sans-serif !important;
+  font-size: 13px !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
