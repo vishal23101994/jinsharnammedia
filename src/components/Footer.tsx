@@ -28,14 +28,14 @@ export function Footer() {
       name: "Organization",
       subLinks: [
         { name: "Jinsharnam Tirth", path: "/organization/jinsharnam-tirth" },
-        { name: "Pulakmunch", path: "/organization/pulakmunch" },
+        { name: "Vatsalya Dhara", path: "/organization/vatsalya-dhara" },
       ],
     },
     {
       name: "Media",
       subLinks: [
         { name: "Videos", path: "/media/videos" },
-        { name: "Audio", path: "/media/audio" },
+        // { name: "Audio", path: "/media/audio" },
       ],
     },
   ];
