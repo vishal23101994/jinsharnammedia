@@ -1,33 +1,62 @@
+// middleware.ts
 import { getToken } from "next-auth/jwt";
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
- * Middleware to protect admin routes
+ * Middleware that:
+ * 1) maps requests for jinsharnamtirth.com -> /jinsharnam-tirth...
+ * 2) applies admin route protection based on the effective path
  */
 export async function middleware(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const host = req.headers.get("host") ?? "";
   const { pathname } = req.nextUrl;
 
-  // ✅ Protect all /admin routes
-  if (pathname.startsWith("/admin")) {
+  // Compute effectivePath: what path the request *should* be handled as,
+  // after accounting for domain-based mapping.
+  let effectivePath = pathname;
+
+  if (host === "jinsharnamtirth.com" || host === "www.jinsharnamtirth.com") {
+    if (pathname === "/") {
+      effectivePath = "/jinsharnam-tirth";
+    } else {
+      effectivePath = `/jinsharnam-tirth${pathname}`;
+    }
+  }
+
+  // ADMIN protection: check effectivePath for /admin
+  if (effectivePath.startsWith("/admin")) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
     // Not logged in → redirect to login
     if (!token) {
       return NextResponse.redirect(new URL("/auth/login", req.url));
     }
 
     // Logged in but not an admin → redirect to home
-    if (token.role !== "ADMIN") {  // ✅ FIXED here
+    if (token.role !== "ADMIN") {
       return NextResponse.redirect(new URL("/", req.url));
     }
   }
 
-  // ✅ Allow all other routes
+  // If host requires rewrite, perform it (keeping the browser host same)
+  if (host === "jinsharnamtirth.com" || host === "www.jinsharnamtirth.com") {
+    const url = req.nextUrl.clone();
+    // set url.pathname to the effectivePath we computed
+    url.pathname = effectivePath;
+    return NextResponse.rewrite(url);
+  }
+
+  // Otherwise continue normally
   return NextResponse.next();
 }
 
 /**
- * Apply this middleware only to /admin paths
+ * Apply middleware broadly so rewrite and admin protection will work.
+ * Exclude Next.js static resources from matcher.
  */
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)",
+    "/",
+  ],
 };
