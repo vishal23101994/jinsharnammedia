@@ -6,34 +6,59 @@ import { Poppins, Playfair_Display } from "next/font/google";
 import BackToTop from "@/components/BackToTop";
 import NewsTicker from "@/components/NewsTicker";
 import { Toaster } from "react-hot-toast";
-import SocialSidebar from "@/components/SocialSidebar"; // 👈 new import
+import SocialSidebar from "@/components/SocialSidebar";
 import RegistrationModal from "@/components/RegistrationModal";
 
-const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600"] });
-const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"] });
+import { AudioPlayerProvider } from "@/app/providers/AudioPlayerProvider";
+import GlobalAudioPlayer from "@/components/GlobalAudioPlayer";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+});
 
 export const metadata = {
   title: "Jinsharnam Media - A Jain Spiritual Platform",
   description: "Spreading the message of peace, truth, and compassion.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body className={`${poppins.className} bg-spiritual-light text-spiritual-dark`}>
+      <body
+        className={`${poppins.className} bg-spiritual-light text-spiritual-dark`}
+      >
+        {/* 🌍 GLOBAL APP PROVIDERS */}
         <Providers>
-          <Navbar />
-          <NewsTicker />
-          <Toaster />
-          <RegistrationModal />  {/* ⬅️ shows every time */}
-          <main className="min-h-screen">{children}</main>
-          <Footer />
+          {/* 🎧 GLOBAL AUDIO PROVIDER */}
+          <AudioPlayerProvider>
+            <Navbar />
+            <NewsTicker />
+            <Toaster />
+            <RegistrationModal />
+
+            <main className="min-h-screen">
+              {children}
+            </main>
+
+            <Footer />
+
+            {/* 🎶 GLOBAL AUDIO POPUP — THIS WAS MISSING */}
+            <GlobalAudioPlayer />
+          </AudioPlayerProvider>
         </Providers>
 
-        {/* Floating Back-to-Top Button */}
+        {/* Floating UI */}
         <BackToTop />
-
-        {/* 🌸 Left Floating Social Media Sidebar */}
         <SocialSidebar />
       </body>
     </html>

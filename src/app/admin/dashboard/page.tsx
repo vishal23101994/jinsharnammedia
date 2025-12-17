@@ -471,24 +471,46 @@ export default function AdminDashboard() {
         <section className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1.2fr)] items-start mb-2 pt-2">
           <div className="space-y-6">
             {/* Directory Card (clickable) */}
+            {/* 🔔 Latest Updates */}
+            <div
+              onClick={() => router.push("/admin/updates")}
+              className="group cursor-pointer rounded-2xl bg-[#4B1E00]/40 border border-[#FFD97A]/40 shadow-md hover:shadow-xl hover:border-[#FFD97A]/80 transition-all duration-200 p-6 relative overflow-hidden"
+            >
+              <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-br from-[#FFD97A] via-transparent to-[#FF9F7A]" />
+              <h2 className="text-xl font-semibold text-[#FFD97A] mb-1">
+                📰 Latest Updates
+              </h2>
+              <p className="text-sm text-[#FFF8E7]/80">
+                Publish homepage updates like social media posts.
+              </p>
+            </div>
+
+            {/* 📅 Upcoming Events */}
+            <div
+              onClick={() => router.push("/admin/events")}
+              className="group cursor-pointer rounded-2xl bg-[#4B1E00]/40 border border-[#7AD7FF]/40 shadow-md hover:shadow-xl hover:border-[#7AD7FF]/80 transition-all duration-200 p-6 relative overflow-hidden"
+            >
+              <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-br from-[#7AD7FF] via-transparent to-[#FFD97A]" />
+              <h2 className="text-xl font-semibold text-[#7AD7FF] mb-1">
+                📅 Upcoming Events
+              </h2>
+              <p className="text-sm text-[#FFF8E7]/80">
+                Create & manage future events shown on homepage.
+              </p>
+            </div>
+
+            {/* 📇 Directory Management (existing) */}
             <div
               onClick={() => router.push("/admin/directory")}
               className="group cursor-pointer rounded-2xl bg-[#4B1E00]/40 border border-[#FFD97A]/40 shadow-md hover:shadow-xl hover:border-[#FFD97A]/80 transition-all duration-200 p-6 relative overflow-hidden"
             >
-              <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-br from-[#FFD97A] via-transparent to-[#FF9F7A] transition-opacity duration-200" />
-              <div className="relative z-10">
-                <h2 className="text-xl font-semibold text-[#FFD97A] mb-1 flex items-center gap-2">
-                  📇 Directory Management
-                </h2>
-                <p className="text-sm text-[#FFF8E7]/80">
-                  Approve, reject, edit and manage directory members from a central
-                  place.
-                </p>
-                <p className="mt-3 inline-flex items-center gap-2 text-xs text-[#FFE8B0]/70">
-                  <span className="h-[1px] w-8 bg-[#FFE8B0]/40" />
-                  Click to open directory panel
-                </p>
-              </div>
+              <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-br from-[#FFD97A] via-transparent to-[#FF9F7A]" />
+              <h2 className="text-xl font-semibold text-[#FFD97A] mb-1">
+                📇 Directory Management
+              </h2>
+              <p className="text-sm text-[#FFF8E7]/80">
+                Approve, reject and manage directory members.
+              </p>
             </div>
 
             {/* Directory Excel Upload */}

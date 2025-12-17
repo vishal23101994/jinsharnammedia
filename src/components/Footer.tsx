@@ -35,7 +35,7 @@ export function Footer() {
       name: "Media",
       subLinks: [
         { name: "Videos", path: "/media/videos" },
-        // { name: "Audio", path: "/media/audio" },
+        { name: "Audio", path: "/media/audio" },
       ],
     },
   ];

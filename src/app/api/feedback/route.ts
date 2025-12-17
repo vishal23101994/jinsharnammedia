@@ -1,4 +1,3 @@
-// app/api/feedback/route.ts
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
@@ -35,16 +34,26 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, message, rating, page } = body || {};
+
+    const {
+      name,
+      image,        // 👈 NEW
+      message,
+      rating,
+      page,
+    } = body || {};
 
     if (!message || typeof message !== "string" || !message.trim()) {
-      return NextResponse.json({ ok: false, msg: "Message is required." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, msg: "Message is required." },
+        { status: 400 }
+      );
     }
 
     const entry = {
       id: Date.now().toString(36) + "-" + Math.floor(Math.random() * 10000),
       name: name?.trim() || null,
-      email: email?.trim() || null,
+      image: image || null,      // 👈 SAVE IMAGE
       message: message.trim(),
       rating: typeof rating === "number" ? Number(rating) : null,
       page: page || null,
@@ -55,10 +64,13 @@ export async function POST(req: Request) {
     all.push(entry);
     await writeStore(all);
 
-    console.log("[Feedback] saved:", entry);
     return NextResponse.json({ ok: true, data: entry }, { status: 200 });
   } catch (err) {
     console.error("POST /api/feedback error:", err);
-    return NextResponse.json({ ok: false, msg: "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, msg: "Server error" },
+      { status: 500 }
+    );
   }
 }
+
