@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import * as XLSX from "xlsx";
 
 type Member = {
   id?: string;
@@ -274,13 +275,41 @@ export default function DirectoryPage() {
     return sortDir === "asc" ? "▲" : "▼";
   }
 
+  // ✅ Export Directory to Excel (filtered + sorted)
+  const handleExportDirectoryToExcel = () => {
+    if (!sorted || sorted.length === 0) {
+      alert("No data available to export");
+      return;
+    }
+
+    const exportData = sorted.map((m, index) => ({
+      "S.No": index + 1,
+      State: m.state || "",
+      Name: m.name || "",
+      Position: m.position || "",
+      Organization: m.organization || "",
+      Address: m.address || "",
+      Branch: m.branch || "",
+      Mobile: m.mobile || "",
+      "Date of Birth": formatDate(m.date_of_birth),
+      "Date of Marriage": formatDate(m.date_of_marriage),
+      Email: m.email || "",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Directory");
+    XLSX.writeFile(workbook, "Jinsharnam_Directory.xlsx");
+  };
+
+
   return (
     <section className="min-h-screen py-10 px-4 bg-[#FBF5EE] text-[#2f1a00]">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-serif mb-6 text-[#6A0000]">
+        <h1 className="text-4xl font-serif mb-6 text-[#6A0000] text-center">
           Jinsharnam Directory
         </h1>
-
+        
         {/* Controls */}
         <div className="mb-6 grid gap-3 md:grid-cols-4 items-center">
           <div className="md:col-span-2 flex gap-3">
@@ -295,6 +324,16 @@ export default function DirectoryPage() {
               className="px-4 py-2 rounded-lg bg-[#C45A00] text-white hover:bg-[#a84300] transition text-sm"
             >
               Reset
+            </button>
+          </div>
+          <br />
+
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={handleExportDirectoryToExcel}
+              className="px-4 py-2 rounded-lg bg-[#C45A00] text-white hover:bg-[#a84300] transition text-sm"
+            >
+              Export to Excel
             </button>
           </div>
 

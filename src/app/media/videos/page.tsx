@@ -147,9 +147,6 @@ export default function JinsharnamMediaSpiritual() {
               />
             </div>
           </div>
-
-          {/* Subscribe (inline via OAuth) */}
-          <SubscribeButton />
         </div>
 
         {/* Tabs & Sort */}
@@ -453,86 +450,5 @@ function PlaylistsSection({
         ))}
       </div>
     </div>
-  );
-}
-
-/* ---------- Inline Subscribe Button (real YouTube subscription) ---------- */
-function SubscribeButton() {
-  const [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState<null | "ok" | "err">(null);
-
-  const handleSubscribe = async () => {
-    if (!window.google || !GOOGLE_CLIENT_ID) {
-      alert("Google client not ready. Check NEXT_PUBLIC_GOOGLE_CLIENT_ID and reload.");
-      return;
-    }
-    setBusy(true);
-    setStatus(null);
-
-    try {
-      const tokenClient = window.google.accounts.oauth2.initTokenClient({
-        client_id: GOOGLE_CLIENT_ID,
-        scope: "https://www.googleapis.com/auth/youtube",
-        callback: async (tokenResponse: any) => {
-          try {
-            const res = await fetch(
-              "https://www.googleapis.com/youtube/v3/subscriptions?part=snippet",
-              {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${tokenResponse.access_token}`,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  snippet: {
-                    resourceId: {
-                      kind: "youtube#channel",
-                      channelId: YT_CHANNEL_ID,
-                    },
-                  },
-                }),
-              }
-            );
-
-            if (res.ok) {
-              setStatus("ok");
-            } else {
-              const j = await res.json();
-              console.error("Subscribe error:", j);
-              setStatus("err");
-              alert(
-                j.error?.message ||
-                  "Subscription failed. Ensure your Google account has YouTube enabled and you approved access."
-              );
-            }
-          } catch (e) {
-            console.error(e);
-            setStatus("err");
-            alert("Failed to reach YouTube API.");
-          } finally {
-            setBusy(false);
-          }
-        },
-      });
-
-      tokenClient.requestAccessToken({ prompt: "" });
-    } catch (e) {
-      console.error(e);
-      setBusy(false);
-      setStatus("err");
-    }
-  };
-
-  return (
-    <button
-      onClick={handleSubscribe}
-      disabled={busy}
-      className={`${
-        busy ? "opacity-60 cursor-not-allowed" : ""
-      } bg-[#B8860B] hover:bg-[#A67C00] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md`}
-      title="Subscribe to Jinsharnam Media"
-    >
-      {busy ? "Subscribing…" : "🔔 Subscribe"}
-    </button>
   );
 }

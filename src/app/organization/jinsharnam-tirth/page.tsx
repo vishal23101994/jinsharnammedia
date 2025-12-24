@@ -10,7 +10,9 @@ import {
   Train,
   Bus,
   Users,
+  Download,
 } from "lucide-react";
+import * as XLSX from "xlsx";
 
 export default function JinsharnamTirthPage() {
   const bookRef = useRef<any>(null);
@@ -78,6 +80,28 @@ export default function JinsharnamTirthPage() {
 
   const nextBookPage = () => bookRef.current?.pageFlip()?.flipNext();
   const prevBookPage = () => bookRef.current?.pageFlip()?.flipPrev();
+
+  // 🔽 ADD THIS ABOVE `return (`
+  const handleExportToExcel = () => {
+    if (!trustees || trustees.length === 0) {
+      alert("No data available to export");
+      return;
+    }
+
+    const exportData = trustees.map((t, index) => ({
+      "S.No": index + 1,
+      Name: t.NAME || "",
+      Designation: t.DESIGNATION || "",
+      Address: t.ADDRESS || "",
+      Mobile: t.MOBILE || "",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Trustee Committee");
+    XLSX.writeFile(workbook, "Trustee_Committee.xlsx");
+  };
+
 
   return (
     <section className="text-gray-800 bg-gradient-to-b from-amber-50 to-white min-h-screen overflow-x-hidden">
@@ -244,23 +268,38 @@ export default function JinsharnamTirthPage() {
       {/* 🙏 Trustee Committee Section */}
       <div className="bg-[#FFF8E7] py-16 border-t border-amber-300">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-serif text-center text-[#4B1E00] font-semibold mb-10 flex justify-center items-center gap-2">
-            <Users className="text-amber-700" size={30} /> Trustee Committee
-          </h2>
+
+          {/* Heading + Export */}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <h2 className="text-3xl font-serif text-[#4B1E00] font-semibold flex items-center gap-2">
+              <Users className="text-amber-700" size={30} />
+              Trustee Committee
+            </h2>
+
+            <button
+              onClick={handleExportToExcel}
+              className="flex items-center gap-2 px-4 py-2 bg-amber-700 text-white rounded-md hover:bg-amber-800 transition"
+            >
+              <Download size={18} />
+              Export to Excel
+            </button>
+          </div>
 
           {/* Trustee Table */}
           <div className="overflow-x-auto shadow-lg rounded-xl border border-amber-200 bg-white/80">
-            <table className="min-w-full text-[#4B1E00] text-left">
-              <thead className="bg-gradient-to-r from-amber-200 to-amber-100 font-semibold text-[#4B1E00]">
+            <table className="min-w-full text-[#4B1E00] text-left text-sm">
+              <thead className="bg-gradient-to-r from-amber-200 to-amber-100 font-semibold">
                 <tr>
-                  <th className="py-3 px-4 border-b border-amber-300">क्रमांक</th>
-                  <th className="py-3 px-4 border-b border-amber-300">नाम</th>
-                  <th className="py-3 px-4 border-b border-amber-300">मोबाइल 1</th>
-                  <th className="py-3 px-4 border-b border-amber-300">मोबाइल 2</th>
-                  <th className="py-3 px-4 border-b border-amber-300">शहर</th>
-                  <th className="py-3 px-4 border-b border-amber-300">राज्य</th>
+                  <th className="py-2 px-3 border-b border-amber-300">S.No</th>
+                  <th className="py-2 px-3 border-b border-amber-300">Name</th>
+                  <th className="py-2 px-3 border-b border-amber-300">
+                    Designation
+                  </th>
+                  <th className="py-2 px-3 border-b border-amber-300">Address</th>
+                  <th className="py-2 px-3 border-b border-amber-300">Mobile</th>
                 </tr>
               </thead>
+
               <tbody>
                 {currentItems.map((t, i) => (
                   <tr
@@ -269,50 +308,66 @@ export default function JinsharnamTirthPage() {
                       i % 2 === 0 ? "bg-white" : "bg-amber-50/50"
                     }`}
                   >
-                    <td className="py-3 px-4 border-b border-amber-200">
+                    <td className="py-2 px-3 border-b border-amber-200">
                       {startIndex + i + 1}
                     </td>
-                    <td className="py-3 px-4 border-b border-amber-200 font-semibold">
-                      {t["NAME"] || "-"}
+
+                    <td className="py-2 px-3 border-b border-amber-200 font-medium">
+                      {t.NAME || "-"}
                     </td>
-                    <td className="py-3 px-4 border-b border-amber-200">
-                      {t["Mobile 1"] || "-"}
+
+                    <td className="py-2 px-3 border-b border-amber-200">
+                      {t.DESIGNATION || "-"}
                     </td>
-                    <td className="py-3 px-4 border-b border-amber-200">
-                      {t["Mobile 2"] || "-"}
+
+                    <td className="py-2 px-3 border-b border-amber-200">
+                      {t.ADDRESS || "-"}
                     </td>
-                    <td className="py-3 px-4 border-b border-amber-200">
-                      {t["CITY"] || "-"}
-                    </td>
-                    <td className="py-3 px-4 border-b border-amber-200">
-                      {t["STATE"] || "-"}
+
+                    <td className="py-2 px-3 border-b border-amber-200">
+                      {t.MOBILE || "-"}
                     </td>
                   </tr>
                 ))}
+
+                {currentItems.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="py-6 text-center text-gray-500"
+                    >
+                      No trustee data available
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-center mt-8 gap-4 sticky bottom-4 bg-[#FFF8E7]/80 py-2 backdrop-blur-sm rounded-lg">
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => p - 1)}
-              className="px-4 py-2 bg-[#4B1E00] text-yellow-100 rounded-md hover:bg-yellow-400 hover:text-[#4B1E00] transition disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <span className="text-[#4B1E00] font-medium">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => p + 1)}
-              className="px-4 py-2 bg-[#4B1E00] text-yellow-100 rounded-md hover:bg-yellow-400 hover:text-[#4B1E00] transition disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-8 gap-4 sticky bottom-4 bg-[#FFF8E7]/80 py-2 backdrop-blur-sm rounded-lg">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
+                className="px-4 py-2 bg-[#4B1E00] text-yellow-100 rounded-md hover:bg-yellow-400 hover:text-[#4B1E00] disabled:opacity-50"
+              >
+                Previous
+              </button>
+
+              <span className="text-[#4B1E00] font-medium">
+                Page {currentPage} of {totalPages}
+              </span>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => p + 1)}
+                className="px-4 py-2 bg-[#4B1E00] text-yellow-100 rounded-md hover:bg-yellow-400 hover:text-[#4B1E00] disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

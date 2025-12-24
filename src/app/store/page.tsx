@@ -13,7 +13,7 @@ declare global {
 type Product = {
   id: string;
   title: string;
-  category?: "Book" | "Calendar" | "Poster";
+  category?: "Book" | "Calendar";
   description?: string;
   priceCents: number;
   imageUrl?: string;
@@ -21,6 +21,40 @@ type Product = {
 };
 
 type CartItem = Product & { qty: number };
+
+/* ===============================
+   Delivery & Packaging Calculator
+   =============================== */
+function calculateDelivery(cart: CartItem[]) {
+  let delivery = 0;
+
+  cart.forEach((item) => {
+    const qty = item.qty;
+
+    // 📚 Book delivery (existing logic)
+    if (item.category === "Book") {
+      const price = item.priceCents / 100;
+
+      if (price >= 20 && price <= 50) {
+        if (qty === 1) delivery += 50;
+        else if (qty <= 5) delivery += 100;
+        else delivery += qty * 20;
+      }
+
+      if (price > 50 && price <= 200) {
+        if (qty === 1) delivery += 100;
+        else if (qty > 5) delivery += qty * 50;
+      }
+    }
+
+    // 📅 Calendar delivery (NEW)
+    if (item.category === "Calendar") {
+      delivery += qty * 100; // ₹100 per calendar
+    }
+  });
+
+  return delivery;
+}
 
 function loadRazorpayScript(): Promise<boolean> {
   return new Promise((resolve) => {
@@ -55,13 +89,13 @@ export default function StorePage() {
   const [items, setItems] = useState<Product[]>([]);
   const [filtered, setFiltered] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<
-    "All" | "Book" | "Calendar" | "Poster"
+    "All" | "Book" | "Calendar"
   >("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<"ONLINE" | "COD">("ONLINE");
+  const [paymentMethod, setPaymentMethod] = useState<"ONLINE">("ONLINE");
   const { data: session } = useSession();
 
   // Fetch products
@@ -153,6 +187,14 @@ export default function StorePage() {
   const totalAmount = cart.reduce((sum, p) => sum + p.priceCents * p.qty, 0);
 
   // Checkout (Razorpay or COD)
+  const cartAmount = cart.reduce(
+    (sum, p) => sum + p.priceCents * p.qty,
+    0
+  );
+
+  const deliveryCharge = calculateDelivery(cart);
+  const grandTotal = cartAmount + deliveryCharge * 100;
+
   const handleCheckout = async () => {
     if (!session?.user) {
       window.dispatchEvent(
@@ -163,34 +205,6 @@ export default function StorePage() {
 
     if (cart.length === 0) {
       alert("Your cart is empty!");
-      return;
-    }
-
-    // 💵 COD flow (no Razorpay)
-    if (paymentMethod === "COD") {
-      try {
-        const res = await fetch("/api/orders", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            items: cart,
-            paymentStatus: "COD_PENDING",
-          }),
-        });
-
-        const data = await res.json();
-        if (!res.ok) {
-          console.error("COD order creation failed:", data);
-          throw new Error(data.error || "Failed to create COD order");
-        }
-
-        localStorage.removeItem("jinsharnam_cart");
-        setCart([]);
-        window.location.href = "/user/orders";
-      } catch (error) {
-        console.error("COD checkout error:", error);
-        alert("Error creating COD order. Please try again.");
-      }
       return;
     }
 
@@ -214,7 +228,11 @@ export default function StorePage() {
       const res = await fetch("/api/checkout/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: cart }),
+        body: JSON.stringify({
+          items: cart,
+          deliveryCharge,
+          totalAmount: grandTotal
+        }),
       });
 
       const data = await res.json();
@@ -289,25 +307,19 @@ export default function StorePage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-amber-50 via-amber-100/40 to-white text-gray-800">
       {/* Hero */}
-      <section className="relative w-full h-[420px] flex items-center justify-center text-center overflow-hidden">
-        <img
-          src="/images/redtextured.jpg"
-          alt="Jinsharnam Media Store"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/60" />
-        <div className="relative z-10 px-6">
-          <h1 className="text-4xl md:text-5xl font-serif text-amber-100 font-semibold mb-3">
-            Jinsharnam Media Store
+      <section className="w-full py-28 flex items-center justify-center text-center bg-gradient-to-b from-amber-100 to-amber-50">
+        <div className="px-6">
+          <h1 className="text-4xl md:text-5xl font-serif text-amber-800 font-semibold mb-4">
+            Jinsharnam Sahitya
           </h1>
-          <p className="text-amber-50 text-lg mb-6">
-            Explore spiritual books, divine calendars & peaceful posters.
+          <p className="text-amber-700 text-lg mb-6 max-w-2xl mx-auto">
+            Sacred literature and spiritual offerings for inner growth and peace.
           </p>
           <a
             href="#products"
             className="inline-block bg-amber-600 text-white px-6 py-3 rounded-full font-medium hover:bg-amber-700 transition"
           >
-            Shop Now
+            Explore Collection
           </a>
         </div>
       </section>
@@ -316,7 +328,7 @@ export default function StorePage() {
       <section id="products" className="max-w-7xl mx-auto px-4 py-10">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div className="flex flex-wrap justify-center gap-3">
-            {(["All", "Book", "Calendar", "Poster"] as const).map((cat) => (
+            {(["All", "Book", "Calendar"] as const).map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
@@ -461,29 +473,32 @@ export default function StorePage() {
                   />
                   <span>Online Payment (Razorpay)</span>
                 </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    value="COD"
-                    checked={paymentMethod === "COD"}
-                    onChange={() => setPaymentMethod("COD")}
-                  />
-                  <span>Cash on Delivery</span>
-                </label>
               </div>
             </div>
 
-            <p className="text-right text-lg font-semibold text-amber-800 mb-1">
-              Total: ₹ {(totalAmount / 100).toFixed(2)}
+            <div className="text-sm text-gray-700 space-y-1">
+              <p className="flex justify-between">
+                <span>Items Total</span>
+                <span>₹ {(cartAmount / 100).toFixed(2)}</span>
+              </p>
+
+              <p className="flex justify-between">
+                <span>Packaging & Delivery</span>
+                <span>₹ {deliveryCharge.toFixed(2)}</span>
+              </p>
+            </div>
+
+            <p className="text-right text-lg font-semibold text-amber-800 mt-2">
+              Grand Total: ₹ {(grandTotal / 100).toFixed(2)}
             </p>
+
             <button
               onClick={handleCheckout}
               className="w-full rounded-full bg-amber-600 text-white py-2 hover:bg-amber-700 transition"
             >
-              {paymentMethod === "COD"
-                ? "Place COD Order"
-                : "Checkout with Razorpay"}
+              Checkout with Razorpay
             </button>
+
           </div>
         )}
       </div>

@@ -24,7 +24,15 @@ export default function AudioPage() {
   const [query, setQuery] = useState("");
   const [loop, setLoop] = useState(false);
 
-  const { play, toggle, currentTrack, isPlaying } = useAudioPlayer();
+  const {
+    playByIndex,
+    toggle,
+    currentTrack,
+    isPlaying,
+    next,
+    prev,
+  } = useAudioPlayer();
+
   const rowRefs = useRef<Record<number, HTMLLIElement | null>>({});
 
   /* --------------------------------------------------
@@ -42,19 +50,7 @@ export default function AudioPage() {
      HELPERS
   -------------------------------------------------- */
   const playAtIndex = (idx: number) => {
-    play(filtered[idx]);
-  };
-
-  const playNext = () => {
-    if (!currentTrack) return playAtIndex(0);
-    const idx = filtered.findIndex((t) => t.src === currentTrack.src);
-    playAtIndex((idx + 1) % filtered.length);
-  };
-
-  const playPrev = () => {
-    if (!currentTrack) return playAtIndex(0);
-    const idx = filtered.findIndex((t) => t.src === currentTrack.src);
-    playAtIndex((idx - 1 + filtered.length) % filtered.length);
+    playByIndex(audios.findIndex(a => a.src === filtered[idx].src));
   };
 
   const onDownload = (track: Track) => {
@@ -181,7 +177,7 @@ export default function AudioPage() {
                 />
               </button>
 
-              <button onClick={playPrev}>
+              <button onClick={prev}>
                 <SkipBack className="w-5 h-5" />
               </button>
 
@@ -196,7 +192,7 @@ export default function AudioPage() {
                 )}
               </button>
 
-              <button onClick={playNext}>
+              <button onClick={next}>
                 <SkipForward className="w-5 h-5" />
               </button>
             </div>

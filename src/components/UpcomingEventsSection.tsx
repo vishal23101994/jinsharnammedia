@@ -18,7 +18,6 @@ export default function UpcomingEventsSection() {
   const isAdmin = session?.user?.role === "ADMIN";
 
   const [events, setEvents] = useState<Event[]>([]);
-  const [index, setIndex] = useState(0);
   const [activeImage, setActiveImage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -37,11 +36,6 @@ export default function UpcomingEventsSection() {
 
   if (events.length === 0) return null;
 
-  const prev = () =>
-    setIndex((i) => (i === 0 ? events.length - 1 : i - 1));
-  const next = () =>
-    setIndex((i) => (i === events.length - 1 ? 0 : i + 1));
-
   return (
     <>
       <section className="relative py-28 bg-gradient-to-b from-[#FFF8E7] to-white overflow-hidden">
@@ -49,134 +43,107 @@ export default function UpcomingEventsSection() {
           Upcoming Events
         </h2>
 
-        <ArrowButton side="left" onClick={prev} />
-        <ArrowButton side="right" onClick={next} />
+        {/* AUTO SCROLLING ROW */}
+        <div className="relative overflow-hidden">
+          <motion.div
+            className="flex gap-10 w-max px-10"
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{
+              duration: 60,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            whileHover={{ animationPlayState: "paused" }}
+          >
+            {[...Array(2)].map((_, loopIndex) =>
+              events.map((e) => {
+                const eventDate = new Date(e.eventDate);
 
-        <div className="relative flex justify-center items-center h-[560px]">
-          {events.map((e, i) => {
-            const offset = i - index;
-            if (Math.abs(offset) > 2) return null;
+                return (
+                  <div
+                    key={`${loopIndex}-${e.id}`}
+                    className="relative w-[320px]
+                               rounded-3xl overflow-hidden
+                               bg-white shadow-xl
+                               border border-[#FFD97A]/40
+                               shrink-0"
+                  >
+                    {/* EVENT IMAGE WITH HOVER ZOOM */}
+                    {e.imageUrl && (
+                      <div className="relative overflow-hidden group">
+                        <img
+                          src={e.imageUrl}
+                          onClick={() => setActiveImage(e.imageUrl!)}
+                          alt={e.title}
+                          className="
+                            w-full h-[360px] object-cover
+                            cursor-zoom-in
+                            transition-transform duration-500 ease-out
+                            group-hover:scale-110
+                          "
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition" />
+                      </div>
+                    )}
 
-            const isCenter = offset === 0;
-            const eventDate = new Date(e.eventDate);
+                    {/* DATE BADGE */}
+                    <div className="absolute top-4 left-4 bg-[#4B1E00] text-white rounded-xl px-3 py-1 text-xs shadow">
+                      {eventDate.toDateString()}
+                    </div>
 
-            return (
-              <motion.div
-                key={e.id}
-                animate={{
-                  x: offset * 340,
-                  scale: isCenter ? 1 : 0.78,
-                  opacity: isCenter ? 1 : 0.35,
-                  filter: isCenter ? "blur(0px)" : "blur(4px)",
-                  zIndex: isCenter ? 20 : 1,
-                }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
-                className="absolute w-[320px] rounded-3xl overflow-hidden bg-white shadow-2xl border border-[#FFD97A]/40"
-              >
-                {/* ✨ Spiritual glow */}
-                {isCenter && (
-                  <div className="absolute -inset-4 bg-[#FFD97A]/30 blur-3xl rounded-full -z-10" />
-                )}
+                    {/* ADMIN CONTROLS */}
+                    {isAdmin && (
+                      <div className="absolute top-4 right-4 flex gap-2 bg-white/90 px-2 py-1 rounded-xl shadow">
+                        <a
+                          href={`/admin/events/${e.id}`}
+                          className="text-xs font-semibold text-blue-700"
+                        >
+                          Edit
+                        </a>
+                        <button
+                          onClick={async () => {
+                            if (!confirm("Delete this event?")) return;
+                            await fetch(`/api/admin/events/${e.id}`, {
+                              method: "DELETE",
+                            });
+                            location.reload();
+                          }}
+                          className="text-xs font-semibold text-red-600"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
 
-                {/* Event Image */}
-                {e.imageUrl && (
-                  <img
-                    src={e.imageUrl}
-                    onClick={() => isCenter && setActiveImage(e.imageUrl!)}
-                    className="w-full h-[360px] object-cover cursor-zoom-in"
-                  />
-                )}
+                    {/* CONTENT */}
+                    <div className="p-5">
+                      <h3 className="font-semibold text-lg text-[#4B1E00] line-clamp-1">
+                        {e.title}
+                      </h3>
 
-                {/* 📅 Date Badge */}
-                <div className="absolute top-4 left-4 bg-[#4B1E00] text-white rounded-xl px-3 py-1 text-xs shadow">
-                  {eventDate.toDateString()}
-                </div>
+                      <p className="text-sm text-[#4B1E00]/80 line-clamp-2 mt-1">
+                        {e.description}
+                      </p>
 
-                {/* Admin controls (NOT on image) */}
-                {isCenter && isAdmin && (
-                  <div className="absolute bottom-4 right-4 flex gap-2">
-                    <AdminButton
-                      label="✏️"
-                      href={`/admin/events/${e.id}`}
-                    />
-                    <AdminDeleteButton
-                      endpoint={`/api/admin/events/${e.id}`}
-                    />
+                      <p className="text-sm text-[#B97A2B] mt-2">
+                        📍 {e.location || "Location TBA"}
+                      </p>
+                    </div>
                   </div>
-                )}
-
-                <div className="p-5">
-                  <h3 className="font-semibold text-lg text-[#4B1E00] line-clamp-1">
-                    {e.title}
-                  </h3>
-
-                  <p className="text-sm text-[#4B1E00]/80 line-clamp-2 mt-1">
-                    {e.description}
-                  </p>
-
-                  <p className="text-sm text-[#B97A2B] mt-2">
-                    📍 {e.location || "Location TBA"}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
+                );
+              })
+            )}
+          </motion.div>
         </div>
       </section>
 
+      {/* IMAGE MODAL */}
       <ImageModal src={activeImage} onClose={() => setActiveImage(null)} />
     </>
   );
 }
 
-/* ---------------- REUSABLE UI ---------------- */
-
-function ArrowButton({
-  side,
-  onClick,
-}: {
-  side: "left" | "right";
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`absolute ${
-        side === "left" ? "left-10" : "right-10"
-      } top-1/2 -translate-y-1/2 z-30 h-14 w-14 rounded-full 
-      bg-[#FFD97A] text-[#4B1E00] shadow-xl 
-      hover:scale-110 transition`}
-    >
-      {side === "left" ? "←" : "→"}
-    </button>
-  );
-}
-
-function AdminButton({ label, href }: { label: string; href: string }) {
-  return (
-    <a
-      href={href}
-      className="h-9 w-9 bg-[#FFD97A] rounded-full flex items-center justify-center shadow hover:scale-110 transition"
-    >
-      {label}
-    </a>
-  );
-}
-
-function AdminDeleteButton({ endpoint }: { endpoint: string }) {
-  return (
-    <button
-      onClick={async () => {
-        if (!confirm("Delete this event?")) return;
-        await fetch(endpoint, { method: "DELETE" });
-        location.reload();
-      }}
-      className="h-9 w-9 bg-red-500 text-white rounded-full shadow hover:scale-110 transition"
-    >
-      🗑
-    </button>
-  );
-}
+/* ---------- IMAGE MODAL ---------- */
 
 function ImageModal({
   src,
@@ -190,7 +157,7 @@ function ImageModal({
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center"
+        className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
         onClick={onClose}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -198,11 +165,11 @@ function ImageModal({
       >
         <motion.img
           src={src}
-          className="max-h-[75vh] max-w-[80vw] rounded-xl shadow-2xl"
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0.9 }}
+          className="max-h-[75vh] max-w-[85vw] rounded-2xl shadow-2xl"
           onClick={(e) => e.stopPropagation()}
+          initial={{ scale: 0.92 }}
+          animate={{ scale: 1 }}
+          exit={{ scale: 0.92 }}
         />
       </motion.div>
     </AnimatePresence>

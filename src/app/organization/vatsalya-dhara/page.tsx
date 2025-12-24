@@ -49,28 +49,127 @@ export default function VatsalyaDharaPage() {
   return (
     <section className="min-h-screen bg-gradient-to-b from-[#FAE3A3]/30 to-[#FFF8E7] text-[#4B1E00]">
       
-      {/* HERO */}
-      <header className="py-20 px-6 text-center">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="font-serif text-4xl md:text-5xl lg:text-6xl font-semibold mb-4"
-        >
-          Vatsalya Dhara
-        </motion.h1>
+      {/* DIVINE HERO */}
+      <header className="relative overflow-hidden py-24 px-6 text-center bg-gradient-to-b from-[#FFF1C1]/70 via-[#FFF8E7] to-transparent">
 
-        <motion.p
+        {/* soft radial glow */}
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(255,200,120,0.25),transparent_65%)]" />
+
+        {/* subtle floating particles */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.15, duration: 0.6 }}
-          className="max-w-3xl mx-auto text-lg md:text-xl text-[#4B1E00]/90 leading-relaxed"
+          transition={{ duration: 2 }}
         >
-          Guided by the blessings of <strong>Acharya Shri Pulak Sagar Ji Maharaj</strong>, 
-          Vatsalya Dhara is a movement dedicated to compassion, service and human welfare —
-          focused on education, healthcare, animal care, emergency support, and community upliftment.
-        </motion.p>
+          {[...Array(10)].map((_, i) => (
+            <span
+              key={i}
+              className="absolute w-1 h-1 rounded-full bg-amber-300/60"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+              }}
+            />
+          ))}
+        </motion.div>
+
+        {/* CONTENT */}
+        <div className="relative z-10 max-w-4xl mx-auto">
+
+          {/* Title */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease: "easeOut" }}
+            className="font-serif text-4xl md:text-6xl lg:text-7xl font-semibold text-[#4B1E00] mb-6 tracking-wide"
+          >
+            Vatsalya Dhara
+          </motion.h1>
+
+          {/* Lotus Divider */}
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="flex justify-center mb-6"
+          >
+            <div className="h-[2px] w-40 bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
+          </motion.div>
+
+          {/* Description */}
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.7 }}
+            className="max-w-3xl mx-auto text-lg md:text-xl leading-relaxed text-[#4B1E00]/90 text-justify md:text-center"
+          >
+            Guided by the blessings of{" "}
+            <span className="font-semibold text-amber-800">
+              Acharya Shri Pulak Sagar Ji Maharaj
+            </span>,{" "}
+            Vatsalya Dhara is a movement rooted in compassion, selfless service,
+            and human welfare — nurturing education, healthcare, animal care,
+            emergency support, and community upliftment.
+          </motion.p>
+
+          {/* Blessing Line */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, duration: 1 }}
+            className="mt-8 text-sm text-amber-700 tracking-wide"
+          >
+            सेवा • करुणा • मानवता
+          </motion.div>
+
+        </div>
       </header>
+
+      {/* SACRED HORIZONTAL SCROLL */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#FFF1C1] to-transparent py-14">
+
+        {/* edge fades */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#FFF1C1] to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#FFF1C1] to-transparent z-10" />
+
+        <motion.div
+          className="flex gap-8 w-max px-8"
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{
+            duration: 60,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        >
+          {[...Array(2)].map((_, loopIndex) =>
+            [1,2,3,4,5,6,7,8,9].map((imgNo) => (
+              <motion.div
+                key={`${loopIndex}-${imgNo}`}   // ✅ UNIQUE KEY
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.6 }}
+                className="relative shrink-0"
+              >
+                <img
+                  src={`/images/vatsalya/${imgNo}.JPEG`}
+                  alt="Vatsalya Dhara Seva"
+                  className="
+                    w-[260px] md:w-[300px]
+                    h-[380px] md:h-[440px]
+                    object-cover
+                    rounded-3xl
+                    shadow-2xl
+                    border border-amber-200
+                  "
+                />
+
+                {/* spiritual overlay */}
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-black/25 to-transparent" />
+              </motion.div>
+            ))
+          )}
+        </motion.div>
+      </section>
 
       <main className="max-w-6xl mx-auto px-6 pb-20 space-y-12">
 

@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { createContext, useContext, useRef, useState } from "react";
+import { audios } from "@/data/audio";
 
 type Track = {
   title: string;
@@ -21,113 +16,112 @@ type AudioContextType = {
   duration: number;
   isOpen: boolean;
 
-  play: (track: Track, playlist?: Track[]) => void;
+  playByIndex: (index: number) => void;
   toggle: () => void;
   next: () => void;
   prev: () => void;
-  shuffle: () => void;
+  shuffleToggle: () => void;
   seek: (time: number) => void;
   closePlayer: () => void;
 };
 
 const AudioContext = createContext<AudioContextType | null>(null);
 
-export function AudioPlayerProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function AudioPlayerProvider({ children }: { children: React.ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const [playlist, setPlaylist] = useState<Track[]>([]);
-  const [index, setIndex] = useState(0);
+  const [playlist] = useState<Track[]>(audios);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [shuffle, setShuffle] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  // create audio once
-  useEffect(() => {
-    audioRef.current = new Audio();
+  /* ---------- Core ---------- */
+  const loadTrack = async (index: number) => {
+    const track = playlist[index];
+    if (!track) return;
+
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+    }
 
     const audio = audioRef.current;
 
-    audio.addEventListener("timeupdate", () =>
-      setCurrentTime(audio.currentTime)
-    );
-    audio.addEventListener("loadedmetadata", () =>
-      setDuration(audio.duration)
-    );
-    audio.addEventListener("ended", next);
+    // ✅ STOP current playback safely
+    audio.pause();
+    audio.currentTime = 0;
 
-    return () => {
-      audio.pause();
-      audio.src = "";
+    // ✅ CHANGE SOURCE
+    audio.src = track.src;
+    audio.load();
+
+    audio.onloadedmetadata = () => {
+      setDuration(audio.duration || 0);
     };
-  }, []);
 
-  const play = (track: Track, list: Track[] = []) => {
-    if (!audioRef.current) return;
+    audio.ontimeupdate = () => {
+      setCurrentTime(audio.currentTime || 0);
+    };
 
-    if (list.length) {
-      setPlaylist(list);
-      setIndex(list.findIndex((t) => t.src === track.src));
+    audio.onended = () => {
+      next();
+    };
+
+    try {
+      await audio.play(); // ✅ SAFE play
+      setIsPlaying(true);
+    } catch (err) {
+      // 🔕 Ignore AbortError safely
+      console.warn("Audio play interrupted (safe to ignore)");
     }
 
-    audioRef.current.src = track.src;
-    audioRef.current.play();
-
+    setCurrentIndex(index);
     setCurrentTrack(track);
-    setIsPlaying(true);
     setIsOpen(true);
   };
 
+
+  /* ---------- Controls ---------- */
+  const playByIndex = (index: number) => loadTrack(index);
+
   const toggle = () => {
     if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
+    if (audioRef.current.paused) {
       audioRef.current.play();
       setIsPlaying(true);
+    } else {
+      audioRef.current.pause();
+      setIsPlaying(false);
     }
   };
 
   const next = () => {
-    if (!playlist.length) return;
-    const nextIndex = (index + 1) % playlist.length;
-    play(playlist[nextIndex], playlist);
+    const nextIndex = shuffle
+      ? Math.floor(Math.random() * playlist.length)
+      : (currentIndex + 1) % playlist.length;
+
+    loadTrack(nextIndex);
   };
 
   const prev = () => {
-    if (!playlist.length) return;
     const prevIndex =
-      (index - 1 + playlist.length) % playlist.length;
-    play(playlist[prevIndex], playlist);
+      (currentIndex - 1 + playlist.length) % playlist.length;
+    loadTrack(prevIndex);
   };
 
-  const shuffle = () => {
-    if (!playlist.length) return;
-    const rand = Math.floor(Math.random() * playlist.length);
-    play(playlist[rand], playlist);
-  };
+  const shuffleToggle = () => setShuffle((s) => !s);
 
   const seek = (time: number) => {
-    if (!audioRef.current) return;
-    audioRef.current.currentTime = time;
-    setCurrentTime(time);
+    if (audioRef.current) audioRef.current.currentTime = time;
   };
 
   const closePlayer = () => {
-    if (!audioRef.current) return;
-    audioRef.current.pause();
-    audioRef.current.src = "";
+    audioRef.current?.pause();
     setIsPlaying(false);
-    setCurrentTrack(null);
     setIsOpen(false);
-    setCurrentTime(0);
-    setDuration(0);
   };
 
   return (
@@ -138,11 +132,11 @@ export function AudioPlayerProvider({
         currentTime,
         duration,
         isOpen,
-        play,
+        playByIndex,
         toggle,
         next,
         prev,
-        shuffle,
+        shuffleToggle,
         seek,
         closePlayer,
       }}
@@ -154,7 +148,6 @@ export function AudioPlayerProvider({
 
 export const useAudioPlayer = () => {
   const ctx = useContext(AudioContext);
-  if (!ctx)
-    throw new Error("useAudioPlayer must be used inside provider");
+  if (!ctx) throw new Error("useAudioPlayer must be used within provider");
   return ctx;
 };

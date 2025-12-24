@@ -54,7 +54,7 @@ export default function ProductDetailPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const [product, setProduct] = useState<Product | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<"ONLINE" | "COD">("ONLINE");
+  const [paymentMethod] = useState<"ONLINE">("ONLINE");
 
   useEffect(() => {
     if (params?.id) {
@@ -79,27 +79,6 @@ export default function ProductDetailPage() {
       // Save single-product cart so success page / COD can reuse it
       const singleCart = [{ ...product, qty: 1 }];
       localStorage.setItem("jinsharnam_cart", JSON.stringify(singleCart));
-
-      // 💵 COD
-      if (paymentMethod === "COD") {
-        const res = await fetch("/api/orders", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            items: singleCart,
-            paymentStatus: "COD_PENDING",
-          }),
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          console.error("COD order create failed:", data);
-          throw new Error(data.error || "Failed to create COD order");
-        }
-
-        localStorage.removeItem("jinsharnam_cart");
-        router.push("/user/orders");
-        return;
-      }
 
       // 💳 Online (Razorpay)
       const loaded = await loadRazorpayScript();
@@ -183,21 +162,16 @@ export default function ProductDetailPage() {
 
   return (
     <section className="min-h-screen bg-gradient-to-b from-amber-50 to-white text-gray-800 py-10 px-6 relative">
-      <div className="fixed top-[100px] left-1/2 -translate-x-1/2 z-[9999]">
-        <button
-          onClick={() => {
-            try {
-              router.push("/store");
-            } catch (e) {
-              window.location.href = "/store";
-            }
-          }}
-          className="inline-flex items-center gap-2 bg-amber-600 text-white px-5 py-2 rounded-full shadow-md hover:bg-amber-700 transition-all text-sm md:text-base"
-        >
-          ← Back to Store
-        </button>
-      </div>
-
+      <section className="w-full bg-amber-50 border-b border-amber-200">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-center">
+          <Link
+            href="/store"
+            className="inline-flex items-center gap-2 bg-amber-600 text-white px-6 py-2 rounded-full font-medium hover:bg-amber-700 transition"
+          >
+            ← Back to Store
+          </Link>
+        </div>
+      </section>
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 bg-white shadow-md rounded-3xl p-6 mt-16">
         <div className="flex items-center justify-center">
           <img
@@ -216,25 +190,11 @@ export default function ProductDetailPage() {
             ₹ {(product.priceCents / 100).toFixed(2)}
           </p>
 
-          <div className="mb-4 text-sm text-gray-700 space-y-1">
+          <div className="mb-4 text-sm text-gray-700">
             <p className="font-semibold mb-1">Payment Method</p>
             <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                value="ONLINE"
-                checked={paymentMethod === "ONLINE"}
-                onChange={() => setPaymentMethod("ONLINE")}
-              />
+              <input type="radio" checked readOnly />
               <span>Online Payment (Razorpay)</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                value="COD"
-                checked={paymentMethod === "COD"}
-                onChange={() => setPaymentMethod("COD")}
-              />
-              <span>Cash on Delivery</span>
             </label>
           </div>
 
@@ -242,11 +202,11 @@ export default function ProductDetailPage() {
             onClick={() => handleBuy(product)}
             className="w-full md:w-1/2 rounded-full bg-amber-600 text-white py-3 hover:bg-amber-700 transition-all"
           >
-            {paymentMethod === "COD" ? "Place COD Order" : "Buy Now"}
+            Buy Now
           </button>
 
           <div className="mt-8 text-sm text-gray-500">
-            <p>✅ Secure Payment via Razorpay / COD</p>
+            <p>✅ Secure Payment via Razorpay</p>
             <p>🚚 Free Shipping on all orders</p>
             <p>📦 Delivery within 5–7 business days</p>
           </div>

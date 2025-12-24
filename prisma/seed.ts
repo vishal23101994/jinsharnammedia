@@ -407,6 +407,87 @@ async function main() {
        imageUrl: "/images/Products/Books/55-ek-aur-muktidoot.jpg",
        active: true,
      },
+
+     {
+       id: "CAL-001",
+       sku: "CAL-2011",
+       title: "Jinsharnam Spiritual Calendar 2011",
+       category: "Calendar",
+       description: "Daily spiritual thoughts and Jain teachings for the year.",
+       priceCents: 10000, // ₹100
+       imageUrl: "/images/Products/Calendars/CL_2011.jpg",
+       active: true,
+     },
+     {
+       id: "CAL-002",
+       sku: "CAL-2012",
+       title: "Jinsharnam Spiritual Calendar 2012",
+       category: "Calendar",
+       description: "Daily spiritual thoughts and Jain teachings for the year.",
+       priceCents: 10000, // ₹100
+       imageUrl: "/images/Products/Calendars/CL_2012.jpg",
+       active: true,
+     },
+     {
+       id: "CAL-003",
+       sku: "CAL-2014",
+       title: "Jinsharnam Spiritual Calendar 2014",
+       category: "Calendar",
+       description: "Daily spiritual thoughts and Jain teachings for the year.",
+       priceCents: 10000, // ₹100
+       imageUrl: "/images/Products/Calendars/CL_2014.jpg",
+       active: true,
+     },
+     {
+       id: "CAL-004",
+       sku: "CAL-2015",
+       title: "Jinsharnam Spiritual Calendar 2015",
+       category: "Calendar",
+       description: "Daily spiritual thoughts and Jain teachings for the year.",
+       priceCents: 10000, // ₹100
+       imageUrl: "/images/Products/Calendars/CL_2015.JPG",
+       active: true,
+     },
+     {
+       id: "CAL-005",
+       sku: "CAL-2016",
+       title: "Jinsharnam Spiritual Calendar 2016",
+       category: "Calendar",
+       description: "Daily spiritual thoughts and Jain teachings for the year.",
+       priceCents: 10000, // ₹100
+       imageUrl: "/images/Products/Calendars/CL_2016.JPG",
+       active: true,
+     },
+     {
+       id: "CAL-006",
+       sku: "CAL-2017",
+       title: "Jinsharnam Spiritual Calendar 2017",
+       category: "Calendar",
+       description: "Daily spiritual thoughts and Jain teachings for the year.",
+       priceCents: 10000, // ₹100
+       imageUrl: "/images/Products/Calendars/CL_2017.jpg",
+       active: true,
+     },
+     {
+       id: "CAL-007",
+       sku: "CAL-2020",
+       title: "Jinsharnam Spiritual Calendar 2020",
+       category: "Calendar",
+       description: "Daily spiritual thoughts and Jain teachings for the year.",
+       priceCents: 10000, // ₹100
+       imageUrl: "/images/Products/Calendars/CL_2020.jpg",
+       active: true,
+     },
+     {
+       id: "CAL-008",
+       sku: "CAL-2021",
+       title: "Jinsharnam Spiritual Daily Calendar 2016",
+       category: "Calendar",
+       description: "Daily spiritual thoughts and Jain teachings for the year.",
+       priceCents: 10000, // ₹100
+       imageUrl: "/images/Products/Calendars/DLCL_2016.jpg",
+       active: true,
+     }
     ],
   });
 

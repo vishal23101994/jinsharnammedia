@@ -18,7 +18,6 @@ export default function LatestUpdatesSection() {
   const isAdmin = session?.user?.role === "ADMIN";
 
   const [updates, setUpdates] = useState<Update[]>([]);
-  const [index, setIndex] = useState(0);
   const [activeImage, setActiveImage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,11 +28,6 @@ export default function LatestUpdatesSection() {
 
   if (updates.length === 0) return null;
 
-  const prev = () =>
-    setIndex((i) => (i === 0 ? updates.length - 1 : i - 1));
-  const next = () =>
-    setIndex((i) => (i === updates.length - 1 ? 0 : i + 1));
-
   return (
     <>
       <section className="relative py-28 bg-gradient-to-b from-[#FFF3D6] via-[#FFF8E7] to-white overflow-hidden">
@@ -41,114 +35,98 @@ export default function LatestUpdatesSection() {
           Latest Updates
         </h2>
 
-        {/* Arrows */}
-        <ArrowButton side="left" onClick={prev} />
-        <ArrowButton side="right" onClick={next} />
+        {/* AUTO SCROLLING ROW */}
+        <div className="relative overflow-hidden">
+          <motion.div
+            className="flex gap-8 w-max px-10"
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{
+              duration: 55,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            whileHover={{ animationPlayState: "paused" }}
+          >
+            {[...Array(2)].map((_, loopIndex) =>
+              updates.map((u) => (
+                <div
+                  key={`${loopIndex}-${u.id}`}
+                  className="relative w-[300px] bg-white rounded-3xl
+                             shadow-xl border border-[#FFD97A]/40
+                             overflow-hidden shrink-0"
+                >
+                  {/* IMAGE WITH HOVER ZOOM */}
+                  {u.imageUrl && (
+                    <div className="relative overflow-hidden group">
+                      <img
+                        src={u.imageUrl}
+                        onClick={() => setActiveImage(u.imageUrl!)}
+                        alt={u.title}
+                        className="
+                          w-full h-[360px] object-cover
+                          cursor-zoom-in
+                          transition-transform duration-500 ease-out
+                          group-hover:scale-110
+                        "
+                      />
 
-        {/* Carousel */}
-        <div className="relative flex justify-center items-center h-[540px]">
-          {updates.map((u, i) => {
-            const offset = i - index;
-            if (Math.abs(offset) > 2) return null;
+                      {/* subtle hover overlay (optional but recommended) */}
+                      <div className="
+                        pointer-events-none absolute inset-0
+                        bg-black/0 group-hover:bg-black/10
+                        transition
+                      " />
+                    </div>
+                  )}
 
-            const isCenter = offset === 0;
 
-            return (
-              <motion.div
-                key={u.id}
-                animate={{
-                  x: offset * 330,
-                  scale: isCenter ? 1 : 0.78,
-                  opacity: isCenter ? 1 : 0.35,
-                  filter: isCenter ? "blur(0px)" : "blur(4px)",
-                  zIndex: isCenter ? 20 : 1,
-                }}
-                transition={{ duration: 0.7, ease: "easeInOut" }}
-                className="absolute w-[300px] bg-white rounded-3xl shadow-2xl border border-[#FFD97A]/40 overflow-hidden"
-              >
-                {/* Aura */}
-                {isCenter && (
-                  <div className="absolute -inset-6 bg-[#FFD97A]/30 blur-3xl rounded-full -z-10" />
-                )}
+                  {/* ADMIN ACTIONS */}
+                  {isAdmin && (
+                    <div className="absolute top-3 left-3 flex gap-2 bg-white/90 px-2 py-1 rounded-xl shadow">
+                      <Link
+                        href={`/admin/updates/${u.id}`}
+                        className="text-xs font-semibold text-blue-700"
+                      >
+                        Edit
+                      </Link>
+                      <button
+                        onClick={async () => {
+                          if (!confirm("Delete this update?")) return;
+                          await fetch(`/api/admin/updates/${u.id}`, {
+                            method: "DELETE",
+                          });
+                          location.reload();
+                        }}
+                        className="text-xs font-semibold text-red-600"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
 
-                {/* Image */}
-                {u.imageUrl && (
-                  <img
-                    src={u.imageUrl}
-                    onClick={() => {
-                      if (isCenter && u.imageUrl) {
-                        setActiveImage(u.imageUrl);
-                      }
-                    }}
-                    className="w-full h-[360px] object-cover cursor-zoom-in"
-                    alt={u.title}
-                  />
-                )}
-
-                {/* Admin actions (NOT on image) */}
-                {isCenter && isAdmin && (
-                  <div className="absolute top-3 left-3 flex gap-2 bg-white/90 backdrop-blur px-2 py-1 rounded-xl shadow">
-                    <Link
-                      href={`/admin/updates/${u.id}`}
-                      className="text-xs font-semibold text-blue-700"
-                    >
-                      Edit
-                    </Link>
-                    <button
-                      onClick={async () => {
-                        if (!confirm("Delete this update?")) return;
-                        await fetch(`/api/admin/updates/${u.id}`, {
-                          method: "DELETE",
-                        });
-                        location.reload();
-                      }}
-                      className="text-xs font-semibold text-red-600"
-                    >
-                      Delete
-                    </button>
+                  {/* CONTENT */}
+                  <div className="p-5">
+                    <h3 className="font-semibold text-lg text-[#4B1E00] line-clamp-1">
+                      {u.title}
+                    </h3>
+                    <p className="text-sm text-[#4B1E00]/80 line-clamp-2">
+                      {u.content}
+                    </p>
                   </div>
-                )}
-
-                {/* Content */}
-                <div className="p-5">
-                  <h3 className="font-semibold text-lg text-[#4B1E00] line-clamp-1">
-                    {u.title}
-                  </h3>
-                  <p className="text-sm text-[#4B1E00]/80 line-clamp-2">
-                    {u.content}
-                  </p>
                 </div>
-              </motion.div>
-            );
-          })}
+              ))
+            )}
+          </motion.div>
         </div>
       </section>
 
+      {/* IMAGE MODAL */}
       <ImageModal src={activeImage} onClose={() => setActiveImage(null)} />
     </>
   );
 }
 
-/* ---------- Shared Components ---------- */
-
-function ArrowButton({
-  side,
-  onClick,
-}: {
-  side: "left" | "right";
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`absolute ${
-        side === "left" ? "left-10" : "right-10"
-      } top-1/2 -translate-y-1/2 z-30 h-14 w-14 rounded-full bg-[#FFD97A] text-[#4B1E00] shadow-xl hover:scale-110 transition`}
-    >
-      {side === "left" ? "←" : "→"}
-    </button>
-  );
-}
+/* ---------- IMAGE MODAL ---------- */
 
 function ImageModal({
   src,
@@ -162,7 +140,7 @@ function ImageModal({
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center"
+        className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
         onClick={onClose}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -170,11 +148,11 @@ function ImageModal({
       >
         <motion.img
           src={src}
-          className="max-h-[75vh] max-w-[80vw] rounded-xl shadow-2xl"
+          className="max-h-[75vh] max-w-[85vw] rounded-2xl shadow-2xl"
           onClick={(e) => e.stopPropagation()}
-          initial={{ scale: 0.9 }}
+          initial={{ scale: 0.92 }}
           animate={{ scale: 1 }}
-          exit={{ scale: 0.9 }}
+          exit={{ scale: 0.92 }}
         />
       </motion.div>
     </AnimatePresence>

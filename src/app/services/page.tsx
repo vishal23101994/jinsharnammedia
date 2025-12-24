@@ -29,12 +29,6 @@ export default function ServicesPage() {
   // 🪷 Services Section with Real Images
   const services = [
     {
-      image: "/images/our services/4.png",
-      title: "Print & Digital Publications",
-      desc: "Publishing Jain magazines, brochures, and creative digital posters infused with cultural design.",
-    },
-
-    {
       image: "/images/our services/7.JPG",
       title: "Spiritual Live Broadcasting",
       desc: "Delivering sacred discourses and live Pravachans from Jain saints worldwide through professional HD streaming.",
@@ -54,13 +48,46 @@ export default function ServicesPage() {
       title: "IT & Media Solutions",
       desc: "Offering website design, mobile apps, and digital management tools to empower modern Jain institutions.",
     },
-    {
-      image: "/images/our services/6.jpg",
-      title: "Public Relations & Coordination",
-      desc: "Building partnerships and spiritual outreach through transparent communication and media engagement.",
-    },
   ];
 
+  const printSubTypes = [
+    {
+      title: "Jain Magazines & Periodicals",
+      desc: "Monthly, quarterly, and special-edition magazines covering Jain philosophy, pravachans, Chaturmas updates, and spiritual thought.",
+      icon: <FileText className="w-8 h-8 text-white" />,
+      gradient: "from-[#8B0000] to-[#C45A00]",
+    },
+    {
+      title: "Religious Books & Granth Publications",
+      desc: "Editing, layout, printing, and publishing of Jain scriptures, pravachan compilations, and biographies of saints.",
+      icon: <Star className="w-8 h-8 text-white" />,
+      gradient: "from-[#6B0F1A] to-[#B91372]",
+    },
+    {
+      title: "Chaturmas & Event Special Editions",
+      desc: "Souvenir books, event documentation volumes, and commemorative publications for major Jain events.",
+      icon: <Sparkles className="w-8 h-8 text-white" />,
+      gradient: "from-[#7A1CAC] to-[#C77DFF]",
+    },
+    {
+      title: "Calendars, Diaries & Annual Publications",
+      desc: "Spiritually themed Jain calendars, Panchang-based diaries, and annual reference publications.",
+      icon: <Heart className="w-8 h-8 text-white" />,
+      gradient: "from-[#A43B00] to-[#FF9F1C]",
+    },
+    {
+      title: "Posters, Hoardings & Press Material",
+      desc: "High-quality posters, banners, hoardings, invitations, and press-ready creatives with Jain aesthetics.",
+      icon: <Megaphone className="w-8 h-8 text-white" />,
+      gradient: "from-[#003566] to-[#1D4ED8]",
+    },
+    {
+      title: "Editorial & Content Curation",
+      desc: "Content planning, proofreading, spiritual editorial guidance, and publication workflow management.",
+      icon: <Users className="w-8 h-8 text-white" />,
+      gradient: "from-[#065F46] to-[#16A34A]",
+    },
+  ];
 
   return (
     <section className="relative bg-gradient-to-b from-[#FFF4E0] via-[#FFE0A8] to-[#FFD580] text-[#3A0A00] overflow-hidden">
@@ -104,7 +131,7 @@ export default function ServicesPage() {
       </div>
 
       {/* 🕉️ Services Grid */}
-      <div className="max-w-7xl mx-auto px-6 pb-24">
+      <div className="max-w-7xl mx-auto px-5 pb-20">
         <motion.h2
           className="text-4xl text-center font-serif text-[#A43B00] mb-12"
           initial={{ opacity: 0, y: 30 }}
@@ -116,7 +143,90 @@ export default function ServicesPage() {
           </h2>
         </motion.h2>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        {/* 📚 Featured Print & Publication Section */}
+        <motion.div
+          className="relative max-w-8xl mx-auto px-6 pb-28"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="relative rounded-[2rem] overflow-hidden bg-gradient-to-r from-[#FFF1D6] via-[#FFE2A8] to-[#FFD27A] shadow-2xl border-2 border-[#ECA400]/60">
+
+            {/* Glow Animation */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-[#FFD97A]/30 via-transparent to-[#FFD97A]/30"
+              animate={{ x: ["-100%", "100%"] }}
+              transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
+            />
+
+            <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center p-12">
+
+              {/* Text */}
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <FileText className="w-10 h-10 text-[#C45A00]" />
+                  <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#8B0000]">
+                    Print & Publications
+                  </h2>
+                </div>
+                <p className="text-lg text-[#4B2200] leading-relaxed mb-6 text-justify">
+                  <b>Print & Publications is the foundation of Jinsharnam Media.</b><br />
+                  We function as a dedicated Jain spiritual publication house, managing
+                  everything from content planning and editorial design to large-scale
+                  printing and nationwide distribution.
+                </p>
+              </div>
+              {/* Image Stack */}
+              <div className="relative">
+                <motion.img
+                  src="/images/our services/4.png"
+                  alt="Jain Print Publications"
+                  className="rounded-3xl shadow-xl border border-[#ECA400]/50"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.4 }}
+                />
+
+                <div className="absolute -bottom-6 -right-6 bg-white/90 backdrop-blur-md px-6 py-4 rounded-2xl shadow-lg border border-[#ECA400]/40">
+                  <p className="text-sm font-semibold text-[#8B0000]">
+                    Trusted by Jain Institutions Nationwide
+                  </p>
+                </div>
+              </div>
+            </div>
+            {/* 📦 Print & Publication Subtype Cards */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+              {printSubTypes.map((item, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: i * 0.1 }}
+                  whileHover={{ y: -10, scale: 1.03 }}
+                  className={`relative rounded-3xl p-6 text-white shadow-xl overflow-hidden bg-gradient-to-br ${item.gradient}`}
+                >
+                  {/* Glow */}
+                  <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500 bg-white/10"></div>
+
+                  {/* Icon */}
+                  <div className="mb-4 flex items-center justify-center w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md shadow-lg">
+                    {item.icon}
+                  </div>
+
+                  {/* Text */}
+                  <h3 className="text-xl font-semibold mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-white/90">
+                    {item.desc}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {services.map((service, i) => (
             <motion.div
               key={i}
@@ -264,8 +374,6 @@ export default function ServicesPage() {
         {/* Decorative Glow */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#FFE8B3]/30 to-transparent blur-3xl"></div>
       </div>
-
-
 
       {/* 🚀 CTA Section */}
       <div className="text-center py-20 bg-gradient-to-r from-[#FFD580] to-[#FFEAB8]">

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Mail, Phone } from "lucide-react";
 import FloatingParticles from "@/components/FloatingParticles";
+import { MapPin, Mail, Phone, Train, Bus, TramFront } from "lucide-react";
 
 export default function ContactPage() {
   const [status, setStatus] = useState<null | "idle" | "loading" | "success" | "error">("idle");
@@ -155,6 +155,112 @@ export default function ContactPage() {
           <span>info@jinsharnammedia.com</span>
         </div>
       </motion.div>
+
+      {/* HOW TO REACH OUR OFFICE – ENHANCED */}
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+        className="relative z-10 mt-14 w-full max-w-6xl mx-auto
+                   bg-gradient-to-br from-[#4a0000]/90 via-[#3a0000]/90 to-[#2a0000]/90
+                   backdrop-blur-md
+                   border border-[#FFD97A]/30
+                   rounded-[2rem]
+                   shadow-[0_0_50px_rgba(255,217,122,0.18)]
+                   px-6 md:px-10 py-10"
+      >
+        {/* Heading */}
+        <h2 className="text-center font-serif text-3xl md:text-4xl text-[#FFD97A] mb-10">
+          How to Reach Our Office
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-8 text-[#FFF8E7]">
+
+          {/* METRO CARD */}
+          <div className="rounded-2xl p-6
+                          bg-[#ffffff]/5
+                          border border-[#FFD97A]/20
+                          hover:border-[#FFD97A]/50
+                          transition">
+            <div className="flex items-center gap-3 mb-4">
+              <TramFront className="text-[#FFD97A]" size={28} />
+              <h3 className="text-xl font-semibold text-[#FFD97A]">
+                Metro Stations
+              </h3>
+            </div>
+
+            <ul className="space-y-4 text-sm leading-relaxed">
+              <li>
+                <p className="font-semibold">Shahdara Metro Station</p>
+                <p className="text-[#FFF8E7]/70">
+                  Red Line • ~1.2 km<br />
+                  Auto / E-rickshaw easily available
+                </p>
+              </li>
+
+              <li>
+                <p className="font-semibold">Welcome Metro Station</p>
+                <p className="text-[#FFF8E7]/70">
+                  Red Line / Pink Line (Interchange)<br />
+                  ~2.3 km • Excellent connectivity
+                </p>
+              </li>
+
+              <li>
+                <p className="font-semibold">East Azad Nagar Metro Station</p>
+                <p className="text-[#FFF8E7]/70">
+                  Pink Line • ~2.0 km<br />
+                  Convenient from North & East Delhi
+                </p>
+              </li>
+            </ul>
+          </div>
+
+          {/* RAILWAY CARD */}
+          <div className="rounded-2xl p-6
+                          bg-[#ffffff]/5
+                          border border-[#FFD97A]/20
+                          hover:border-[#FFD97A]/50
+                          transition">
+            <div className="flex items-center gap-3 mb-4">
+              <Train className="text-[#FFD97A]" size={28} />
+              <h3 className="text-xl font-semibold text-[#FFD97A]">
+                Railway Station
+              </h3>
+            </div>
+
+            <p className="font-semibold">Shahdara Junction (SDA)</p>
+            <p className="text-sm text-[#FFF8E7]/70 mt-1">
+              ~1.5 km distance<br />
+              5–10 minutes by auto or cab
+            </p>
+          </div>
+
+          {/* BUS CARD */}
+          <div className="rounded-2xl p-6
+                          bg-[#ffffff]/5
+                          border border-[#FFD97A]/20
+                          hover:border-[#FFD97A]/50
+                          transition">
+            <div className="flex items-center gap-3 mb-4">
+              <Bus className="text-[#FFD97A]" size={28} />
+              <h3 className="text-xl font-semibold text-[#FFD97A]">
+                Bus Stop
+              </h3>
+            </div>
+
+            <p className="font-semibold">Bihari Colony Bus Stop</p>
+            <p className="text-sm text-[#FFF8E7]/70 mt-1">
+              Walking distance<br />
+              ~2–3 minutes from office
+            </p>
+          </div>
+
+        </div>
+      </motion.section>
+
+
 
       <motion.div
         initial={{ opacity: 0, y: 40 }}
