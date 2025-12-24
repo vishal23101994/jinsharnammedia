@@ -151,7 +151,7 @@ export default function VatsalyaDharaPage() {
                 className="relative shrink-0"
               >
                 <img
-                  src={`/images/vatsalya/${imgNo}.JPEG`}
+                  src={`/images/vatsalya/${imgNo}.jpeg`}
                   alt="Vatsalya Dhara Seva"
                   className="
                     w-[260px] md:w-[300px]
