@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 
+/* ================= TYPES ================= */
 type Member = {
-  id?: string;
+  zone?: string | null;
   state?: string | null;
   name?: string | null;
   position?: string | null;
@@ -15,714 +16,303 @@ type Member = {
   date_of_birth?: string | null;
   date_of_marriage?: string | null;
   email?: string | null;
-  [k: string]: any;
 };
 
-type SortKey =
-  | "state"
-  | "name"
-  | "position"
-  | "organization"
-  | "address"
-  | "branch"
-  | "mobile"
-  | "date_of_birth"
-  | "date_of_marriage"
-  | "email";
+type ColumnKey = keyof Member;
 
-// Escape special regex chars from user text
-function escapeRegExp(str: string) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
+/* ================= HELPERS ================= */
+const formatDate = (d?: string | null) => {
+  if (!d) return "";
+  const dt = new Date(d);
+  return isNaN(dt.getTime()) ? "" : dt.toLocaleDateString("en-GB");
+};
 
-// Highlight occurrences of query in text with <mark>
-function highlight(text: string, query: string) {
-  if (!query) return text;
-  const q = query.trim();
+const highlight = (text: string, q: string) => {
   if (!q) return text;
+  return text.replace(
+    new RegExp(`(${q})`, "gi"),
+    "<mark class='bg-[#FFE8A3] px-1 rounded'>$1</mark>"
+  );
+};
 
-  const pattern = escapeRegExp(q);
-  const regex = new RegExp(`(${pattern})`, "gi");
-  return text.replace(regex, "<mark>$1</mark>");
-}
-
+/* ================= COMPONENT ================= */
 export default function DirectoryPage() {
-  const [allMembers, setAllMembers] = useState<Member[]>([]);
+  const [data, setData] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterState, setFilterState] = useState("");
-  const [filterBranch, setFilterBranch] = useState("");
-  const [filterPosition, setFilterPosition] = useState("");
-  const [filterOrganization, setFilterOrganization] = useState("");
+  const [search, setSearch] = useState("");
+  const [filters, setFilters] = useState({
+    zone: "",
+    state: "",
+    branch: "",
+    position: "",
+    organization: "",
+  });
 
-  // sorting
-  const [sortBy, setSortBy] = useState<SortKey | null>(null);
+  const [sortBy, setSortBy] = useState<ColumnKey | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
+  const tableRef = useRef<HTMLDivElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  /* ================= FETCH ================= */
   useEffect(() => {
-    async function load() {
-      setLoading(true);
-      try {
-        const urls = ["/api/directory/approved", "/api/directory"];
-        let respData: any = null;
-        for (const u of urls) {
-          try {
-            const r = await fetch(u);
-            if (!r.ok) continue;
-            respData = await r.json();
-            break;
-          } catch {
-            /* try next */
-          }
-        }
-        const arr: Member[] = Array.isArray(respData)
-          ? respData
-          : respData?.data ?? [];
-        const normalized = arr.map((m) => ({
-          id: m.id ?? m.ID ?? undefined,
-          state: m.state ?? m.State ?? m.location ?? null,
-          name: m.name ?? m.Name ?? null,
-          position: m.position ?? m.Position ?? null,
-          organization: m.organization ?? m.Organization ?? m.org ?? null,
-          address: m.address ?? m.Address ?? null,
-          branch: m.branch ?? m.Branch ?? null,
-          mobile: m.mobile ?? m.Mobile ?? m.phone ?? m.Phone ?? null,
-          date_of_birth: m.dateOfBirth ?? m.date_of_birth ?? m.dob ?? null,
-          date_of_marriage:
-            m.dateOfMarriage ?? m.date_of_marriage ?? m.dom ?? null,
-          // sanitize temp / placeholder emails
-          email: (() => {
-            const e = m.email ?? m.Email ?? null;
-            if (!e) return null;
-            const es = String(e).trim();
-            if (!es) return null;
-            // treat temp / @local addresses as "no email"
-            if (
-              es.toLowerCase().startsWith("temp") ||
-              es.toLowerCase().includes("@local")
-            ) {
-              return null;
-            }
-            return es;
-          })(),
-        }));
-        setAllMembers(normalized);
-      } catch (err) {
-        console.error(err);
-        setAllMembers([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
+    fetch("/api/directory")
+      .then((r) => r.json())
+      .then((res) =>
+        setData(
+          res.map((m: any) => ({
+            zone: m.zone,
+            state: m.state,
+            name: m.name,
+            position: m.position,
+            organization: m.organization,
+            address: m.address,
+            branch: m.branch,
+            mobile: m.phone,
+            date_of_birth: m.dateOfBirth,
+            date_of_marriage: m.dateOfMarriage,
+            email: m.email?.includes("@local") ? "" : m.email,
+          }))
+        )
+      )
+      .finally(() => setLoading(false));
   }, []);
 
-  const formatDate = (d?: string | null) => {
-    if (!d) return "";
-    const dt = new Date(d);
-    if (isNaN(dt.getTime())) return d;
-    return dt.toLocaleDateString("en-GB").replace(/\//g, ".");
-  };
-
-  const stateOptions = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          allMembers
-            .map((m) => m.state)
-            .filter((s): s is string => Boolean(s))
-        )
-      ).sort(),
-    [allMembers]
-  );
-
-  const branchOptions = useMemo(() => {
-    const src = filterState
-      ? allMembers.filter((m) => m.state === filterState)
-      : allMembers;
-    return Array.from(
-      new Set(
-        src
-          .map((m) => m.branch)
-          .filter((b): b is string => Boolean(b))
-      )
-    ).sort();
-  }, [allMembers, filterState]);
-
-  const positionOptions = useMemo(() => {
-    let src = allMembers;
-    if (filterState) src = src.filter((m) => m.state === filterState);
-    if (filterBranch) src = src.filter((m) => m.branch === filterBranch);
-    return Array.from(
-      new Set(
-        src
-          .map((m) => m.position)
-          .filter((p): p is string => Boolean(p))
-      )
-    ).sort();
-  }, [allMembers, filterState, filterBranch]);
-
-  const organizationOptions = useMemo(() => {
-    let src = allMembers;
-    if (filterState) src = src.filter((m) => m.state === filterState);
-    if (filterBranch) src = src.filter((m) => m.branch === filterBranch);
-    if (filterPosition) src = src.filter((m) => m.position === filterPosition);
-    return Array.from(
-      new Set(
-        src
-          .map((m) => m.organization)
-          .filter((o): o is string => Boolean(o))
-      )
-    ).sort();
-  }, [allMembers, filterState, filterBranch, filterPosition]);
-
+  /* ================= STICKY SHADOW ================= */
   useEffect(() => {
-    if (filterBranch && !branchOptions.includes(filterBranch))
-      setFilterBranch("");
-    if (filterPosition && !positionOptions.includes(filterPosition))
-      setFilterPosition("");
-    if (
-      filterOrganization &&
-      !organizationOptions.includes(filterOrganization)
-    )
-      setFilterOrganization("");
-  }, [filterState, branchOptions, positionOptions, organizationOptions]);
+    const el = tableRef.current;
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 5);
+    el.addEventListener("scroll", onScroll);
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
 
+  /* ================= FILTER ================= */
   const filtered = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    return allMembers.filter((m) => {
-      if (filterState && m.state !== filterState) return false;
-      if (filterBranch && m.branch !== filterBranch) return false;
-      if (filterPosition && m.position !== filterPosition) return false;
-      if (filterOrganization && m.organization !== filterOrganization)
-        return false;
-      if (!q) return true;
-      return (
-        String(m.name || "").toLowerCase().includes(q) ||
-        String(m.mobile || "").toLowerCase().includes(q) ||
-        String(m.email || "").toLowerCase().includes(q) ||
-        String(m.organization || "").toLowerCase().includes(q) ||
-        String(m.address || "").toLowerCase().includes(q)
-      );
+    const q = search.toLowerCase();
+    return data.filter((m) => {
+      for (const k in filters) {
+        if ((filters as any)[k] && (m as any)[k] !== (filters as any)[k])
+          return false;
+      }
+      return Object.values(m).join(" ").toLowerCase().includes(q);
     });
-  }, [
-    allMembers,
-    searchQuery,
-    filterState,
-    filterBranch,
-    filterPosition,
-    filterOrganization,
-  ]);
+  }, [data, search, filters]);
 
-  // sorting helper
-  function parseSortable(value: any, key: SortKey) {
-    if (value === undefined || value === null) return "";
-    if ((key === "date_of_birth" || key === "date_of_marriage") && value) {
-      const d = new Date(value);
-      return isNaN(d.getTime()) ? String(value) : d.getTime();
-    }
-    if (key === "mobile") {
-      // remove non-digit and parse number for numeric sort
-      const num = String(value).replace(/\D+/g, "");
-      return num ? Number(num) : 0;
-    }
-    // strings: lowercase for case-insensitive
-    return String(value).toLowerCase();
-  }
-
+  /* ================= SORT ================= */
   const sorted = useMemo(() => {
     if (!sortBy) return filtered;
-    const arr = [...filtered];
-    arr.sort((a, b) => {
-      const va = parseSortable((a as any)[sortBy], sortBy);
-      const vb = parseSortable((b as any)[sortBy], sortBy);
-
-      if (va === vb) return 0;
-      if (typeof va === "number" && typeof vb === "number") {
-        return sortDir === "asc" ? va - vb : vb - va;
-      }
-      // fallback to string compare
+    return [...filtered].sort((a, b) => {
+      const va = String(a[sortBy] ?? "");
+      const vb = String(b[sortBy] ?? "");
       return sortDir === "asc"
-        ? String(va).localeCompare(String(vb))
-        : String(vb).localeCompare(String(va));
+        ? va.localeCompare(vb)
+        : vb.localeCompare(va);
     });
-    return arr;
   }, [filtered, sortBy, sortDir]);
 
-  const resetFilters = () => {
-    setSearchQuery("");
-    setFilterState("");
-    setFilterBranch("");
-    setFilterPosition("");
-    setFilterOrganization("");
-    // also reset sorting
-    setSortBy(null);
-    setSortDir("asc");
-  };
-
-  function toggleSort(key: SortKey) {
-    if (sortBy === key) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    } else {
-      setSortBy(key);
+  const toggleSort = (k: ColumnKey) => {
+    if (sortBy === k) setSortDir(sortDir === "asc" ? "desc" : "asc");
+    else {
+      setSortBy(k);
       setSortDir("asc");
     }
-  }
-
-  function sortIcon(key: SortKey) {
-    if (sortBy !== key) return "⇅";
-    return sortDir === "asc" ? "▲" : "▼";
-  }
-
-  // ✅ Export Directory to Excel (filtered + sorted)
-  const handleExportDirectoryToExcel = () => {
-    if (!sorted || sorted.length === 0) {
-      alert("No data available to export");
-      return;
-    }
-
-    const exportData = sorted.map((m, index) => ({
-      "S.No": index + 1,
-      State: m.state || "",
-      Name: m.name || "",
-      Position: m.position || "",
-      Organization: m.organization || "",
-      Address: m.address || "",
-      Branch: m.branch || "",
-      Mobile: m.mobile || "",
-      "Date of Birth": formatDate(m.date_of_birth),
-      "Date of Marriage": formatDate(m.date_of_marriage),
-      Email: m.email || "",
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Directory");
-    XLSX.writeFile(workbook, "Jinsharnam_Directory.xlsx");
   };
 
+  /* ================= EXPORT ================= */
+  const exportExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      sorted.map((m, i) => ({
+        "S.No": i + 1,
+        Zone: m.zone,
+        State: m.state,
+        Name: m.name,
+        Position: m.position,
+        Organization: m.organization,
+        Address: m.address,
+        Branch: m.branch,
+        Mobile: m.mobile,
+        "Date of Birth": formatDate(m.date_of_birth),
+        "Date of Marriage": formatDate(m.date_of_marriage),
+        Email: m.email,
+      }))
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Directory");
+    XLSX.writeFile(wb, "Jinsharnam_Directory.xlsx");
+  };
 
+  /* ================= UI ================= */
   return (
-    <section className="min-h-screen py-10 px-4 bg-[#FBF5EE] text-[#2f1a00]">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-serif mb-6 text-[#6A0000] text-center">
-          Jinsharnam Directory
-        </h1>
-        
-        {/* Controls */}
-        <div className="mb-6 grid gap-3 md:grid-cols-4 items-center">
-          <div className="md:col-span-2 flex gap-3">
+    <section className="min-h-screen bg-[#FBF5EE] px-6 py-10">
+      <div className="max-w-[1500px] mx-auto">
+
+        {/* HEADER */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl md:text-5xl font-serif text-[#6A0000]">
+            Jinsharnam Directory
+          </h1>
+          <div className="w-24 h-[2px] bg-[#D4AF37] mx-auto mt-3" />
+        </div>
+
+        {/* SEARCH + RESET */}
+        <div className="bg-white p-5 rounded-2xl shadow border border-[#E7D6BF] mb-4">
+          <div className="flex flex-wrap gap-3 items-center">
             <input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by name, mobile, email, organization or address..."
-              className="flex-1 px-4 py-2 rounded-lg border border-[#E7D6BF] bg-white shadow-sm text-sm"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="🔍 Search members..."
+              className="flex-1 min-w-[100px] px-2 py-2 rounded-full border border-[#E7D6BF] focus:ring-[#D4AF37]"
             />
+
             <button
-              onClick={resetFilters}
-              className="px-4 py-2 rounded-lg bg-[#C45A00] text-white hover:bg-[#a84300] transition text-sm"
+              onClick={() => {
+                setSearch("");
+                setFilters({
+                  zone: "",
+                  state: "",
+                  branch: "",
+                  position: "",
+                  organization: "",
+                });
+              }}
+              className="px-5 py-2 rounded-full border border-[#D4AF37] text-[#6A0000] hover:bg-[#FFF1D6] transition"
             >
               Reset
             </button>
+            {/* ACTION BAR */}
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={exportExcel}
+                className="px-3 py-2 rounded-full bg-[#6A0000] text-[#FFF1D6] font-semibold hover:bg-[#8B0000] transition"
+              >
+                Export Excel
+              </button>
+            </div>
           </div>
-          <br />
 
-          <div className="flex justify-end mb-4">
-            <button
-              onClick={handleExportDirectoryToExcel}
-              className="px-4 py-2 rounded-lg bg-[#C45A00] text-white hover:bg-[#a84300] transition text-sm"
+          {/* FILTERS BELOW */}
+          <div className="flex flex-wrap gap-3 mt-4">
+            {(["zone", "state", "branch", "position", "organization"] as const).map(
+              (k) => (
+                <select
+                  key={k}
+                  value={filters[k]}
+                  onChange={(e) =>
+                    setFilters({ ...filters, [k]: e.target.value })
+                  }
+                  className="px-4 py-2 rounded-full bg-[#FFF1D6] border border-[#E7D6BF] text-sm"
+                >
+                  <option value="">All {k}s</option>
+                  {[...new Set(data.map((d) => d[k]).filter(Boolean))].map(
+                    (v) => (
+                      <option key={v}>{v}</option>
+                    )
+                  )}
+                </select>
+              )
+            )}
+          </div>
+        </div>
+
+        {/* TABLE */}
+        <div
+          ref={tableRef}
+          className="hidden md:block bg-white rounded-2xl shadow-xl border border-[#E7D6BF] max-h-[70vh] overflow-y-auto"
+        >
+          <table className="w-full table-fixed text-sm border-collapse">
+            <thead
+              className={`sticky top-0 bg-[#FAF3E8] ${
+                scrolled ? "shadow-md" : ""
+              }`}
             >
-              Export to Excel
-            </button>
-          </div>
-
-          <select
-            value={filterState}
-            onChange={(e) => setFilterState(e.target.value)}
-            className="px-3 py-2 rounded-lg border bg-white text-sm"
-          >
-            <option value="">All States</option>
-            {stateOptions.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={filterBranch}
-            onChange={(e) => setFilterBranch(e.target.value)}
-            className="px-3 py-2 rounded-lg border bg-white text-sm"
-          >
-            <option value="">All Branches</option>
-            {branchOptions.map((b) => (
-              <option key={b} value={b}>
-                {b}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={filterPosition}
-            onChange={(e) => setFilterPosition(e.target.value)}
-            className="px-3 py-2 rounded-lg border bg-white text-sm"
-          >
-            <option value="">All Positions</option>
-            {positionOptions.map((p) => (
-              <option key={p} value={p}>
-                {p}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={filterOrganization}
-            onChange={(e) => setFilterOrganization(e.target.value)}
-            className="px-3 py-2 rounded-lg border bg-white md:col-span-1 text-sm"
-          >
-            <option value="">All Organizations</option>
-            {organizationOptions.map((o) => (
-              <option key={o} value={o}>
-                {o}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Table container: horizontal scroll on small screens */}
-        <div className="bg-white rounded-lg shadow-sm border border-[#efe6d7] overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full table-fixed border-collapse">
-              <colgroup>
-                <col style={{ width: "8%" }} />
-                <col style={{ width: "12%" }} />
-                <col style={{ width: "10%" }} />
-                <col style={{ width: "14%" }} />
-                <col style={{ width: "22%" }} />
-                <col style={{ width: "8%" }} />
-                <col style={{ width: "8%" }} />
-                <col style={{ width: "7%" }} />
-                <col style={{ width: "7%" }} />
-                <col style={{ width: "12%" }} />
-              </colgroup>
-
-              <thead className="bg-[#faf7f3] border-b border-[#e5ded3]">
-                <tr className="text-[14px] text-[#4b2e0f] font-medium">
+              <tr>
+                {[
+                  ["zone", "6%"],
+                  ["state", "8%"],
+                  ["name", "10%"],
+                  ["position", "9%"],
+                  ["organization", "14%"],
+                  ["address", "18%"],
+                  ["branch", "7%"],
+                  ["mobile", "8%"],
+                  ["date_of_birth", "8%"],
+                  ["date_of_marriage", "8%"],
+                  ["email", "10%"],
+                ].map(([k, w]) => (
                   <th
-                    className="px-3 py-2 border-r border-[#e5ded3] text-left sticky top-0"
-                    style={{ background: "#fbf8f5" }}
-                    onClick={() => toggleSort("state")}
-                    title="Sort by State"
+                    key={k}
+                    style={{ width: w }}
+                    onClick={() => toggleSort(k as ColumnKey)}
+                    className="px-3 py-3 text-left text-xs tracking-wider uppercase border border-[#E7D6BF] cursor-pointer"
                   >
-                    <div className="flex items-center gap-2">
-                      <span>State</span>
-                      <span className="text-xs text-[#7a5a3a]">
-                        {sortIcon("state")}
-                      </span>
-                    </div>
+                    {k.replace(/_/g, " ")}
                   </th>
+                ))}
+              </tr>
+            </thead>
 
-                  <th
-                    className="px-3 py-2 border-r border-[#e5ded3] text-left sticky top-0"
-                    style={{ background: "#fbf8f5" }}
-                    onClick={() => toggleSort("name")}
-                    title="Sort by Name"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span>Name</span>
-                      <span className="text-xs text-[#7a5a3a]">
-                        {sortIcon("name")}
-                      </span>
-                    </div>
-                  </th>
-
-                  <th
-                    className="px-3 py-2 border-r border-[#e5ded3] text-left sticky top-0"
-                    style={{ background: "#fbf8f5" }}
-                    onClick={() => toggleSort("position")}
-                    title="Sort by Position"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span>Position</span>
-                      <span className="text-xs text-[#7a5a3a]">
-                        {sortIcon("position")}
-                      </span>
-                    </div>
-                  </th>
-
-                  <th
-                    className="px-3 py-2 border-r border-[#e5ded3] text-left sticky top-0"
-                    style={{ background: "#fbf8f5" }}
-                    onClick={() => toggleSort("organization")}
-                    title="Sort by Organization"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span>Organization</span>
-                      <span className="text-xs text-[#7a5a3a]">
-                        {sortIcon("organization")}
-                      </span>
-                    </div>
-                  </th>
-
-                  <th
-                    className="px-3 py-2 border-r border-[#e5ded3] text-left sticky top-0"
-                    style={{ background: "#fbf8f5" }}
-                    onClick={() => toggleSort("address")}
-                    title="Sort by Address"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span>Address</span>
-                      <span className="text-xs text-[#7a5a3a]">
-                        {sortIcon("address")}
-                      </span>
-                    </div>
-                  </th>
-
-                  <th
-                    className="px-3 py-2 border-r border-[#e5ded3] text-left sticky top-0"
-                    style={{ background: "#fbf8f5" }}
-                    onClick={() => toggleSort("branch")}
-                    title="Sort by Branch"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span>Branch</span>
-                      <span className="text-xs text-[#7a5a3a]">
-                        {sortIcon("branch")}
-                      </span>
-                    </div>
-                  </th>
-
-                  <th
-                    className="px-3 py-2 border-r border-[#e5ded3] text-left sticky top-0"
-                    style={{ background: "#fbf8f5" }}
-                    onClick={() => toggleSort("mobile")}
-                    title="Sort by Mobile"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span>Mobile</span>
-                      <span className="text-xs text-[#7a5a3a]">
-                        {sortIcon("mobile")}
-                      </span>
-                    </div>
-                  </th>
-
-                  <th
-                    className="px-3 py-2 border-r border-[#e5ded3] text-left sticky top-0"
-                    style={{ background: "#fbf8f5" }}
-                    onClick={() => toggleSort("date_of_birth")}
-                    title="Sort by Date of Birth"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span>Date of Birth</span>
-                      <span className="text-xs text-[#7a5a3a]">
-                        {sortIcon("date_of_birth")}
-                      </span>
-                    </div>
-                  </th>
-
-                  <th
-                    className="px-3 py-2 border-r border-[#e5ded3] text-left sticky top-0"
-                    style={{ background: "#fbf8f5" }}
-                    onClick={() => toggleSort("date_of_marriage")}
-                    title="Sort by Date of Marriage"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span>Date of Marriage</span>
-                      <span className="text-xs text-[#7a5a3a]">
-                        {sortIcon("date_of_marriage")}
-                      </span>
-                    </div>
-                  </th>
-
-                  <th
-                    className="px-3 py-2 text-left sticky top-0"
-                    style={{ background: "#fbf8f5" }}
-                    onClick={() => toggleSort("email")}
-                    title="Sort by Email"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span>Email</span>
-                      <span className="text-xs text-[#7a5a3a]">
-                        {sortIcon("email")}
-                      </span>
-                    </div>
-                  </th>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={11} className="p-6 text-center">
+                    Loading…
+                  </td>
                 </tr>
-              </thead>
-
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan={10} className="p-6 text-center text-[#6b4b2b]">
-                      Loading members…
-                    </td>
-                  </tr>
-                ) : sorted.length === 0 ? (
-                  <tr>
-                    <td colSpan={10} className="p-6 text-center text-[#6b4b2b]">
-                      No members found.
-                    </td>
-                  </tr>
-                ) : (
-                  sorted.map((m, i) => (
-                    <tr
-                      key={m.id ?? i}
-                      className={`${
-                        i % 2 === 0 ? "bg-white" : "bg-[#fcfaf7]"
-                      } text-[13px] text-[#3b2a16] align-top`}
-                    >
-                      <td className="px-3 py-2 border-r border-[#e5ded3] min-w-0 break-words">
-                        {m.state || "-"}
-                      </td>
-
-                      <td className="px-3 py-2 border-r border-[#e5ded3] min-w-0 break-words">
-                        <div className="line-clamp-2">
-                          <span
-                            dangerouslySetInnerHTML={{
-                              __html: highlight(m.name || "-", searchQuery),
-                            }}
-                          />
-                        </div>
-                      </td>
-
-                      <td className="px-3 py-2 border-r border-[#e5ded3] min-w-0 break-words">
-                        {m.position || "-"}
-                      </td>
-
-                      <td className="px-3 py-2 border-r border-[#e5ded3] min-w-0 break-words">
-                        <span
-                          dangerouslySetInnerHTML={{
-                            __html: highlight(
-                              m.organization || "-",
-                              searchQuery
-                            ),
-                          }}
-                        />
-                      </td>
-
+              ) : (
+                sorted.map((m, i) => (
+                  <tr
+                    key={i}
+                    className="odd:bg-white even:bg-[#FBF7F2] hover:bg-[#FFF1D6] transition"
+                  >
+                    {([
+                      m.zone,
+                      m.state,
+                      m.name,
+                      m.position,
+                      m.organization,
+                      m.address,
+                      m.branch,
+                      m.mobile,
+                      formatDate(m.date_of_birth),
+                      formatDate(m.date_of_marriage),
+                      m.email,
+                    ] as (string | null | undefined)[]).map((v, idx) => (
                       <td
-                        className="px-3 py-2 border-r border-[#e5ded3] min-w-0 break-words"
-                        style={{ overflowWrap: "anywhere" }}
-                      >
-                        <span
-                          dangerouslySetInnerHTML={{
-                            __html: highlight(m.address || "-", searchQuery),
-                          }}
-                        />
-                      </td>
-
-                      <td className="px-3 py-2 border-r border-[#e5ded3] min-w-0 break-words">
-                        {m.branch || "-"}
-                      </td>
-
-                      <td className="px-3 py-2 border-r border-[#e5ded3] min-w-0">
-                        {m.mobile ? (
-                          <a
-                            href={`tel:${m.mobile}`}
-                            dangerouslySetInnerHTML={{
-                              __html: highlight(m.mobile, searchQuery),
-                            }}
-                          />
-                        ) : (
-                          "-"
-                        )}
-                      </td>
-
-                      <td className="px-3 py-2 border-r border-[#e5ded3] min-w-0">
-                        {formatDate(m.date_of_birth)}
-                      </td>
-
-                      <td className="px-3 py-2 border-r border-[#e5ded3] min-w-0">
-                        {formatDate(m.date_of_marriage)}
-                      </td>
-
-                      <td
-                        className="px-3 py-2 min-w-0 break-words"
-                        style={{ wordBreak: "break-word" }}
-                      >
-                        {m.email ? (
-                          <a
-                            href={`mailto:${m.email}`}
-                            dangerouslySetInnerHTML={{
-                              __html: highlight(m.email, searchQuery),
-                            }}
-                          />
-                        ) : (
-                          ""
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                        key={idx}
+                        className={`px-3 py-3 border border-[#E7D6BF] ${
+                          idx === 10 ? "break-all text-blue-700" : "break-words"
+                        }`}
+                        dangerouslySetInnerHTML={{
+                          __html: highlight(v ?? "", search),
+                        }}
+                      />
+                    ))}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
 
-        <div className="mt-4 text-xs text-[#8b6f50]">
-          Showing <strong>{sorted.length}</strong> of{" "}
-          <strong>{allMembers.length}</strong> members.
-        </div>
-
-        {/* Mobile stacked rows fallback */}
-        <div className="md:hidden mt-6 space-y-4">
+        {/* MOBILE */}
+        <div className="md:hidden space-y-4">
           {sorted.map((m, i) => (
             <div
-              key={m.id ?? i}
-              className="bg-white p-3 rounded-lg shadow-sm border border-[#efe6d7]"
+              key={i}
+              className="bg-white p-4 rounded-xl shadow border border-[#E7D6BF]"
             >
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-sm">
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: highlight(m.name || "", searchQuery),
-                      }}
-                    />
-                  </div>
-                  <div className="text-xs text-[#6b4b2b] mt-1">
-                    {m.position}
-                  </div>
-                </div>
-                <div className="text-sm text-right">{m.state}</div>
-              </div>
-
-              <div className="mt-2 text-xs text-[#6b4b2b]">
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: highlight(m.organization || "", searchQuery),
-                  }}
-                />
-              </div>
-              <div className="mt-2 text-xs text-[#6b4b2b]">
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: highlight(m.address || "", searchQuery),
-                  }}
-                />
-              </div>
-              <div className="mt-2 flex gap-3 text-sm">
-                <div>
-                  <strong>Mobile:</strong>{" "}
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: highlight(m.mobile || "", searchQuery),
-                    }}
-                  />
-                </div>
-                <div>
-                  <strong>Email:</strong>{" "}
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: highlight(m.email || "", searchQuery),
-                    }}
-                  />
-                </div>
-              </div>
+              <h3 className="font-semibold text-[#6A0000]">{m.name}</h3>
+              <p className="text-sm">{m.position}</p>
+              <p className="text-sm">{m.organization}</p>
+              <p className="text-sm">{m.address}</p>
+              <p className="text-sm">📞 {m.mobile}</p>
+              <p className="text-sm break-all">📧 {m.email}</p>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );

@@ -44,7 +44,7 @@ export function Footer() {
     { icon: <FaYoutube />, url: "https://youtube.com/@jinsharnammedia?si=7H1TrEVFK6rjI5qu", color: "#FF0000" },
     { icon: <FaFacebookF />, url: "https://www.facebook.com/Jinsharnammedia", color: "#1877F2" },
     { icon: <FaInstagram />, url: "https://www.instagram.com/jinsharnam_media", color: "#E1306C" },
-    { icon: <FaTwitter />, url: "https://twitter.com/jinsharanam", color: "#FFFFFF", label: "X" },
+    { icon: <FaTwitter />, url: "https://x.com/jinsharnamedia", color: "#FFFFFF", label: "X" },
     { icon: <FaLinkedinIn />, url: "https://www.linkedin.com/company/jinsharnammedia/", color: "#0077B5" },
     { icon: <FaTelegramPlane />, url: "https://t.me/Jinsharnam_Media", color: "#0088cc" },
     { icon: <FaPinterestP />, url: "https://www.pinterest.com/jinsharnam/", color: "#E60023" },
@@ -108,7 +108,7 @@ export function Footer() {
           <div className="text-xs sm:text-sm text-yellow-100/90 text-left leading-relaxed space-y-2 w-full md:w-1/2">
             <p className="flex items-center gap-2">
               <FaMapMarkerAlt className="text-yellow-400" />
-              Vatsalya Bhawan, P-75, Street Number 5, Bihari Colony Extension, Bihari Colony, Shahdara, Delhi – 110032
+              Vatsalya Bhawan, P-75, Street Number 5, Near Dua Chai Waale, Bihari Colony Extension, Bihari Colony, Shahdara, Delhi – 110032
             </p>
             <p className="flex items-center gap-2">
               <FaPhoneAlt className="text-yellow-400" />
@@ -116,7 +116,7 @@ export function Footer() {
                 href="tel:+919876543210"
                 className="hover:text-yellow-400 transition"
               >
-                +91 98765 43210
+                +91 9910987666, 9810900699
               </a>
             </p>
             <p className="flex items-center gap-2">
@@ -125,7 +125,7 @@ export function Footer() {
                 href="mailto:contact@jinsharnammedia.com"
                 className="hover:text-yellow-400 transition"
               >
-                contact@jinsharnammedia.com
+                jinsharnam@gmail.com
               </a>
             </p>
           </div>

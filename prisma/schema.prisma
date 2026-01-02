@@ -98,6 +98,7 @@ model DirectoryMember {
   address        String?
   organization   String?
   position       String?
+  zone           String? 
   state          String?
   branch         String?
   gender         String?
@@ -144,13 +145,20 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
+enum LatestUpdateCategory {
+  JINSHARNAM
+  VATSALYA
+  ADVERTISEMENT
+}
+
 model LatestUpdate {
-  id        String   @id @default(cuid())
+  id        String               @id @default(cuid())
   title     String
   content   String
   imageUrl  String?
-  published Boolean  @default(true)
-  createdAt DateTime @default(now())
+  published Boolean              @default(true)
+  category  LatestUpdateCategory
+  createdAt DateTime             @default(now())
 }
 
 model Event {
@@ -163,3 +171,4 @@ model Event {
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())
 }
+

@@ -183,6 +183,7 @@ export default function Navbar() {
   // === NAVIGATION LINKS ===
   const links = [
     { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
     { name: "Pulak Sagar", path: "/pulak-sagar" },
     {
       name: "Organization",
@@ -199,10 +200,9 @@ export default function Navbar() {
       ],
     },
     { name: "Gallery", path: "/gallery" },
-    { name: "About", path: "/about" },
     { name: "Services", path: "/services" },
     // { name: "Achievements", path: "/achievements" },
-    { name: "Store", path: "/store" },
+    { name: "Sahitya", path: "/store" },
     { name: "Directory", path: "/directory" },
     { name: "Contact", path: "/contact" },
   ];

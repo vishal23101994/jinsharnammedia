@@ -45,6 +45,7 @@ export default function JinsharnamTirthPage() {
     "/images/tirth/part-11.2.jpg",
     "/images/tirth/part-12.1.jpg",
     "/images/tirth/part-12.2.jpg",
+    "/images/tirth/part-1.1.jpg",
   ];
 
   // responsive setup
@@ -219,9 +220,8 @@ export default function JinsharnamTirthPage() {
               <Plane className="text-amber-700 mb-3" size={32} />
               <h3 className="font-semibold text-lg">Nearest Airports</h3>
               <ul className="text-sm mt-2 space-y-1">
-                <li>Mumbai Intl. Airport — 130 km</li>
-                <li>Navi Mumbai Airport — 120 km</li>
-                <li>Surat Airport — 105 km</li>
+                <li>Mumbai Intl. Airport — 140 km</li>
+                <li>Surat Airport — 140 km</li>
                 <li>Nashik Airport — 165 km</li>
                 <li>Pune Airport — 250 km</li>
               </ul>
@@ -231,10 +231,10 @@ export default function JinsharnamTirthPage() {
               <Train className="text-amber-700 mb-3" size={32} />
               <h3 className="font-semibold text-lg">Nearest Railway Stations</h3>
               <ul className="text-sm mt-2 space-y-1">
-                <li>Mumbai Central — 125 km</li>
-                <li>Surat — 105 km</li>
+                <li>Mumbai Central — 140 km</li>
+                <li>Surat — 140 km</li>
                 <li>Nashik — 150 km</li>
-                <li>Vapi — 40 km</li>
+                <li>Vapi — 20 km</li>
               </ul>
             </div>
 

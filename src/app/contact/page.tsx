@@ -142,17 +142,16 @@ export default function ContactPage() {
         <div className="flex justify-center items-center gap-3">
           <MapPin className="text-[#FFD97A]" size={20} />
           <span>
-            Vatsalya Bhawan, P-75, Gali Number 5, Bihari Colony Extension, Bihari
-            Colony, Shahdara, Delhi, 110032
+            Vatsalya Bhawan, P-75, Street Number 5, Near Dua Chai Waale, Bihari Colony Extension, Bihari Colony, Shahdara, Delhi – 110032
           </span>
         </div>
         <div className="flex justify-center items-center gap-3">
           <Phone className="text-[#FFD97A]" size={20} />
-          <span>+91 98765 43210</span>
+          <span>+91 9910987666, 9810900699</span>
         </div>
         <div className="flex justify-center items-center gap-3">
           <Mail className="text-[#FFD97A]" size={20} />
-          <span>info@jinsharnammedia.com</span>
+          <span>jinsharnam@gmail.com</span>
         </div>
       </motion.div>
 

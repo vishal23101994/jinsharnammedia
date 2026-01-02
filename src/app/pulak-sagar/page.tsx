@@ -251,7 +251,7 @@ export default function PulakSagarPage() {
               <strong> 22 February 2024</strong>.
             </p>
             <p className="mt-4 text-justify">
-              <strong>Address:</strong> Jinsharnam Tirth Jain Digambar Temple, Upalat, Maharashtra – 401606
+              <strong>Address:</strong> Mumbai-Surat Highway No 48, Mukaam Post, Uplat, Tehsil Talasari, District Palghar, Maharashtra-401606
             </p>
             <div className="mt-6 flex flex-wrap gap-4">
               <Link

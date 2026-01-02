@@ -60,7 +60,7 @@ export default function AboutPage() {
           Our Founders
         </h2>
         <p className="text-lg text-[#4B2200] max-w-3xl mx-auto mb-16 leading-relaxed">
-          <strong>Ankit Jain</strong> and <strong>Seema Jain</strong> are visionaries who blend 
+          <strong>Ankit Jain 'Prince'</strong> and <strong>Seema Jain</strong> are visionaries who blend 
           leadership, innovation, and Jain philosophy to shape Jinsharnam Media’s mission of 
           creative excellence and spiritual growth.
         </p>
@@ -83,7 +83,7 @@ export default function AboutPage() {
             />
             <div className="md:w-2/3 bg-gradient-to-b from-[#FFE8B2] to-[#FFD580] p-8 rounded-3xl border border-[#ECA400]/30 text-left shadow-md">
               <h3 className="text-2xl font-serif text-[#8B0000] font-semibold mb-2">
-                Ankit Jain
+                Ankit Jain 'Prince'
               </h3>
               <p className="text-sm uppercase tracking-wide text-[#C45A00] mb-4">
                 Founder & Managing Director

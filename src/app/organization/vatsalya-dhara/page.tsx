@@ -23,6 +23,8 @@ import {
 
 export default function VatsalyaDharaPage() {
   const [copyMsg, setCopyMsg] = useState<string | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const [zoomImage, setZoomImage] = useState<string | null>(null);
 
   const donation = {
     accountName: "VATSALYA DHARA TRUST (REGD.)",
@@ -135,20 +137,23 @@ export default function VatsalyaDharaPage() {
 
         <motion.div
           className="flex gap-8 w-max px-8"
-          animate={{ x: ["0%", "-50%"] }}
+          animate={isPaused ? { x: undefined } : { x: ["0%", "-50%"] }}
           transition={{
             duration: 60,
             repeat: Infinity,
             ease: "linear",
           }}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
         >
           {[...Array(2)].map((_, loopIndex) =>
             [1,2,3,4,5,6,7,8,9].map((imgNo) => (
               <motion.div
                 key={`${loopIndex}-${imgNo}`}   // ✅ UNIQUE KEY
                 whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.6 }}
-                className="relative shrink-0"
+                transition={{ duration: 0.4 }}
+                className="relative shrink-0 cursor-zoom-in"
+                onClick={() => setZoomImage(`/images/vatsalya/${imgNo}.JPEG`)}
               >
                 <img
                   src={`/images/vatsalya/${imgNo}.jpeg`}
@@ -169,6 +174,31 @@ export default function VatsalyaDharaPage() {
             ))
           )}
         </motion.div>
+        {zoomImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+            onClick={() => setZoomImage(null)}
+          >
+            <motion.img
+              src={zoomImage}
+              alt="Zoomed Seva"
+              initial={{ scale: 0.85 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.3 }}
+              className="
+                max-w-[90vw]
+                max-h-[90vh]
+                rounded-2xl
+                shadow-2xl
+                border border-amber-300
+                cursor-zoom-out
+              "
+            />
+          </motion.div>
+        )}
       </section>
 
       <main className="max-w-6xl mx-auto px-6 pb-20 space-y-12">

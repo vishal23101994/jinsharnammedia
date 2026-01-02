@@ -49,9 +49,9 @@ export default function Home() {
       <AboutSection />
       <LatestUpdatesSection />
       <UpcomingEventsSection />
+      <AdvertisementCards />
       <PulakSagarHighlights />
       <LatestVideosSection videos={videos} loading={loading} />
-      <AdvertisementCards />
       <FeedbackSection />
     </>
   );
