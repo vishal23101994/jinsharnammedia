@@ -13,10 +13,25 @@ import {
   Heart,
   Sparkles,
   Star,
+  PenTool,
+  Palette,
   Handshake,
   Zap,
+  Image as ImageIcon,
 } from "lucide-react";
 import CountUp from "react-countup";
+
+const fadeUp = {
+  initial: { opacity: 0, y: 40 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.6 },
+};
+
+const stagger = (delay = 0) => ({
+  ...fadeUp,
+  transition: { duration: 0.6, delay },
+});
 
 export default function ServicesPage() {
   const stats = [
@@ -86,6 +101,30 @@ export default function ServicesPage() {
       desc: "Content planning, proofreading, spiritual editorial guidance, and publication workflow management.",
       icon: <Users className="w-8 h-8 text-white" />,
       gradient: "from-[#065F46] to-[#16A34A]",
+    },
+  ];
+
+  /* -------------------- Pulak Graphics (NEW) -------------------- */
+  const graphicsServices = [
+    {
+      title: "Hindi Posters & Banners",
+      desc: "Spiritually aligned Hindi creatives for Pravachans, Chaturmas & Jain events.",
+      icon: <Megaphone className="w-7 h-7" />,
+    },
+    {
+      title: "Book & Magazine Design",
+      desc: "Cover design, layouts, and typography primarily in Hindi language.",
+      icon: <PenTool className="w-7 h-7" />,
+    },
+    {
+      title: "Social Media Creatives",
+      desc: "Daily Jain quotes, Pravachan highlights, reels & post creatives in Hindi.",
+      icon: <ImageIcon className="w-7 h-7" />,
+    },
+    {
+      title: "Complete Graphic Identity",
+      desc: "End-to-end visual identity for Jain institutions & spiritual brands.",
+      icon: <Palette className="w-7 h-7" />,
     },
   ];
 
@@ -226,6 +265,22 @@ export default function ServicesPage() {
             </div>
           </div>
         </motion.div>
+        {/* -------------------- Pulak Graphics (NEW) -------------------- */}
+        <motion.h2 {...fadeUp}
+          className="text-center text-4xl font-serif text-[#A43B00] font-semibold mb-12">
+          Pulak Graphics <span className="text-[#C45A00]">(Hindi Creative Studio)</span>
+        </motion.h2>
+
+        <div className="max-w-7xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-8 px-6 pb-32">
+          {graphicsServices.map((g, i) => (
+            <motion.div key={i} {...stagger(i * 0.1)}
+              className="bg-white/90 rounded-3xl p-6 shadow-xl hover:-translate-y-2 transition">
+              <div className="mb-4 text-[#C45A00]">{g.icon}</div>
+              <h3 className="text-lg font-semibold text-[#8B0000] mb-2">{g.title}</h3>
+              <p className="text-sm">{g.desc}</p>
+            </motion.div>
+          ))}
+        </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {services.map((service, i) => (
             <motion.div

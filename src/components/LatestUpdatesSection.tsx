@@ -1,160 +1,328 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
+/* ================= TYPES ================= */
+
+type Category = "JINSHARNAM" | "VATSALYA" | "ADVERTISEMENT";
+
 type Update = {
   id: string;
   title: string;
-  content: string;
-  imageUrl?: string | null;
-  createdAt: string;
+  imageUrl?: string;
+  category: Category;
 };
+
+const SECTIONS = [
+  { key: "JINSHARNAM", title: "Jinsharnam Tirth" },
+  { key: "VATSALYA", title: "Vatsalya Dhara Trust" },
+  { key: "ADVERTISEMENT", title: "Advertisement" },
+] as const;
+
+/* ================= MAIN ================= */
 
 export default function LatestUpdatesSection() {
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === "ADMIN";
 
   const [updates, setUpdates] = useState<Update[]>([]);
-  const [activeImage, setActiveImage] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
+  const [zoomImage, setZoomImage] = useState<string | null>(null);
+
+  const [index, setIndex] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+
+  /* ================= FETCH ================= */
 
   useEffect(() => {
-    fetch("/api/latest-updates")
+    fetch("/api/latest-update")
       .then((r) => r.json())
       .then((j) => setUpdates(j.data || []));
   }, []);
 
-  if (updates.length === 0) return null;
+  /* Reset carousel on open */
+  useEffect(() => {
+    if (activeCategory) setIndex(0);
+  }, [activeCategory]);
+
+  /* Lock background scroll */
+  useEffect(() => {
+    document.body.style.overflow = activeCategory ? "hidden" : "";
+  }, [activeCategory]);
+
+  const latestByCategory = (cat: Category) =>
+    updates
+      .filter((u) => u.category === cat)
+      .sort((a, b) => (a.id < b.id ? 1 : -1))[0];
+
+  const filtered = updates.filter((u) => u.category === activeCategory);
+  const maxIndex = Math.max(filtered.length - 3, 0);
+
+  const next = () => setIndex((i) => Math.min(i + 1, maxIndex));
+  const prev = () => setIndex((i) => Math.max(i - 1, 0));
+
+  /* Auto slide */
+  useEffect(() => {
+    if (!activeCategory || isHovering || filtered.length <= 3) return;
+    const t = setInterval(
+      () => setIndex((i) => (i >= maxIndex ? 0 : i + 1)),
+      4500
+    );
+    return () => clearInterval(t);
+  }, [activeCategory, filtered.length, isHovering]);
 
   return (
     <>
-      <section className="relative py-28 bg-gradient-to-b from-[#FFF3D6] via-[#FFF8E7] to-white overflow-hidden">
-        <h2 className="text-4xl font-serif text-center text-[#4B1E00] mb-16">
+      {/* ================= HOME ================= */}
+      <section className="py-28 bg-[#FFF7E1]">
+        <h2 className="text-4xl font-serif text-center text-[#4B1E00]">
           Latest Updates
         </h2>
 
-        {/* AUTO SCROLLING ROW */}
-        <div className="relative overflow-hidden">
-          <motion.div
-            className="flex gap-8 w-max px-10"
-            animate={{ x: ["0%", "-50%"] }}
-            transition={{
-              duration: 55,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            whileHover={{ animationPlayState: "paused" }}
-          >
-            {[...Array(2)].map((_, loopIndex) =>
-              updates.map((u) => (
-                <div
-                  key={`${loopIndex}-${u.id}`}
-                  className="relative w-[300px] bg-white rounded-3xl
-                             shadow-xl border border-[#FFD97A]/40
-                             overflow-hidden shrink-0"
-                >
-                  {/* IMAGE WITH HOVER ZOOM */}
-                  {u.imageUrl && (
-                    <div className="relative overflow-hidden group">
+        <div className="mt-6 mb-20 text-center italic text-[#4B1E00]/80 space-y-2">
+          <p>Moments of Seva, Sadhana & Spiritual Growth</p>
+          <p>Reflections from Jinsharnam Tirth & Vatsalya Dhara</p>
+          <p>Walking together on the path of Dharma</p>
+        </div>
+
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16 px-6">
+          {SECTIONS.map((s) => {
+            const latest = latestByCategory(s.key);
+
+            return (
+              <motion.div
+                key={s.key}
+                whileHover={{ y: -10 }}
+                className="
+                  rounded-[2.8rem] p-[3px]
+                  bg-gradient-to-br from-[#C99A2C] via-[#FFE6A3] to-[#B8821E]
+                  shadow-[0_35px_90px_rgba(201,140,43,0.55)]
+                "
+              >
+                <div className="
+                  rounded-[2.4rem] p-6
+                  bg-[radial-gradient(circle_at_top,#FFFDF6,#FFF1CF)]
+                  border border-[#E6C670]
+                ">
+                  {/* IMAGE PREVIEW */}
+                  <div className="h-64 flex items-center justify-center mb-5">
+                    {latest?.imageUrl ? (
                       <img
-                        src={u.imageUrl}
-                        onClick={() => setActiveImage(u.imageUrl!)}
-                        alt={u.title}
-                        className="
-                          w-full h-[360px] object-cover
-                          cursor-zoom-in
-                          transition-transform duration-500 ease-out
-                          group-hover:scale-110
-                        "
+                        src={latest.imageUrl}
+                        alt={latest.title}
+                        className="max-h-full max-w-full object-contain"
+                        loading="lazy"
                       />
-
-                      {/* subtle hover overlay (optional but recommended) */}
-                      <div className="
-                        pointer-events-none absolute inset-0
-                        bg-black/0 group-hover:bg-black/10
-                        transition
-                      " />
-                    </div>
-                  )}
-
-
-                  {/* ADMIN ACTIONS */}
-                  {isAdmin && (
-                    <div className="absolute top-3 left-3 flex gap-2 bg-white/90 px-2 py-1 rounded-xl shadow">
-                      <Link
-                        href={`/admin/updates/${u.id}`}
-                        className="text-xs font-semibold text-blue-700"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={async () => {
-                          if (!confirm("Delete this update?")) return;
-                          await fetch(`/api/admin/updates/${u.id}`, {
-                            method: "DELETE",
-                          });
-                          location.reload();
-                        }}
-                        className="text-xs font-semibold text-red-600"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-
-                  {/* CONTENT */}
-                  <div className="p-5">
-                    <h3 className="font-semibold text-lg text-[#4B1E00] line-clamp-1">
-                      {u.title}
-                    </h3>
-                    <p className="text-sm text-[#4B1E00]/80 line-clamp-2">
-                      {u.content}
-                    </p>
+                    ) : (
+                      <span className="font-serif text-[#4B1E00]">
+                        {s.title}
+                      </span>
+                    )}
                   </div>
+
+                  <h3 className="font-serif text-lg text-[#4B1E00] mb-2">
+                    {s.title}
+                  </h3>
+
+                  {s.key === "ADVERTISEMENT" ? (
+                    <button
+                      onClick={() => setActiveCategory("ADVERTISEMENT")}
+                      className="font-semibold underline text-sm"
+                    >
+                      Contact us for advertisement →
+                    </button>
+                  ) : latest ? (
+                    <>
+                      <p className="text-sm font-semibold mb-3">
+                        {latest.title}
+                      </p>
+                      <button
+                        onClick={() => setActiveCategory(s.key)}
+                        className="font-semibold underline text-sm"
+                      >
+                        View all updates →
+                      </button>
+                    </>
+                  ) : (
+                    <p className="text-sm text-gray-500">
+                      No updates yet.
+                    </p>
+                  )}
                 </div>
-              ))
-            )}
-          </motion.div>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
-      {/* IMAGE MODAL */}
-      <ImageModal src={activeImage} onClose={() => setActiveImage(null)} />
+      {/* ================= GALLERY ================= */}
+      <AnimatePresence>
+        {activeCategory && (
+          <motion.div
+            className="fixed inset-0 z-50 bg-[#3A1A00]/85 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="bg-[#FFF7E1] rounded-3xl w-[95vw] max-w-7xl p-10 relative overflow-hidden">
+              <button
+                onClick={() => setActiveCategory(null)}
+                className="absolute top-4 right-4 text-xl font-bold"
+              >
+                ✕
+              </button>
+
+              <h3 className="text-3xl font-serif text-center text-[#4B1E00] mb-14">
+                {SECTIONS.find((s) => s.key === activeCategory)?.title}
+              </h3>
+
+              <div
+                className="relative overflow-hidden px-16"
+                onMouseEnter={() => setIsHovering(true)}
+                onMouseLeave={() => setIsHovering(false)}
+                onTouchStart={(e) =>
+                  (touchStartX.current = e.touches[0].clientX)
+                }
+                onTouchEnd={(e) => {
+                  if (touchStartX.current === null) return;
+                  const diff =
+                    touchStartX.current - e.changedTouches[0].clientX;
+                  if (diff > 60) next();
+                  if (diff < -60) prev();
+                  touchStartX.current = null;
+                }}
+              >
+                {/* LEFT */}
+                <Arrow direction="left" onClick={prev} disabled={index === 0} />
+
+                {/* SLIDER */}
+                <motion.div
+                  className="flex gap-12"
+                  animate={{ x: -index * 320 }}
+                  transition={{ type: "spring", stiffness: 80, damping: 22 }}
+                >
+                  {filtered.map((u) => (
+                    <motion.div
+                      key={u.id}
+                      className="
+                        relative min-w-[280px]
+                        rounded-[2.8rem] p-[3px]
+                        bg-gradient-to-br from-[#C99A2C] via-[#FFE6A3] to-[#B8821E]
+                      "
+                    >
+                      <div className="
+                        rounded-[2.4rem] p-6
+                        bg-[radial-gradient(circle_at_top,#FFFDF6,#FFF1CF)]
+                        border border-[#E6C670]
+                      ">
+                        {/* ADMIN */}
+                        {isAdmin && (
+                          <div className="absolute top-4 left-4 z-20 flex gap-2 bg-white/90 rounded px-2 py-1">
+                            <Link
+                              href={`/admin/updates/${u.id}`}
+                              className="text-xs font-semibold text-blue-700"
+                            >
+                              Edit
+                            </Link>
+                            <button
+                              className="text-xs font-semibold text-red-600"
+                              onClick={async () => {
+                                if (!confirm("Delete this update?")) return;
+                                await fetch(`/api/admin/updates/${u.id}`, {
+                                  method: "DELETE",
+                                });
+                                setUpdates((p) =>
+                                  p.filter((x) => x.id !== u.id)
+                                );
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+
+                        <div
+                          className="h-60 flex items-center justify-center cursor-zoom-in"
+                          onClick={() => setZoomImage(u.imageUrl || null)}
+                        >
+                          {u.imageUrl && (
+                            <img
+                              src={u.imageUrl}
+                              alt={u.title}
+                              className="max-h-full max-w-full object-contain"
+                            />
+                          )}
+                        </div>
+
+                        <div className="mt-4 text-center font-semibold">
+                          {u.title}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+
+                {/* RIGHT */}
+                <Arrow
+                  direction="right"
+                  onClick={next}
+                  disabled={index >= maxIndex}
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ================= ZOOM ================= */}
+      <AnimatePresence>
+        {zoomImage && (
+          <motion.div
+            className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center"
+            onClick={() => setZoomImage(null)}
+          >
+            <motion.img
+              src={zoomImage}
+              className="max-h-[92vh] max-w-[92vw] rounded-2xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
 
-/* ---------- IMAGE MODAL ---------- */
+/* ================= ARROW ================= */
 
-function ImageModal({
-  src,
-  onClose,
+function Arrow({
+  direction,
+  onClick,
+  disabled,
 }: {
-  src: string | null;
-  onClose: () => void;
+  direction: "left" | "right";
+  onClick: () => void;
+  disabled: boolean;
 }) {
-  if (!src) return null;
-
   return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
-        onClick={onClose}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
-        <motion.img
-          src={src}
-          className="max-h-[75vh] max-w-[85vw] rounded-2xl shadow-2xl"
-          onClick={(e) => e.stopPropagation()}
-          initial={{ scale: 0.92 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0.92 }}
-        />
-      </motion.div>
-    </AnimatePresence>
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`
+        absolute ${direction === "left" ? "left-2" : "right-2"}
+        top-1/2 -translate-y-1/2 z-20
+        w-12 h-12 rounded-full
+        flex items-center justify-center
+        bg-gradient-to-br from-[#FFE6A3] to-[#C99A2C]
+        shadow-lg text-2xl font-bold
+        ${disabled ? "opacity-40 cursor-not-allowed" : ""}
+      `}
+    >
+      {direction === "left" ? "‹" : "›"}
+    </button>
   );
 }

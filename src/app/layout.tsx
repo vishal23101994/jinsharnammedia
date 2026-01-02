@@ -8,7 +8,7 @@ import NewsTicker from "@/components/NewsTicker";
 import { Toaster } from "react-hot-toast";
 import SocialSidebar from "@/components/SocialSidebar";
 import RegistrationModal from "@/components/RegistrationModal";
-
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { AudioPlayerProvider } from "@/app/providers/AudioPlayerProvider";
 import GlobalAudioPlayer from "@/components/GlobalAudioPlayer";
 
@@ -60,6 +60,7 @@ export default function RootLayout({
         {/* Floating UI */}
         <BackToTop />
         <SocialSidebar />
+        <WhatsAppButton />
       </body>
     </html>
   );

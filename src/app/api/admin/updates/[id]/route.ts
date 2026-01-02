@@ -84,6 +84,7 @@ export async function PUT(
         title: body.title,
         content: body.content,
         imageUrl: body.imageUrl,
+        category: body.category, // ✅ FIXED
       },
     });
 
@@ -96,3 +97,4 @@ export async function PUT(
     );
   }
 }
+

@@ -7,11 +7,30 @@ import {
   SkipBack,
   SkipForward,
   Shuffle,
+  Repeat,
+  Heart,
   X,
   Music,
+  ListMusic,
+  Maximize2,
+  Minimize2,
+  Moon,
+  Sun,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAudioPlayer } from "@/app/providers/AudioPlayerProvider";
+
+/* --------------------------------------------------
+   Helpers
+-------------------------------------------------- */
+const isMobile =
+  typeof window !== "undefined" &&
+  window.matchMedia("(max-width: 768px)").matches;
+
+/* 🔒 Extend audio element safely */
+type AudioWithSource = HTMLAudioElement & {
+  __mediaSource?: MediaElementAudioSourceNode;
+};
 
 export default function GlobalAudioPlayer() {
   const {
@@ -26,126 +45,333 @@ export default function GlobalAudioPlayer() {
     seek,
     isOpen,
     closePlayer,
+    repeatMode,
+    setRepeatMode,
+    getAudioElement,
+    getQueue,
+    setQueueAndPlay,
   } = useAudioPlayer();
 
-  const [isShuffleOn, setIsShuffleOn] = useState(false);
+  /* ---------------- UI STATE ---------------- */
+  const [liked, setLiked] = useState(false);
+  const [showQueue, setShowQueue] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [dark, setDark] = useState(false);
+
+  /* ---------------- ESC to exit fullscreen ---------------- */
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && fullscreen) setFullscreen(false);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [fullscreen]);
+
+  /* ---------------- FAVORITES ---------------- */
+  useEffect(() => {
+    if (!currentTrack) return;
+    const favs = JSON.parse(localStorage.getItem("audio_favs") || "[]");
+    setLiked(favs.includes(currentTrack.src));
+  }, [currentTrack]);
+
+  const toggleLike = () => {
+    if (!currentTrack) return;
+    const favs: string[] = JSON.parse(localStorage.getItem("audio_favs") || "[]");
+    const updated = liked
+      ? favs.filter((s) => s !== currentTrack.src)
+      : [...favs, currentTrack.src];
+    localStorage.setItem("audio_favs", JSON.stringify(updated));
+    setLiked(!liked);
+  };
+
+  /* ---------------- MediaSession API (NO ARTWORK) ---------------- */
+  useEffect(() => {
+    if (!("mediaSession" in navigator) || !currentTrack) return;
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: currentTrack.title,
+      artist: currentTrack.artist || "Jinsharnam Media",
+    });
+
+    navigator.mediaSession.setActionHandler("play", toggle);
+    navigator.mediaSession.setActionHandler("pause", toggle);
+    navigator.mediaSession.setActionHandler("previoustrack", prev);
+    navigator.mediaSession.setActionHandler("nexttrack", next);
+  }, [currentTrack, isPlaying]);
+
+  /* ---------------- REAL WAVEFORM (SAFE) ---------------- */
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const audio = getAudioElement() as AudioWithSource | null;
+    const canvas = canvasRef.current;
+    if (!audio || !canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    if (!audioCtxRef.current) {
+      audioCtxRef.current = new AudioContext();
+    }
+
+    /* 🔒 create MediaElementSource ONLY ONCE */
+    if (!audio.__mediaSource) {
+      audio.__mediaSource =
+        audioCtxRef.current.createMediaElementSource(audio);
+    }
+
+    if (!analyserRef.current) {
+      analyserRef.current = audioCtxRef.current.createAnalyser();
+      analyserRef.current.fftSize = 256;
+
+      audio.__mediaSource.connect(analyserRef.current);
+      analyserRef.current.connect(audioCtxRef.current.destination);
+    }
+
+    const analyser = analyserRef.current;
+    const buffer = new Uint8Array(analyser.frequencyBinCount);
+
+    const draw = () => {
+      analyser.getByteTimeDomainData(buffer);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.beginPath();
+      ctx.strokeStyle = dark ? "#fbbf24" : "#f59e0b";
+      ctx.lineWidth = 2;
+
+      let x = 0;
+      const step = canvas.width / buffer.length;
+
+      for (let i = 0; i < buffer.length; i++) {
+        const y = (buffer[i] / 255) * canvas.height;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        x += step;
+      }
+
+      ctx.stroke();
+      rafRef.current = requestAnimationFrame(draw);
+    };
+
+    draw();
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, [currentTrack, isPlaying, dark]);
+
+  /* ---------------- Queue (drag reorder) ---------------- */
+  const queue = getQueue();
+  const dragIndex = useRef<number | null>(null);
+
+  const onDragStart = (index: number) => {
+    dragIndex.current = index;
+  };
+
+  const onDrop = (index: number) => {
+    if (dragIndex.current === null) return;
+    const newQueue = [...queue];
+    const [moved] = newQueue.splice(dragIndex.current, 1);
+    newQueue.splice(index, 0, moved);
+    dragIndex.current = null;
+
+    const currentSrc = currentTrack?.src;
+    const newIndex = newQueue.findIndex(t => t.src === currentSrc);
+    setQueueAndPlay(newQueue, newIndex >= 0 ? newIndex : 0);
+  };
 
   if (!currentTrack || !isOpen) return null;
 
-  const handleShuffle = () => {
-    setIsShuffleOn((prev) => !prev);
-    shuffleToggle();
-  };
-
   return (
     <AnimatePresence>
-      <motion.div
-        drag
-        dragMomentum={false}
-        dragElastic={0.15}
-        initial={{ y: 100, opacity: 0, scale: 0.95 }}
-        animate={{ y: 0, opacity: 1, scale: 1 }}
-        exit={{ y: 100, opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-        className="fixed bottom-4 right-4 z-[9999] w-[360px] cursor-grab active:cursor-grabbing"
-      >
+      {(fullscreen || (isMobile && showQueue)) && (
         <motion.div
-          whileHover={{ y: -4 }}
-          className="rounded-2xl bg-gradient-to-br from-[#FFF3C4] via-[#FFE39A] to-[#FFD36A]
-                     border border-[#E6C670] shadow-2xl px-4 py-4"
+          key="player-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.4 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black z-[9998]"
+          onClick={() => {
+            setFullscreen(false);
+            setShowQueue(false);
+          }}
+        />
+      )}
+
+      <motion.div
+        key="global-audio-player"
+        drag={!fullscreen && !isMobile}
+        dragMomentum={false}
+        initial={{ y: 120, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 120, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 120, damping: 18 }}
+        className={`
+          fixed z-[9999]
+          ${fullscreen
+            ? "inset-0 flex items-center justify-center"
+            : isMobile
+              ? "inset-x-0 bottom-0"
+              : "bottom-6 right-6 w-[360px]"}
+        `}
+      >
+        <div
+          className={`
+            relative p-4 shadow-2xl border border-black/10
+            ${dark
+              ? "bg-gradient-to-br from-[#1a1207] to-[#2a1c0d] text-amber-100"
+              : "bg-gradient-to-br from-[#FFF6D5] to-[#FFD36A] text-[#4B1E00]"}
+            ${fullscreen ? "w-[420px] rounded-3xl" : "rounded-3xl"}
+          `}
         >
-          {/* Header */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="w-9 h-9 rounded-full bg-[#8B0000] text-white flex items-center justify-center shadow-md">
-                <Music size={18} />
+          {/* HEADER */}
+          <div className="flex justify-between items-center mb-2">
+            <div className="flex gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-orange-500 text-white flex items-center justify-center">
+                <Music size={16} />
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-[#4B1E00] truncate">
+                <p className="text-sm font-semibold truncate">
                   {currentTrack.title}
                 </p>
-                <p className="text-[11px] text-[#6B3E00]/70 truncate">
+                <p className="text-xs opacity-70 truncate">
                   {currentTrack.artist || "Jinsharnam Media"}
                 </p>
               </div>
             </div>
 
-            <button
-              onClick={closePlayer}
-              className="p-1.5 rounded-full hover:bg-white/60 transition"
-              title="Close Player"
-            >
-              <X size={16} />
-            </button>
+            <div className="flex gap-2">
+              <button onClick={() => setDark(d => !d)}>
+                {dark ? <Sun size={16} /> : <Moon size={16} />}
+              </button>
+              <button onClick={() => setFullscreen(f => !f)}>
+                {fullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+              </button>
+              <button onClick={closePlayer}>
+                <X size={16} />
+              </button>
+            </div>
           </div>
 
-          {/* Progress Bar */}
-          <motion.input
+          {/* ART */}
+          <motion.div
+            animate={{ rotate: isPlaying ? 360 : 0 }}
+            transition={{ repeat: Infinity, duration: 18, ease: "linear" }}
+            className="mx-auto my-3 w-24 h-24 rounded-full bg-orange-500 text-white flex items-center justify-center text-3xl shadow-lg"
+          >
+            🎵
+          </motion.div>
+
+          {/* WAVEFORM */}
+          <canvas ref={canvasRef} width={260} height={40} className="mx-auto" />
+
+          {/* PROGRESS */}
+          <input
             type="range"
             min={0}
             max={duration || 0}
             value={currentTime}
             onChange={(e) => seek(Number(e.target.value))}
-            className="w-full accent-[#8B0000] cursor-pointer"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            className="w-full mt-2 accent-orange-500"
           />
 
-          {/* Time */}
-          <div className="flex justify-between text-[10px] text-[#6B3E00]/70 mt-1">
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
-          </div>
-
-          {/* Controls */}
-          <div className="flex items-center justify-center gap-5 mt-4">
-            <button
-              onClick={handleShuffle}
-              title="Shuffle"
-              className={`p-2 rounded-full transition ${
-                isShuffleOn
-                  ? "bg-[#8B0000] text-white shadow-md"
-                  : "hover:bg-white/60"
-              }`}
-            >
-              <Shuffle size={18} />
-            </button>
+          {/* CONTROLS */}
+          <div className="flex items-center justify-between mt-3 px-2">
+            <button onClick={shuffleToggle}><Shuffle size={18} /></button>
+            <button onClick={prev}><SkipBack size={22} /></button>
 
             <button
-              onClick={prev}
-              title="Previous"
-              className="p-2 rounded-full hover:bg-white/60 transition"
-            >
-              <SkipBack size={20} />
-            </button>
-
-            <motion.button
               onClick={toggle}
-              whileTap={{ scale: 0.85 }}
-              className="w-12 h-12 rounded-full bg-[#F5B301] text-[#4B1E00]
-                         flex items-center justify-center shadow-lg"
+              className="w-14 h-14 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-xl"
             >
-              {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-            </motion.button>
+              {isPlaying ? <Pause size={22} /> : <Play size={22} />}
+            </button>
+
+            <button onClick={next}><SkipForward size={22} /></button>
 
             <button
-              onClick={next}
-              title="Next"
-              className="p-2 rounded-full hover:bg-white/60 transition"
+              onClick={() =>
+                setRepeatMode(
+                  repeatMode === "off"
+                    ? "all"
+                    : repeatMode === "all"
+                    ? "one"
+                    : "off"
+                )
+              }
             >
-              <SkipForward size={20} />
+              <Repeat
+                size={18}
+                className={repeatMode !== "off" ? "text-orange-500" : ""}
+              />
             </button>
           </div>
-        </motion.div>
+
+          {/* ACTIONS */}
+          <div className="flex justify-center gap-4 mt-2">
+            <button onClick={toggleLike}>
+              <Heart
+                size={18}
+                className={liked ? "fill-red-500 text-red-500" : "opacity-70"}
+              />
+            </button>
+
+            {queue.length > 1 && (
+              <button onClick={() => setShowQueue(s => !s)}>
+                <ListMusic size={18} />
+              </button>
+            )}
+          </div>
+
+          {/* QUEUE */}
+          <AnimatePresence>
+            {showQueue && (
+              <motion.div
+                key="queue-drawer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                className={`
+                  absolute left-3 right-3 bottom-[72px]
+                  ${dark ? "bg-white/10 text-amber-100" : "bg-white/70 text-[#4B1E00]"}
+                  backdrop-blur-xl rounded-2xl shadow-xl
+                  max-h-60 overflow-auto border border-white/20
+                `}
+              >
+                <div className="p-3 space-y-1">
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="text-sm font-semibold">Upcoming Queue</h4>
+                    <button onClick={() => setShowQueue(false)}>✕</button>
+                  </div>
+
+                  {queue.map((t, i) => (
+                    <div
+                      key={`${t.src}-${i}`}
+                      draggable
+                      onDragStart={() => onDragStart(i)}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={() => onDrop(i)}
+                      className={`
+                        px-2 py-2 rounded-lg text-sm cursor-move
+                        ${t.src === currentTrack.src
+                          ? dark
+                            ? "bg-white/20 font-semibold"
+                            : "bg-orange-100 font-semibold"
+                          : "hover:bg-white/20"}
+                      `}
+                    >
+                      {i + 1}. {t.title}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </motion.div>
     </AnimatePresence>
   );
-}
-
-/* -------------------- Helpers -------------------- */
-function formatTime(seconds: number) {
-  if (!seconds && seconds !== 0) return "0:00";
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
 }
