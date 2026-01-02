@@ -59,9 +59,14 @@ export default function JinsharnamTirthPage() {
   // gentle preview flip
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (bookRef.current) {
+      if (bookRef.current?.pageFlip) {
         bookRef.current.pageFlip().flipNext();
-        setTimeout(() => bookRef.current.pageFlip().flipPrev(), 1200);
+
+        setTimeout(() => {
+          if (bookRef.current?.pageFlip) {
+            bookRef.current.pageFlip().flipPrev();
+          }
+        }, 1200);
       }
     }, 1000);
     return () => clearTimeout(timeout);
