@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { LatestUpdateCategory } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
 import { getServerSession } from "next-auth";
@@ -53,7 +54,7 @@ export async function POST(req: Request) {
       data: {
         title,
         content,
-        category, // ✅ FIXED
+        category: category as LatestUpdateCategory,
         imageUrl,
         published: true,
       },
