@@ -153,7 +153,7 @@ export default function VatsalyaDharaPage() {
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.4 }}
                 className="relative shrink-0 cursor-zoom-in"
-                onClick={() => setZoomImage(`/images/vatsalya/${imgNo}.JPEG`)}
+                onClick={() => setZoomImage(`/images/vatsalya/${imgNo}.jpeg`)}
               >
                 <img
                   src={`/images/vatsalya/${imgNo}.jpeg`}
