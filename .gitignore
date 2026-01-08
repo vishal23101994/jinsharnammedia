@@ -5,3 +5,6 @@ node_modules
 # Ignore videos
 public/videos/
 *.mp4
+# Large documents
+public/directory/*.pdf
+*.pdf
