@@ -207,7 +207,7 @@ export default function DirectoryPage() {
           </a>
 
           <a
-            href="/Ekta_Directory_Ladies_2025.pdf"
+            href="/directory/Ekta_Directory_Ladies_2025.pdf"
             download
             target="_blank"
             className="px-6 py-3 rounded-full bg-[#D4AF37] text-[#6A0000] font-semibold shadow hover:bg-[#C9A227] transition"
