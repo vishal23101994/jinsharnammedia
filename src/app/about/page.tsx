@@ -75,7 +75,7 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
           >
             <Image
-              src="/images/founder/ankit.jpeg"
+              src="/images/founder/ankit1.jpeg"
               alt="Ankit Jain"
               width={250}
               height={250}
