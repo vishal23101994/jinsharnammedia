@@ -28,7 +28,7 @@ export default function AdvertisementCards() {
   return (
     <section
       className="
-        relative py-36 overflow-hidden
+        relative py-10 overflow-hidden
         bg-gradient-to-b from-[#FFF8E7] via-[#FFEEC2] to-[#FAE3A3]/40
       "
     >
@@ -73,7 +73,7 @@ export default function AdvertisementCards() {
         {/* ---------------- CARD 1 ---------------- */}
         <TempleCard index={0}>
           <h3 className="text-2xl font-serif text-[#4B1E00] mb-4">
-            Jinsharnam Tirth Trust
+            Shri Digambar Jain <br/>Jinsharnam Tirth Trust
           </h3>
 
           <p className="text-[#4B1E00]/85 mb-8 leading-relaxed flex-1">

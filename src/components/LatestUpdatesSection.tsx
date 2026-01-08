@@ -17,7 +17,7 @@ type Update = {
 };
 
 const SECTIONS = [
-  { key: "JINSHARNAM", title: "Jinsharnam Tirth" },
+  { key: "JINSHARNAM", title: "Shri Digambar Jain Jinsharnam Tirth Trust" },
   { key: "VATSALYA", title: "Vatsalya Dhara Trust" },
   { key: "ADVERTISEMENT", title: "Advertisement" },
 ] as const;

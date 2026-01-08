@@ -29,6 +29,7 @@ export function Footer() {
       subLinks: [
         { name: "Jinsharnam Tirth", path: "/organization/jinsharnam-tirth" },
         { name: "Vatsalya Dhara", path: "/organization/vatsalya-dhara" },
+        { name: "Pulak Manch", path: "/organization/pulak-manch" },
       ],
     },
     {
@@ -55,8 +56,10 @@ export function Footer() {
     <footer className="bg-gradient-to-b from-[#2d0000] via-[#4B0000] to-[#1a0000] text-yellow-100 border-t border-yellow-700/30 pt-10">
       <div className="max-w-7xl mx-auto px-6 md:px-12 space-y-8">
         {/* 🌼 1. Logo + Message */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 border-b border-yellow-700/30 pb-6">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col md:flex-row items-center md:items-start 
+                justify-between gap-4 border-b border-yellow-700/30 pb-6
+                text-center md:text-left">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
             <img
               src="/images/logo.jpg"
               alt="Jinsharnam Media Logo"
@@ -74,7 +77,8 @@ export function Footer() {
         </div>
 
         {/* 🌿 2. Explore Section */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-y-3 text-sm border-b border-yellow-700/30 pb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 
+                        gap-y-4 text-sm border-b border-yellow-700/30 pb-6">
           {footerLinks.map((item, idx) => (
             <div key={idx}>
               {item.subLinks ? (
@@ -103,9 +107,11 @@ export function Footer() {
         </div>
 
         {/* 🌐 3. Contact (Left) + Social (Right) */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8 border-b border-yellow-700/30 pb-6">
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 border-b border-yellow-700/30 pb-6 text-center md:text-left">
           {/* Left: Contact */}
-          <div className="text-xs sm:text-sm text-yellow-100/90 text-left leading-relaxed space-y-2 w-full md:w-1/2">
+          <div className="text-xs sm:text-sm text-yellow-100/90 leading-relaxed 
+                          space-y-3 w-full md:w-1/2
+                          text-center md:text-left">
             <p className="flex items-center gap-2">
               <FaMapMarkerAlt className="text-yellow-400" />
               Vatsalya Bhawan, P-75, Street Number 5, Near Dua Chai Waale, Bihari Colony Extension, Bihari Colony, Shahdara, Delhi – 110032
@@ -131,7 +137,7 @@ export function Footer() {
           </div>
 
           {/* Right: Social Icons with Glow */}
-          <div className="flex flex-wrap justify-center md:justify-end gap-5 w-full md:w-1/2">
+          <div className="flex flex-wrap justify-center md:justify-end gap-6 w-full md:w-1/2">
             {socialLinks.map((s, i) => (
               <Link
                 key={i}

@@ -42,6 +42,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [mobileDropdown, setMobileDropdown] = useState<string | null>(null);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchBoxRef = useRef<HTMLDivElement>(null);
@@ -190,6 +191,7 @@ export default function Navbar() {
       subLinks: [
         { name: "Jinsharnam Tirth", path: "/organization/jinsharnam-tirth" },
         { name: "Vatsalya Dhara", path: "/organization/vatsalya-dhara" },
+        { name: "Pulak Manch", path: "/organization/pulak-manch" },
       ],
     },
     {
@@ -209,13 +211,21 @@ export default function Navbar() {
 
   // === COMPONENT RETURN ===
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-gradient-to-r from-[#2d0000]/95 via-[#500000]/95 to-[#1a0000]/95 border-b border-yellow-700/40 shadow-lg">
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-gradient-to-r from-[#2d0000]/95 via-[#500000]/95 to-[#1a0000]/95 border-b border-yellow-700/40 shadow-lg min-h-[56px] md:min-h-[80px]">
       {/* === TOP SECTION === */}
       <div className="flex justify-between items-center px-6 md:px-12 py-2 border-b border-yellow-700/40 text-sm relative">
+        <Link href="/" className="md:hidden flex items-center gap-2">
+          <img
+            src="/images/logo.jpg"
+            alt="Logo"
+            className="w-11 h-11 sm:w-12 sm:h-9 rounded-full"
+          />
+        </Link>
         {/* SEARCH BOX */}
         <div
           ref={searchBoxRef}
-          className="relative flex items-center gap-2 bg-[#400101]/70 border border-yellow-700/50 rounded-md px-2 py-[3px] w-36 md:w-64"
+          className="relative flex items-center gap-2 bg-[#400101]/70 border border-yellow-700/50 rounded-md px-2 py-[3px]
+           w-full max-w-[220px] sm:max-w-xs md:w-64"
         >
           <Search size={16} className="text-yellow-400" />
           <input
@@ -397,7 +407,9 @@ export default function Navbar() {
               key={index}
               className="relative"
               onMouseEnter={() =>
-                link.subLinks ? setOpenDropdown(link.name) : null
+                link.subLinks && window.innerWidth >= 768
+                  ? setOpenDropdown(link.name)
+                  : null
               }
               onMouseLeave={() => setOpenDropdown(null)}
             >
@@ -475,19 +487,44 @@ export default function Navbar() {
               <div key={index} className="flex flex-col">
                 {link.subLinks ? (
                   <>
-                    <span className="font-semibold text-yellow-300 mb-1">
+                    <button
+                      onClick={() =>
+                        setMobileDropdown(
+                          mobileDropdown === link.name ? null : link.name
+                        )
+                      }
+                      className="flex justify-between w-full font-semibold text-yellow-300 py-2"
+                    >
                       {link.name}
-                    </span>
-                    {link.subLinks.map((sublink: any, subIndex: number) => (
-                      <Link
-                        key={subIndex}
-                        href={sublink.path}
-                        className="pl-3 py-1 text-yellow-200 hover:text-yellow-300"
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        {sublink.name}
-                      </Link>
-                    ))}
+                      <ChevronDown
+                        size={16}
+                        className={`transition ${
+                          mobileDropdown === link.name ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+
+                    <AnimatePresence>
+                      {mobileDropdown === link.name && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="pl-4"
+                        >
+                          {link.subLinks.map((sublink, subIndex) => (
+                            <Link
+                              key={subIndex}
+                              href={sublink.path}
+                              className="block py-1 text-yellow-200"
+                              onClick={() => setMenuOpen(false)}
+                            >
+                              {sublink.name}
+                            </Link>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </>
                 ) : (
                   <Link

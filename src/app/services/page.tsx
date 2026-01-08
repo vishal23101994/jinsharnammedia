@@ -210,7 +210,7 @@ export default function ServicesPage() {
                   </h2>
                 </div>
                 <p className="text-lg text-[#4B2200] leading-relaxed mb-6 text-justify">
-                  <b>Print & Publications is the foundation of Jinsharnam Media.</b><br />
+                  <b>Print & Publications is the foundation of Pulak Graphics.</b><br />
                   We function as a dedicated Jain spiritual publication house, managing
                   everything from content planning and editorial design to large-scale
                   printing and nationwide distribution.
@@ -225,7 +225,6 @@ export default function ServicesPage() {
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.4 }}
                 />
-
                 <div className="absolute -bottom-6 -right-6 bg-white/90 backdrop-blur-md px-6 py-4 rounded-2xl shadow-lg border border-[#ECA400]/40">
                   <p className="text-sm font-semibold text-[#8B0000]">
                     Trusted by Jain Institutions Nationwide
@@ -233,54 +232,114 @@ export default function ServicesPage() {
                 </div>
               </div>
             </div>
-            {/* 📦 Print & Publication Subtype Cards */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-              {printSubTypes.map((item, i) => (
+          </div>
+          {/* -------------------- Pulak Graphics (NEW) -------------------- */}
+          <motion.div className="relative py-16">
+
+            {/* Section Glow */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#FFE8B3]/40 via-transparent to-transparent blur-3xl pointer-events-none" />
+
+            <motion.h2
+              {...fadeUp}
+              className="relative text-center text-4xl md:text-5xl font-serif text-[#A43B00] font-semibold mb-14"
+            >
+              Pulak Graphics{" "}
+              <span className="text-[#C45A00] block text-xl md:text-2xl font-normal mt-2">
+                "Hindi Creative Studio"
+              </span>
+            </motion.h2>
+
+            <div className="relative max-w-7xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-8 px-6 pb-0">
+              {graphicsServices.map((g, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: i * 0.1 }}
+                  {...stagger(i * 0.12)}
                   whileHover={{ y: -10, scale: 1.03 }}
-                  className={`relative rounded-3xl p-6 text-white shadow-xl overflow-hidden bg-gradient-to-br ${item.gradient}`}
+                  className="
+                    group relative
+                    bg-white/90
+                    rounded-3xl
+                    p-7
+                    shadow-xl
+                    border border-[#ECA400]/40
+                    transition-all duration-500
+                    overflow-hidden
+                  "
                 >
-                  {/* Glow */}
-                  <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500 bg-white/10"></div>
+                  {/* Card Glow */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-[#FFD97A]/20 via-transparent to-transparent" />
 
                   {/* Icon */}
-                  <div className="mb-4 flex items-center justify-center w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md shadow-lg">
-                    {item.icon}
-                  </div>
+                  <motion.div
+                    className="
+                      mb-5
+                      w-14 h-14
+                      flex items-center justify-center
+                      rounded-2xl
+                      bg-gradient-to-br from-[#FFE2A8] to-[#FFD27A]
+                      text-[#8B0000]
+                      shadow-md
+                    "
+                    animate={{ y: [0, -4, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    {g.icon}
+                  </motion.div>
 
-                  {/* Text */}
-                  <h3 className="text-xl font-semibold mb-2">
-                    {item.title}
+                  {/* Title */}
+                  <h3 className="text-lg font-semibold text-[#8B0000] mb-2">
+                    {g.title}
                   </h3>
-                  <p className="text-sm leading-relaxed text-white/90">
-                    {item.desc}
+
+                  {/* Description */}
+                  <p className="text-sm text-[#3A0A00]/90 leading-relaxed">
+                    {g.desc}
                   </p>
                 </motion.div>
               ))}
             </div>
+          </motion.div>
+          {/* 📦 Print & Publication Subtype Cards */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+            {printSubTypes.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+                whileHover={{ y: -10, scale: 1.03 }}
+                className={`relative rounded-3xl p-6 text-white shadow-xl overflow-hidden bg-gradient-to-br ${item.gradient}`}
+              >
+                {/* Glow */}
+                <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500 bg-white/10"></div>
+
+                {/* Icon */}
+                <div className="mb-4 flex items-center justify-center w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md shadow-lg">
+                  {item.icon}
+                </div>
+
+                {/* Text */}
+                <h3 className="text-xl font-semibold mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-white/90">
+                  {item.desc}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </motion.div>
-        {/* -------------------- Pulak Graphics (NEW) -------------------- */}
-        <motion.h2 {...fadeUp}
-          className="text-center text-4xl font-serif text-[#A43B00] font-semibold mb-12">
-          Pulak Graphics <span className="text-[#C45A00]">(Hindi Creative Studio)</span>
-        </motion.h2>
 
-        <div className="max-w-7xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-8 px-6 pb-32">
-          {graphicsServices.map((g, i) => (
-            <motion.div key={i} {...stagger(i * 0.1)}
-              className="bg-white/90 rounded-3xl p-6 shadow-xl hover:-translate-y-2 transition">
-              <div className="mb-4 text-[#C45A00]">{g.icon}</div>
-              <h3 className="text-lg font-semibold text-[#8B0000] mb-2">{g.title}</h3>
-              <p className="text-sm">{g.desc}</p>
-            </motion.div>
-          ))}
-        </div>
+        {/* Section Glow */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#FFE8B3]/40 via-transparent to-transparent blur-3xl pointer-events-none" />
+
+        <motion.h2
+          {...fadeUp}
+          className="relative text-center text-4xl md:text-5xl font-serif text-[#A43B00] font-semibold mb-14"
+        >
+          Other Services{" "}
+        </motion.h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {services.map((service, i) => (
             <motion.div
@@ -317,7 +376,6 @@ export default function ServicesPage() {
           ))}
         </div>
       </div>
-
 
       {/* 💎 Why Jinsharnam Media */}
       <div className="relative py-24 bg-gradient-to-b from-[#FFF8E7] via-[#FFEEC2] to-[#FFD97A] border-t border-amber-300 overflow-hidden">

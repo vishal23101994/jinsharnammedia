@@ -121,7 +121,7 @@ export default function JinsharnamTirthPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-amber-100 px-4">
           <h1 className="text-4xl md:text-6xl font-serif font-semibold mb-3 drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]">
-            Jinsharnam Tirth
+            Shri Digambar Jain Jinsharnam Tirth Trust
           </h1>
           <p className="max-w-2xl text-lg md:text-xl font-light leading-relaxed drop-shadow-[0_3px_6px_rgba(0,0,0,0.8)]">
             A serene sanctuary of peace and devotion guided by
@@ -211,13 +211,15 @@ export default function JinsharnamTirthPage() {
       <div className="bg-gradient-to-b from-[#FFF8E7] to-[#FFECC7] py-16 border-t border-amber-200">
         <div className="max-w-6xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-serif text-[#4B1E00] font-semibold mb-8">
-            📍 Location — Jinsharnam Tirth
+            📍 Location — Shri Digambar Jain Jinsharnam Tirth Trust
           </h2>
 
           <p className="text-lg text-[#4B1E00]/90 mb-10">
             <MapPin className="inline-block mr-2 text-amber-600" size={20} />
-            <strong>Address:</strong> Jinsharnam Tirth Jain Digambar Temple,
-            Upalat, Maharashtra 401606
+            <strong>Address: </strong>Mumbai-Surat Highway No 48, Mukaam Post, Uplat, Tehsil Talasari, District Palghar, Maharashtra-401606
+          </p>
+          <p className="text-lg text-[#4B1E00]/90 mb-10">
+            <strong>Contact: </strong>+91-7987176553, 8799598079
           </p>
 
           <div className="grid md:grid-cols-3 gap-8 text-[#4B1E00]/90">
@@ -431,6 +433,24 @@ export default function JinsharnamTirthPage() {
                   <button
                     onClick={() =>
                       navigator.clipboard.writeText("CNRB0002565")
+                    }
+                    className="bg-amber-100 hover:bg-amber-200 transition px-4 py-1.5 rounded-lg text-sm font-medium text-[#4B1E00] shadow-sm"
+                  >
+                    📋 Copy
+                  </button>
+                </div>
+              </div>
+
+              {/* IFSC */}
+              <div className="mb-6">
+                <p className="text-sm text-[#4B1E00]/70">PAN</p>
+
+                <div className="flex items-center gap-3 mt-1">
+                  <p className="font-mono text-xl font-bold">AALTS9991H</p>
+
+                  <button
+                    onClick={() =>
+                      navigator.clipboard.writeText("AALTS9991H")
                     }
                     className="bg-amber-100 hover:bg-amber-200 transition px-4 py-1.5 rounded-lg text-sm font-medium text-[#4B1E00] shadow-sm"
                   >

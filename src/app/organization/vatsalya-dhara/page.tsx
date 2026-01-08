@@ -25,17 +25,64 @@ export default function VatsalyaDharaPage() {
   const [copyMsg, setCopyMsg] = useState<string | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [zoomImage, setZoomImage] = useState<string | null>(null);
+  const [isVideoPaused, setIsVideoPaused] = useState(false);
 
   const donation = {
     accountName: "VATSALYA DHARA TRUST (REGD.)",
     accountNumber: "925010022258145",
     ifsc: "UTIB0005638",
+    pan: "AABTV5574B",
     bankName: "AXIS BANK Ltd.",
     branch: "BHOLANATH NAGAR, DELHI",
     contacts: ["9910987666", "9810900699"],
     qrPath: "/images/donation/vatsalya_qr.jpeg",
     upiId: "",
   };
+
+  const trustees = [
+    {
+      role: "अध्यक्ष",
+      name: "सीमा जैन",
+      address:
+        "D-49 बी, ललिता पार्क, शकरपुर एक्सटें., लक्ष्मी नगर, दिल्ली - 110092",
+      phone: "9625604001",
+    },
+    {
+      role: "महामंत्री",
+      name: "अंकित जैन ‘प्रिंस’",
+      address:
+        "पुलक निवास, 4/2771, गली नं. 3, बिहारी कॉलोनी, शाहदरा, दिल्ली - 32",
+      phone: "9810900699",
+    },
+    {
+      role: "कोषाध्यक्ष",
+      name: "संदीप जैन",
+      address: "मकान नं. 1154, सेक्टर-16, फरीदाबाद (हरि.)",
+      phone: "9810772312",
+    },
+    {
+      role: "ट्रस्टी",
+      name: "राजू व्यास",
+      address: "116, लख्मी की पोल, जोधपुर (राज.)",
+      phone: "9414243770",
+    },
+  ];
+
+  const [activeVideo, setActiveVideo] = useState<number | null>(null);
+
+  const videos = [
+    { src: "/videos/vatsalya/1.mp4", title: "Annadaan Seva" },
+    { src: "/videos/vatsalya/2.mp4", title: "Health Camp" },
+    { src: "/videos/vatsalya/3.mp4", title: "Gau Seva" },
+    { src: "/videos/vatsalya/4.mp4", title: "Youth Empowerment" },
+    { src: "/videos/vatsalya/5.mp4", title: "Ambulance Seva" },
+    { src: "/videos/vatsalya/6.mp4", title: "Education Drive" },
+    { src: "/videos/vatsalya/7.mp4", title: "Food Distribution" },
+    { src: "/videos/vatsalya/8.mp4", title: "Medical Support" },
+    { src: "/videos/vatsalya/9.mp4", title: "Community Help" },
+    { src: "/videos/vatsalya/10.mp4", title: "Spiritual Seva" },
+  ];
+
 
   const copy = async (text: string, label?: string) => {
     try {
@@ -79,15 +126,46 @@ export default function VatsalyaDharaPage() {
         {/* CONTENT */}
         <div className="relative z-10 max-w-4xl mx-auto">
 
-          {/* Title */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+          <motion.div
+            initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: "easeOut" }}
-            className="font-serif text-4xl md:text-6xl lg:text-7xl font-semibold text-[#4B1E00] mb-6 tracking-wide"
+            transition={{ duration: 1 }}
+            className="flex flex-col items-center gap-4 mb-6"
           >
-            Vatsalya Dhara
-          </motion.h1>
+            {/* LOGO */}
+            <motion.img
+              src="/images/logo/vatsalya.PNG"
+              alt="Pulak Manch Logo"
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{
+                opacity: 1,
+                scale: [1, 1.06, 1],
+                rotate: [0, 1.5, 0],
+              }}
+              transition={{
+                opacity: { duration: 0.6, delay: 0.2 },
+                scale: {
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                },
+                rotate: {
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                },
+              }}
+              className="w-24 h-24 md:w-28 md:h-28 object-contain drop-shadow-xl"
+              style={{
+                filter: "drop-shadow(0 0 10px rgba(251,191,36,0.6))",
+              }}
+            />
+
+            {/* TITLE */}
+            <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-semibold text-center">
+              Vatsalya Dhara Trust
+            </h1>
+          </motion.div>
 
           {/* Lotus Divider */}
           <motion.div
@@ -200,6 +278,121 @@ export default function VatsalyaDharaPage() {
           </motion.div>
         )}
       </section>
+
+      {/* SEVA IN MOTION – SACRED VIDEO SCROLL */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#FFF1C1] to-transparent py-16">
+
+        {/* edge fades */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#FFF1C1] to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#FFF1C1] to-transparent z-10" />
+
+        <h3 className="text-3xl md:text-4xl font-serif font-semibold text-center mb-10">
+          Vatsalya Dhara Trust
+        </h3>
+
+        <motion.div
+          className="flex gap-8 w-max px-8"
+          animate={isVideoPaused ? { x: undefined } : { x: ["0%", "-50%"] }}
+          transition={{ duration: 70, repeat: Infinity, ease: "linear" }}
+          onMouseEnter={() => setIsVideoPaused(true)}
+          onMouseLeave={() => setIsVideoPaused(false)}
+        >
+
+          {[...Array(2)].map((_, loopIndex) =>
+            videos.map((video, index) => (
+              <motion.div
+                key={`${loopIndex}-${index}`}
+                whileHover={{ scale: 1.05 }}
+                className="relative shrink-0 w-[320px] h-[200px] rounded-3xl overflow-hidden cursor-pointer shadow-2xl border border-amber-200"
+                onClick={() => setActiveVideo(index)}
+              >
+                {/* Thumbnail video (muted preview only) */}
+                <video
+                  src={video.src}
+                  muted
+                  preload="metadata"
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+
+                {/* overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+
+                {/* play icon */}
+                <motion.div
+                  animate={{ scale: [1, 1.15, 1] }}
+                  transition={{ repeat: Infinity, duration: 1.8 }}
+                  className="absolute inset-0 flex items-center justify-center"
+                >
+                  <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-xl">
+                    ▶
+                  </div>
+                </motion.div>
+
+                {/* title */}
+                <div className="absolute bottom-3 left-3 right-3 text-white text-sm font-semibold">
+                  {video.title}
+                </div>
+              </motion.div>
+            ))
+          )}
+        </motion.div>
+        {activeVideo !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+            onClick={() => setActiveVideo(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.3 }}
+              className="relative w-full max-w-4xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* VIDEO PLAYER */}
+              <video
+                src={videos[activeVideo].src}
+                controls
+                autoPlay
+                playsInline
+                className="w-full rounded-2xl shadow-2xl"
+              />
+
+              {/* TITLE */}
+              <p className="text-center text-white mt-4 text-lg font-semibold">
+                {videos[activeVideo].title}
+              </p>
+
+              {/* NAVIGATION */}
+              <div className="flex justify-between mt-6">
+                <button
+                  onClick={() =>
+                    setActiveVideo(
+                      (activeVideo - 1 + videos.length) % videos.length
+                    )
+                  }
+                  className="bg-amber-100 px-5 py-2 rounded-full font-medium"
+                >
+                  ⟵ Previous
+                </button>
+
+                <button
+                  onClick={() =>
+                    setActiveVideo((activeVideo + 1) % videos.length)
+                  }
+                  className="bg-amber-100 px-5 py-2 rounded-full font-medium"
+                >
+                  Next ⟶
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </section>
+
 
       <main className="max-w-6xl mx-auto px-6 pb-20 space-y-12">
 
@@ -362,47 +555,42 @@ export default function VatsalyaDharaPage() {
           </div>
         </motion.section>
 
-        {/* HOW TO HELP */}
-        {/*<motion.section
-          initial={{ opacity: 0, y: 8 }}
+        {/* TRUSTEE SECTION */}
+        <motion.section
+          initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="bg-white/60 p-8 rounded-2xl shadow-lg border border-amber-200"
+          className="bg-white/70 backdrop-blur-md p-8 rounded-2xl shadow-lg border border-amber-200"
         >
-          <h3 className="text-2xl font-serif font-semibold mb-3">How You Can Help</h3>
-          <ul className="list-disc list-inside text-lg text-[#4B1E00]/90 space-y-2">
-            <li>Volunteer during food distribution or medical camps.</li>
-            <li>Support cow shelters or stray animal feeding drives.</li>
-            <li>Donate books or essentials to support education.</li>
-            <li>Assist with emergency and ambulance services.</li>
-            <li>Spread awareness and bring more volunteers.</li>
-          </ul>
-        </motion.section>*/}
+          <h2 className="text-3xl md:text-4xl font-serif font-semibold text-center mb-10">
+            Vatsalya Dhara Trust (Regd.)
+          </h2>
 
-        {/* CONTACT */}
-        {/*<motion.section
-          initial={{ opacity: 0, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="bg-white/60 p-8 rounded-2xl shadow-lg border border-amber-200 text-center"
-        >
-          <h3 className="text-2xl font-serif font-semibold mb-2">Contact</h3>
-          <p className="text-lg text-[#4B1E00]/90 mb-4">
-            For volunteering, events or donation assistance:
-          </p>
-
-          <div className="flex justify-center gap-4 flex-wrap">
-            {donation.contacts.map((c) => (
-              <a
-                key={c}
-                href={`tel:${c}`}
-                className="bg-amber-100 px-4 py-2 rounded-full text-[#4B1E00] font-semibold shadow-sm hover:scale-105 transition"
+          <div className="grid md:grid-cols-4 gap-6">
+            {trustees.map((t) => (
+              <div
+                key={t.name}
+                className="bg-amber-50 p-5 rounded-xl border border-amber-200 shadow-sm text-center"
               >
-                {c}
-              </a>
+                <p className="text-sm text-amber-700 font-semibold mb-1">
+                  {t.role}
+                </p>
+                <h3 className="text-lg font-semibold mb-2">{t.name}</h3>
+
+                <p className="text-sm text-[#4B1E00]/80 leading-relaxed mb-3">
+                  {t.address}
+                </p>
+
+                <a
+                  href={`tel:${t.phone}`}
+                  className="inline-block bg-amber-100 px-3 py-1 rounded-full text-sm font-medium"
+                >
+                  📞 {t.phone}
+                </a>
+              </div>
             ))}
           </div>
-        </motion.section>*/}
+        </motion.section>
 
         {/* DONATION SECTION */}
         <motion.section
@@ -420,7 +608,7 @@ export default function VatsalyaDharaPage() {
             {/* BANK TRANSFER */}
             <div className="bg-white p-6 rounded-xl border border-amber-200 shadow-sm">
               <h4 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <Download size={18} /> Bank Transfer
+                Bank Transfer
               </h4>
 
               <div className="text-[#4B1E00] space-y-3">
@@ -448,6 +636,19 @@ export default function VatsalyaDharaPage() {
                   </div>
                   <button
                     onClick={() => copy(donation.ifsc, "IFSC Code")}
+                    className="ml-auto bg-amber-100 px-3 py-1 rounded-md text-sm flex items-center gap-2 hover:scale-105 transition"
+                  >
+                    <ClipboardCopy size={16} /> Copy
+                  </button>
+                </div>
+                {/* IFSC */}
+                <div className="flex items-center gap-3">
+                  <div>
+                    <p className="text-sm text-[#4B1E00]/70">PAN</p>
+                    <p className="font-mono font-semibold">{donation.pan}</p>
+                  </div>
+                  <button
+                    onClick={() => copy(donation.pan, "PAN")}
                     className="ml-auto bg-amber-100 px-3 py-1 rounded-md text-sm flex items-center gap-2 hover:scale-105 transition"
                   >
                     <ClipboardCopy size={16} /> Copy

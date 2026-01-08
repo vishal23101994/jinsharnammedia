@@ -10,8 +10,6 @@ import LatestUpdatesSection from "@/components/LatestUpdatesSection";
 import UpcomingEventsSection from "@/components/UpcomingEventsSection";
 import FeedbackSection from "@/components/FeedbackSection";
 
-
-
 // 🎥 YouTube video type
 type Video = { id: string; title: string; thumbnail?: string; publishedAt?: string };
 
@@ -47,10 +45,11 @@ export default function Home() {
     <>
       <HeroSection />
       <AboutSection />
+      <OrganizationsSection />
+      <PulakSagarHighlights />
+      <AdvertisementCards />
       <LatestUpdatesSection />
       <UpcomingEventsSection />
-      <AdvertisementCards />
-      <PulakSagarHighlights />
       <LatestVideosSection videos={videos} loading={loading} />
       <FeedbackSection />
     </>
@@ -247,6 +246,127 @@ function AboutSection() {
           </p>
         </motion.div>
       </div>
+    </section>
+  );
+}
+
+function OrganizationsSection() {
+  const orgs = [
+    {
+      title: "Shri Digambar Jain Jinsharnam Tirth Trust",
+      desc:
+        "A sacred Jain Tirth dedicated to spirituality, devotion, and service, established under the divine guidance of Acharya Shri Pulak Sagar Ji Maharaj.",
+      image: "/images/gallery/logo/jinsharnamtirth.PNG",
+      href: "/organization/jinsharnam-tirth",
+    },
+    {
+      title: "Vatsalya Dhara Trust",
+      desc:
+        "A registered humanitarian trust engaged in annadaan, healthcare, education, animal welfare, and compassionate service to society.",
+      image: "/images/logo/vatsalya.PNG",
+      href: "/organization/vatsalya-dhara",
+    },
+    {
+      title: "Pulak Manch Parivar",
+      desc:
+        "A nationwide Jain youth and service movement fostering discipline, leadership, character building, and social responsibility.",
+      image: "/images/logo/pulakmanch.PNG",
+      href: "/organization/pulak-manch",
+    },
+  ];
+
+  return (
+    <section className="relative py-28 bg-gradient-to-b from-[#FFF3D6] via-[#FFE8B5] to-[#FFF3D6]">
+
+      {/* Decorative Border */}
+      <div className="absolute inset-x-0 top-0 h-[6px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
+
+      <div className="max-w-7xl mx-auto px-6">
+
+        {/* SECTION TITLE */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-20"
+        >
+          <h2 className="text-4xl md:text-5xl font-serif text-[#6A0000]">
+            Our Organizations
+          </h2>
+
+          {/* Elegant Divider */}
+          <div className="mt-4 flex justify-center">
+            <div className="w-32 h-[3px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent rounded-full" />
+          </div>
+        </motion.div>
+
+        {/* CARDS */}
+        <div className="grid md:grid-cols-3 gap-14">
+          {orgs.map((org, i) => (
+            <motion.div
+              key={org.title}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: i * 0.15 }}
+              whileHover={{ y: -14 }}
+              className="
+                group rounded-3xl overflow-hidden
+                border border-[#D4AF37]/50
+                bg-gradient-to-b from-[#FFFDF7] to-[#FFF1D6]
+                shadow-[0_20px_40px_rgba(212,175,55,0.25)]
+                hover:shadow-[0_30px_60px_rgba(212,175,55,0.45)]
+                transition-all
+              "
+            >
+              {/* IMAGE AREA (FIXED HEIGHT & BIGGER IMAGE) */}
+              <div className="h-[260px] flex items-center justify-center bg-gradient-to-b from-[#FFF8E7] to-[#FAE3A3]/50">
+                <img
+                  src={org.image}
+                  alt={org.title}
+                  className="
+                    max-h-[210px]
+                    max-w-[90%]
+                    object-contain
+                    transition-transform duration-700
+                    group-hover:scale-110
+                  "
+                />
+              </div>
+
+              {/* CONTENT */}
+              <div className="p-8 text-center">
+                <h3 className="text-2xl font-serif text-[#6A0000] mb-4">
+                  {org.title}
+                </h3>
+
+                <p className="text-[#4B1E00]/90 text-sm leading-relaxed">
+                  {org.desc}
+                </p>
+
+                <Link
+                  href={org.href}
+                  className="
+                    inline-block mt-7 px-7 py-2.5
+                    rounded-full
+                    bg-gradient-to-r from-[#D4AF37] to-[#FFD97A]
+                    text-[#4B1E00] font-semibold
+                    hover:scale-105
+                    shadow-md hover:shadow-lg
+                    transition-all
+                  "
+                >
+                  Learn More →
+                </Link>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Bottom Decorative Border */}
+      <div className="absolute inset-x-0 bottom-0 h-[6px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
     </section>
   );
 }

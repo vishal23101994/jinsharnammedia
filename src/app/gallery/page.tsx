@@ -86,7 +86,12 @@ export default function GalleryPage() {
     ],
 
     "Logos & Identity": [
-      "/images/gallery/logo/logo.jpg",
+      "/images/gallery/logo/jinsharnam.jpg",
+      "/images/gallery/logo/jinsharnamtirth.png",
+      "/images/gallery/logo/vatsalya.png",
+      "/images/gallery/logo/pulakmanch.png",
+      "/images/gallery/logo/pulakjan.png",
+      "/images/gallery/logo/jainmahila.png",
     ],
   };
 

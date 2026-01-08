@@ -20,6 +20,14 @@ type Member = {
 
 type ColumnKey = keyof Member;
 
+type SimpleMember = {
+  "S.No"?: number | string;
+  Name?: string;
+  Designation?: string;
+  Address?: string;
+  Mob?: string;
+};
+
 /* ================= HELPERS ================= */
 const formatDate = (d?: string | null) => {
   if (!d) return "";
@@ -39,6 +47,25 @@ const highlight = (text: string, q: string) => {
 export default function DirectoryPage() {
   const [data, setData] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [simpleData, setSimpleData] = useState<SimpleMember[]>([]);
+  const [simpleLoading, setSimpleLoading] = useState(true);
+
+  const exportSimpleExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      simpleData.map((r) => ({
+        "S.No": r["S.No"],
+        Name: r.Name,
+        Designation: r.Designation,
+        Address: r.Address,
+        Mob: r.Mob,
+      }))
+    );
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Rashriya Karyakarini List");
+    XLSX.writeFile(wb, "Rashriya Karyakarini List.xlsx");
+  };
 
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState({
@@ -77,6 +104,18 @@ export default function DirectoryPage() {
         )
       )
       .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetch("/data/Rashtriye_Karyakarni_List.xlsx")
+      .then((res) => res.arrayBuffer())
+      .then((ab) => {
+        const wb = XLSX.read(ab, { type: "array" });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json<SimpleMember>(ws);
+        setSimpleData(json);
+      })
+      .finally(() => setSimpleLoading(false));
   }, []);
 
   /* ================= STICKY SHADOW ================= */
@@ -151,9 +190,30 @@ export default function DirectoryPage() {
         {/* HEADER */}
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-serif text-[#6A0000]">
-            Jinsharnam Directory
+            Jinsharnam Ekta Directory
           </h1>
           <div className="w-24 h-[2px] bg-[#D4AF37] mx-auto mt-3" />
+        </div>
+
+        {/* DOWNLOAD SECTION */}
+        <div className="flex flex-wrap justify-center gap-4 mb-6">
+          <a
+            href="/ekta-directory-gents.pdf"
+            download
+            target="_blank"
+            className="px-6 py-3 rounded-full bg-[#6A0000] text-[#FFF1D6] font-semibold shadow hover:bg-[#8B0000] transition"
+          >
+            📄 Download Ekta Directory – Gents
+          </a>
+
+          <a
+            href="/ekta-directory-ladies.pdf"
+            download
+            target="_blank"
+            className="px-6 py-3 rounded-full bg-[#D4AF37] text-[#6A0000] font-semibold shadow hover:bg-[#C9A227] transition"
+          >
+            📄 Download Ekta Directory – Ladies
+          </a>
         </div>
 
         {/* SEARCH + RESET */}
@@ -182,13 +242,29 @@ export default function DirectoryPage() {
               Reset
             </button>
             {/* ACTION BAR */}
-            <div className="flex justify-end mb-4">
+            <div className="flex flex-wrap gap-3 justify-end">
               <button
                 onClick={exportExcel}
-                className="px-3 py-2 rounded-full bg-[#6A0000] text-[#FFF1D6] font-semibold hover:bg-[#8B0000] transition"
+                className="px-4 py-2 rounded-full bg-[#6A0000] text-[#FFF1D6] font-semibold hover:bg-[#8B0000] transition"
               >
                 Export Excel
               </button>
+
+              <a
+                href="/directory/Ekta_Directory_Gents_2025.pdf"
+                target="_blank"
+                className="px-4 py-2 rounded-full border border-[#6A0000] text-[#6A0000] font-semibold hover:bg-[#FFF1D6] transition"
+              >
+                Gents PDF
+              </a>
+
+              <a
+                href="/directory/Ekta_Directory_Ladies_2025.pdf"
+                target="_blank"
+                className="px-4 py-2 rounded-full border border-[#D4AF37] text-[#6A0000] font-semibold hover:bg-[#FFF1D6] transition"
+              >
+                Ladies PDF
+              </a>
             </div>
           </div>
 
@@ -295,7 +371,72 @@ export default function DirectoryPage() {
             </tbody>
           </table>
         </div>
+        {/* SECOND EXCEL TABLE */}
+        <div className="mt-12 bg-white rounded-2xl shadow-xl border border-[#E7D6BF]">
+          {/* HEADER + EXPORT */}
+          <div className="relative p-5 border-b border-[#E7D6BF]">
+            <h2 className="text-2xl font-serif text-[#6A0000] text-center">
+              Rashtriya Karyakarini List
+            </h2>
 
+            <button
+              onClick={exportSimpleExcel}
+              className="absolute right-5 top-1/2 -translate-y-1/2 px-4 py-2 rounded-full bg-[#6A0000] text-[#FFF1D6] font-semibold hover:bg-[#8B0000] transition"
+            >
+              Export Excel
+            </button>
+          </div>
+          {/* SCROLL AREA */}
+          <div className="max-h-[50vh] overflow-y-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead className="sticky top-0 bg-[#FAF3E8] z-10">
+                <tr>
+                  {["S.No", "Name", "Designation", "Address", "Mob"].map((h) => (
+                    <th
+                      key={h}
+                      className="px-4 py-3 text-left text-xs uppercase tracking-wider border border-[#E7D6BF]"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+
+              <tbody>
+                {simpleLoading ? (
+                  <tr>
+                    <td colSpan={5} className="p-6 text-center">
+                      Loading…
+                    </td>
+                  </tr>
+                ) : (
+                  simpleData.map((row, i) => (
+                    <tr
+                      key={i}
+                      className="odd:bg-white even:bg-[#FBF7F2] hover:bg-[#FFF1D6]"
+                    >
+                      <td className="px-4 py-3 border border-[#E7D6BF]">
+                        {row["S.No"]}
+                      </td>
+                      <td className="px-4 py-3 border border-[#E7D6BF]">
+                        {row.Name}
+                      </td>
+                      <td className="px-4 py-3 border border-[#E7D6BF]">
+                        {row.Designation}
+                      </td>
+                      <td className="px-4 py-3 border border-[#E7D6BF]">
+                        {row.Address}
+                      </td>
+                      <td className="px-4 py-3 border border-[#E7D6BF]">
+                        {row.Mob}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
         {/* MOBILE */}
         <div className="md:hidden space-y-4">
           {sorted.map((m, i) => (
