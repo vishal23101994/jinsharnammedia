@@ -43,7 +43,7 @@ export default function PulakManchPage() {
           >
             {/* LOGO */}
             <motion.img
-              src="/images/logo/pulakmanch.PNG"
+              src="/images/logo/pulakmanch.png"
               alt="Pulak Manch Logo"
               initial={{ scale: 0.85, opacity: 0 }}
               animate={{

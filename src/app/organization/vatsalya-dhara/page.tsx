@@ -134,7 +134,7 @@ export default function VatsalyaDharaPage() {
           >
             {/* LOGO */}
             <motion.img
-              src="/images/logo/vatsalya.PNG"
+              src="/images/logo/vatsalya.png"
               alt="Pulak Manch Logo"
               initial={{ scale: 0.85, opacity: 0 }}
               animate={{
