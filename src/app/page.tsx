@@ -256,21 +256,21 @@ function OrganizationsSection() {
       title: "Shri Digambar Jain Jinsharnam Tirth Trust",
       desc:
         "A sacred Jain Tirth dedicated to spirituality, devotion, and service, established under the divine guidance of Acharya Shri Pulak Sagar Ji Maharaj.",
-      image: "/images/gallery/logo/jinsharnamtirth.PNG",
+      image: "/images/gallery/logo/jinsharnamtirth.png",
       href: "/organization/jinsharnam-tirth",
     },
     {
       title: "Vatsalya Dhara Trust",
       desc:
         "A registered humanitarian trust engaged in annadaan, healthcare, education, animal welfare, and compassionate service to society.",
-      image: "/images/logo/vatsalya.PNG",
+      image: "/images/logo/vatsalya.png",
       href: "/organization/vatsalya-dhara",
     },
     {
       title: "Pulak Manch Parivar",
       desc:
         "A nationwide Jain youth and service movement fostering discipline, leadership, character building, and social responsibility.",
-      image: "/images/logo/pulakmanch.PNG",
+      image: "/images/logo/pulakmanch.png",
       href: "/organization/pulak-manch",
     },
   ];
