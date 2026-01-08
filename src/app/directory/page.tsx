@@ -198,7 +198,7 @@ export default function DirectoryPage() {
         {/* DOWNLOAD SECTION */}
         <div className="flex flex-wrap justify-center gap-4 mb-6">
           <a
-            href="/ekta-directory-gents.pdf"
+            href="/directory/Ekta_Directory_Gents_2025.pdf"
             download
             target="_blank"
             className="px-6 py-3 rounded-full bg-[#6A0000] text-[#FFF1D6] font-semibold shadow hover:bg-[#8B0000] transition"
@@ -207,7 +207,7 @@ export default function DirectoryPage() {
           </a>
 
           <a
-            href="/ekta-directory-ladies.pdf"
+            href="/Ekta_Directory_Ladies_2025.pdf"
             download
             target="_blank"
             className="px-6 py-3 rounded-full bg-[#D4AF37] text-[#6A0000] font-semibold shadow hover:bg-[#C9A227] transition"
