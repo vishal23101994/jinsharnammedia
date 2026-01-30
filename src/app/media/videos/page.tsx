@@ -33,7 +33,7 @@ const OTHER_CHANNELS = [
     url: "https://www.youtube.com/channel/UCSrH8S5hb6IlI9o7LmdG1rA",
   },
   {
-    name: "Jain Channel",
+    name: "Jain Bhakti",
     url: "https://www.youtube.com/channel/UCG_CLytD3CThclRvdKWNndw",
   },
   {
