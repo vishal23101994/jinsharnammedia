@@ -19,7 +19,7 @@ type Update = {
 const SECTIONS = [
   { key: "JINSHARNAM", title: "Shri Digambar Jain Jinsharnam Tirth Trust" },
   { key: "VATSALYA", title: "Vatsalya Dhara Trust" },
-  { key: "ADVERTISEMENT", title: "Advertisement" },
+  { key: "ADVERTISEMENT", title: "Pulak Manch Parivar" },
 ] as const;
 
 /* ================= MAIN ================= */
@@ -85,7 +85,7 @@ export default function LatestUpdatesSection() {
 
         <div className="mt-6 mb-20 text-center italic text-[#4B1E00]/80 space-y-2">
           <p>Moments of Seva, Sadhana & Spiritual Growth</p>
-          <p>Reflections from Jinsharnam Tirth & Vatsalya Dhara</p>
+          <p>Reflections from Shri Digambar Jain Jinsharnam Tirth Trust, Vatsalya Dhara Trust & Pulak Manch Parivar</p>
           <p>Walking together on the path of Dharma</p>
         </div>
 
@@ -133,7 +133,7 @@ export default function LatestUpdatesSection() {
                       onClick={() => setActiveCategory("ADVERTISEMENT")}
                       className="font-semibold underline text-sm"
                     >
-                      Contact us for advertisement →
+                      View Pulak Manch Parivar Updates →
                     </button>
                   ) : latest ? (
                     <>
