@@ -190,24 +190,74 @@ export default function PulakManchPage() {
             Membership & Contribution
           </h2>
 
-          <p className="text-lg leading-relaxed mb-8">
+          <p className="text-lg leading-relaxed mb-10">
             • One-time Registration / Application Fee: <strong>₹1100 per member</strong><br />
             • Little Champs: <strong>Free</strong><br />
             • Monthly & Annual contributions are decided locally by each unit.
           </p>
 
-          <motion.a
-            href="/forms/pulak-manch-registration-form.pdf"
-            download
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.95 }}
-            animate={{ boxShadow: ["0 0 0px #fbbf24", "0 0 30px #fbbf24", "0 0 0px #fbbf24"] }}
-            transition={{ duration: 3, repeat: Infinity }}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-400 text-white px-8 py-4 rounded-full font-semibold shadow-lg"
-          >
-            <Download size={20} />
-            Download Registration Form (PDF)
-          </motion.a>
+          {/* DOWNLOAD FORMS */}
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+
+            {/* GENERAL FORM */}
+            <motion.a
+              href="/forms/Pulak Manch Membership Form Oct 2024.pdf"
+              download
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.96 }}
+              className="
+                group bg-gradient-to-br from-amber-500 to-yellow-400
+                text-white p-6 rounded-2xl
+                shadow-lg hover:shadow-2xl
+                transition-all
+              "
+            >
+              <Download className="mx-auto mb-3" />
+              <h3 className="text-lg font-semibold">Pulak Manch</h3>
+              <p className="text-sm opacity-90">Membership Form</p>
+            </motion.a>
+
+            {/* JMJM – LADIES */}
+            <motion.a
+              href="/forms/JMJM.pdf"
+              download
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.96 }}
+              className="
+                group bg-gradient-to-br from-pink-500 to-rose-400
+                text-white p-6 rounded-2xl
+                shadow-lg hover:shadow-2xl
+                transition-all
+              "
+            >
+              <Download className="mx-auto mb-3" />
+              <h3 className="text-lg font-semibold">JMJM</h3>
+              <p className="text-sm opacity-90">
+                Ladies Membership Form
+              </p>
+            </motion.a>
+
+            {/* PJCM – GENTS */}
+            <motion.a
+              href="/forms/PJCM.pdf"
+              download
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.96 }}
+              className="
+                group bg-gradient-to-br from-blue-600 to-indigo-500
+                text-white p-6 rounded-2xl
+                shadow-lg hover:shadow-2xl
+                transition-all
+              "
+            >
+              <Download className="mx-auto mb-3" />
+              <h3 className="text-lg font-semibold">PJCM</h3>
+              <p className="text-sm opacity-90">
+                Gents Membership Form
+              </p>
+            </motion.a>
+
+          </div>
         </motion.section>
 
         {/* VALUES */}
@@ -248,15 +298,15 @@ export default function PulakManchPage() {
           viewport={{ once: true }}
           className="bg-white/70 p-10 rounded-3xl shadow-xl border border-amber-200"
         >
-          <h2 className="text-2xl font-serif font-semibold mb-6">
+          <h2 className="text-2xl font-serif font-semibold mb-6 text-center">
             Contact & Offices
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-8 text-sm">
+          <div className="grid md:grid-cols-2 gap-8 text-sm text-center">
             <div>
               <strong>National Office</strong><br />
               Vatsalya Bhawan, P-75, Gali No. 5,<br />
-              Bihari Colony Ext., Shahdara, Delhi – 32<br />
+              Bihari Colony Extension, Bihari Colony, <br />Shahdara, Delhi – 110032<br />
               📞 9810900699
             </div>
             <div>

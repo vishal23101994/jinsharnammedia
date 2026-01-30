@@ -27,6 +27,38 @@ declare global {
   }
 }
 
+const OTHER_CHANNELS = [
+  {
+    name: "Pulak Bhajan",
+    url: "https://www.youtube.com/channel/UCSrH8S5hb6IlI9o7LmdG1rA",
+  },
+  {
+    name: "Jain Channel",
+    url: "https://www.youtube.com/channel/UCG_CLytD3CThclRvdKWNndw",
+  },
+  {
+    name: "Pulakvani News",
+    url: "https://www.youtube.com/channel/UC-ds1gWjZnDGv1UaLT2uosA",
+  },
+  {
+    name: "Kids Masti World",
+    url: "https://www.youtube.com/channel/UCYQlyZBYGd5hcPwXzd4odFg",
+  },
+  {
+    name: "Jyotish Samadhan",
+    url: "https://www.youtube.com/channel/UCL2DHB7Ej6IKc42v8USR50Q",
+  },
+  {
+    name: "Aakhir Aisa Kyon",
+    url: "https://www.youtube.com/channel/UCSGrU6SXeBkvZcIDYsU_7hg",
+  },
+  {
+    name: "Pulak Sagar Shorts",
+    url: "https://www.youtube.com/channel/UCS6WvgPNmY_lZ1eh-A_lQYw",
+  },
+];
+
+
 export default function JinsharnamMediaSpiritual() {
   const [channel, setChannel] = useState<any>(null);
   const [tab, setTab] = useState<Tab>("home");
@@ -193,41 +225,86 @@ export default function JinsharnamMediaSpiritual() {
       <main className="max-w-7xl mx-auto px-4 py-10">
         {/* HOME with See more links */}
         {tab === "home" && sections && (
-          <div className="space-y-10">
-            <Section
-              title="🌼 Latest Uploads"
-              items={sections.latest}
-              onVideoClick={(v: any) => {
-                setVideoList(sections.latest);
-                setSelectedIndex(sections.latest.indexOf(v));
-              }}
-              onSeeMore={() => fetchTab("videos", { useSort: "latest" })}
-            />
-            <Section
-              title="🔥 Popular"
-              items={sections.popular}
-              onVideoClick={(v: any) => {
-                setVideoList(sections.popular);
-                setSelectedIndex(sections.popular.indexOf(v));
-              }}
-              onSeeMore={() => fetchTab("videos", { useSort: "popular" })}
-            />
-            <Section
-              title="🎬 Shorts"
-              items={sections.shorts}
-              isShorts
-              onVideoClick={(v: any) => {
-                setVideoList(sections.shorts);
-                setSelectedIndex(sections.shorts.indexOf(v));
-              }}
-              onSeeMore={() => fetchTab("shorts", { useSort: "latest" })}
-            />
-            <PlaylistsSection
-              title="📜 Playlists"
-              items={sections.playlists}
-              onSeeMore={() => fetchTab("playlists")}
-            />
-          </div>
+          <>
+            <div className="space-y-10">
+              <Section
+                title="🌼 Latest Uploads"
+                items={sections.latest}
+                onVideoClick={(v: any) => {
+                  setVideoList(sections.latest);
+                  setSelectedIndex(sections.latest.indexOf(v));
+                }}
+                onSeeMore={() => fetchTab("videos", { useSort: "latest" })}
+              />
+
+              <Section
+                title="🔥 Popular"
+                items={sections.popular}
+                onVideoClick={(v: any) => {
+                  setVideoList(sections.popular);
+                  setSelectedIndex(sections.popular.indexOf(v));
+                }}
+                onSeeMore={() => fetchTab("videos", { useSort: "popular" })}
+              />
+
+              <Section
+                title="🎬 Shorts"
+                items={sections.shorts}
+                isShorts
+                onVideoClick={(v: any) => {
+                  setVideoList(sections.shorts);
+                  setSelectedIndex(sections.shorts.indexOf(v));
+                }}
+                onSeeMore={() => fetchTab("shorts", { useSort: "latest" })}
+              />
+
+              <PlaylistsSection
+                title="📜 Playlists"
+                items={sections.playlists}
+                onSeeMore={() => fetchTab("playlists")}
+              />
+            </div>
+
+            {/* OTHER YOUTUBE CHANNELS */}
+            <div className="mt-16">
+              <h2 className="text-2xl font-semibold text-[#3E2723] mb-6">
+                📺 Our Other YouTube Channels
+              </h2>
+
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {OTHER_CHANNELS.map((ch) => (
+                  <div
+                    key={ch.url}
+                    className="bg-white rounded-2xl border border-[#E0C097]
+                               shadow-md hover:shadow-xl transition
+                               p-5 flex flex-col justify-between"
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 rounded-full bg-red-600
+                                      text-white flex items-center justify-center
+                                      text-xl font-bold">
+                        ▶
+                      </div>
+                      <h3 className="font-semibold text-[#3E2723] leading-snug">
+                        {ch.name}
+                      </h3>
+                    </div>
+
+                    <a
+                      href={ch.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-auto text-center px-4 py-2 rounded-full
+                                 bg-[#FFF3E0] hover:bg-[#F8E1A1]
+                                 text-[#3E2723] font-medium transition"
+                    >
+                      Visit Channel →
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
         )}
 
         {/* VIDEOS / SHORTS / LIVE with See more */}

@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useAudioPlayer } from "@/app/providers/AudioPlayerProvider";
+import { useLyrics } from "@/hooks/useLyrics";
 
 /* --------------------------------------------------
    Helpers
@@ -57,6 +58,31 @@ export default function GlobalAudioPlayer() {
   const [showQueue, setShowQueue] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [dark, setDark] = useState(false);
+  /* 🔤 LYRICS */
+  const lyrics = useLyrics(currentTrack?.src);
+
+  const activeLyricIndex = lyrics.findIndex(
+    (line, i) =>
+      currentTime >= line.time &&
+      (i === lyrics.length - 1 || currentTime < lyrics[i + 1].time)
+  );
+
+  /* 🎯 AUTO SCROLL ACTIVE LYRIC */
+  useEffect(() => {
+    if (
+      activeLyricIndex < 0 ||
+      !lyricsContainerRef.current ||
+      !lyricLineRefs.current[activeLyricIndex]
+    ) {
+      return;
+    }
+
+    lyricLineRefs.current[activeLyricIndex]?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  }, [activeLyricIndex]);
+
 
   /* ---------------- ESC to exit fullscreen ---------------- */
   useEffect(() => {
@@ -104,6 +130,9 @@ export default function GlobalAudioPlayer() {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const rafRef = useRef<number | null>(null);
+  /* 🎵 LYRICS AUTO-SCROLL */
+  const lyricsContainerRef = useRef<HTMLDivElement | null>(null);
+  const lyricLineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
 
   useEffect(() => {
     const audio = getAudioElement() as AudioWithSource | null;
@@ -277,6 +306,29 @@ export default function GlobalAudioPlayer() {
             onChange={(e) => seek(Number(e.target.value))}
             className="w-full mt-2 accent-orange-500"
           />
+          
+          {lyrics.length > 0 && (
+            <div
+              ref={lyricsContainerRef}
+              className="mt-3 max-h-40 overflow-y-auto text-center px-3 space-y-2 scroll-smooth"
+            >
+              {lyrics.map((line, i) => (
+                <p
+                  key={i}
+                  ref={(el) => {
+                    lyricLineRefs.current[i] = el;
+                  }}
+                  className={`transition-all duration-300 ${
+                    i === activeLyricIndex
+                      ? "text-orange-600 font-semibold scale-105"
+                      : "opacity-50"
+                  }`}
+                >
+                  {line.text}
+                </p>
+              ))}
+            </div>
+          )}
 
           {/* CONTROLS */}
           <div className="flex items-center justify-between mt-3 px-2">

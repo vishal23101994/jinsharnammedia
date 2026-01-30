@@ -1,10 +1,23 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Download, X, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function GalleryPage() {
+
+  const [activeCategory, setActiveCategory] = useState<string>("Pulak Sagar Ji");
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+
+  const [vatsalyaImages, setVatsalyaImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch("/api/gallery/vatsalya")
+      .then((res) => res.json())
+      .then((data) => setVatsalyaImages(data))
+      .catch(console.error);
+  }, []);
 
   // ✅ FIX: Add type so TS allows dynamic indexing
   const categories: Record<string, string[]> = {
@@ -80,10 +93,25 @@ export default function GalleryPage() {
     ],
 
     "Jinsharnam Tirth": [
-      "/images/gallery/tirth/img1.jpeg",
-      "/images/gallery/tirth/img2.jpeg",
-      "/images/gallery/tirth/img3.jpg",
+      "/images/gallery/tirth/1.jpeg", "/images/gallery/tirth/2.jpeg", "/images/gallery/tirth/3.jpeg",
+      "/images/gallery/tirth/4.jpeg", "/images/gallery/tirth/5.jpeg", "/images/gallery/tirth/6.jpeg",
+      "/images/gallery/tirth/7.jpeg", "/images/gallery/tirth/8.jpeg", "/images/gallery/tirth/9.jpeg",
+      "/images/gallery/tirth/10.jpeg", "/images/gallery/tirth/11.jpeg", "/images/gallery/tirth/12.jpeg",
+      "/images/gallery/tirth/13.jpg", "/images/gallery/tirth/14.jpeg", "/images/gallery/tirth/15.jpeg",
+      "/images/gallery/tirth/16.jpeg", "/images/gallery/tirth/17.jpeg", "/images/gallery/tirth/18.jpeg",
+      "/images/gallery/tirth/19.jpeg", "/images/gallery/tirth/20.jpeg", "/images/gallery/tirth/21.jpeg",
+      "/images/gallery/tirth/22.jpeg", "/images/gallery/tirth/23.jpeg", "/images/gallery/tirth/24.jpeg",
+      "/images/gallery/tirth/25.jpeg", "/images/gallery/tirth/26.jpeg", "/images/gallery/tirth/27.jpeg",
+      "/images/gallery/tirth/28.jpeg", "/images/gallery/tirth/29.jpeg", "/images/gallery/tirth/30.jpeg",
+      "/images/gallery/tirth/31.jpeg", "/images/gallery/tirth/32.jpeg", "/images/gallery/tirth/33.jpeg",
+      "/images/gallery/tirth/34.jpeg", "/images/gallery/tirth/35.jpeg", "/images/gallery/tirth/36.jpeg",
+      "/images/gallery/tirth/37.jpeg", "/images/gallery/tirth/38.jpeg", "/images/gallery/tirth/39.jpeg",
+      "/images/gallery/tirth/40.jpeg", "/images/gallery/tirth/41.jpeg", "/images/gallery/tirth/42.jpeg",
+      "/images/gallery/tirth/43.jpeg", "/images/gallery/tirth/44.jpeg", "/images/gallery/tirth/45.jpeg",
+      "/images/gallery/tirth/46.jpeg",      
     ],
+
+    "Vatsalya Dhara Trust": vatsalyaImages, // ✅ NEW
 
     "Logos & Identity": [
       "/images/gallery/logo/jinsharnam.jpg",
@@ -94,10 +122,6 @@ export default function GalleryPage() {
       "/images/gallery/logo/jainmahila.png",
     ],
   };
-
-  const [activeCategory, setActiveCategory] = useState<string>("Pulak Sagar Ji");
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const openImage = (index: number) => {
     setSelectedImage(categories[activeCategory][index]);

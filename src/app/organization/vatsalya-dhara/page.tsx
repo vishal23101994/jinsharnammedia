@@ -204,6 +204,59 @@ export default function VatsalyaDharaPage() {
           </motion.div>
 
         </div>
+        {/* FREE-FLOATING CTA BUTTONS */}
+        <div className="mt-10 text-center space-y-6">
+
+          {/* VISIT WEBSITE */}
+          <a
+            href="https://www.vatsalyadharatrust.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="
+              inline-flex items-center gap-3
+              px-10 py-3
+              rounded-full
+              text-lg font-semibold
+              border-2 border-amber-500
+              text-amber-900
+              bg-white/80
+              hover:bg-amber-100
+              hover:scale-105
+              transition-all duration-300
+              shadow-lg
+            "
+          >
+            🌐 Visit "Vatsalya Dhara Trust" Website
+          </a>
+
+          {/* DONATE */}
+          <div>
+            <button
+              onClick={() =>
+                document
+                  .getElementById('donate-section')
+                  ?.scrollIntoView({ behavior: 'smooth' })
+              }
+              className="
+                relative
+                px-14 py-4
+                text-xl font-bold
+                rounded-full
+                text-[#4B1E00]
+                bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-300
+                shadow-[0_0_55px_rgba(251,191,36,0.95)]
+                hover:shadow-[0_0_85px_rgba(251,191,36,1)]
+                hover:scale-110
+                transition-all duration-300
+                overflow-hidden
+              "
+            >
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full animate-[shine_2.5s_infinite]" />
+              🙏 Donate Now
+            </button>
+          </div>
+
+        </div>
       </header>
 
       {/* SACRED HORIZONTAL SCROLL */}
@@ -531,11 +584,16 @@ export default function VatsalyaDharaPage() {
           className="bg-white/60 p-8 rounded-2xl shadow-lg border border-amber-200 flex flex-col md:flex-row gap-6 items-center"
         >
           <img
-            src="/images/vatsalya/poster.jpeg"
-            alt="Service Poster"
-            className="md:w-60 h-46 object-cover rounded-lg shadow-sm border"
+            src="/images/logo/vatsalya.png"
+            alt="Vatsalya Dhara Trust Logo"
+            className="
+              w-40 md:w-44
+              h-40 md:h-44
+            "
+            style={{
+              filter: "drop-shadow(0 0 10px rgba(251,191,36,0.4))",
+            }}
           />
-
           <div className="w-full md:w-2/3">
             <h3 className="text-2xl font-serif font-semibold mb-3">
               Taking Steps Towards Humanity…
@@ -594,6 +652,7 @@ export default function VatsalyaDharaPage() {
 
         {/* DONATION SECTION */}
         <motion.section
+          id="donate-section"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}

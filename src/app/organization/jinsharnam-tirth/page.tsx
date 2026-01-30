@@ -48,6 +48,15 @@ export default function JinsharnamTirthPage() {
     "/images/tirth/part-1.1.jpg",
   ];
 
+  const hostelGallery = [
+    "/images/tirth/1.1.jpeg",
+    "/images/tirth/1.2.jpeg",
+    "/images/tirth/1.3.jpeg",
+    "/images/tirth/1.4.jpeg",
+    "/images/tirth/1.5.jpeg",
+    "/images/tirth/1.6.jpeg",
+  ];
+
   // responsive setup
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -108,6 +117,8 @@ export default function JinsharnamTirthPage() {
     XLSX.writeFile(workbook, "Trustee_Committee.xlsx");
   };
 
+  const [activeImage, setActiveImage] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
 
   return (
     <section className="text-gray-800 bg-gradient-to-b from-amber-50 to-white min-h-screen overflow-x-hidden">
@@ -128,6 +139,36 @@ export default function JinsharnamTirthPage() {
             <br className="hidden md:block" />
             Acharya Shri Pulak Sagar Ji Maharaj
           </p>
+          {/* 🌟 Eye-catching Donate Now Button */}
+          <div className="mt-8 relative">
+            {/* glowing ring */}
+            <span className="absolute inset-0 rounded-full blur-xl bg-yellow-400 opacity-70 animate-ping" />
+
+            <button
+              onClick={() =>
+                document
+                  .getElementById("donate-section")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+              className="
+                relative z-10
+                px-10 py-4
+                text-lg md:text-xl font-semibold
+                rounded-full
+                text-[#4B1E00]
+                bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-300
+                shadow-[0_0_40px_rgba(251,191,36,0.9)]
+                hover:shadow-[0_0_65px_rgba(251,191,36,1)]
+                hover:scale-110
+                transition-all duration-300
+                overflow-hidden
+              "
+            >
+              {/* shine sweep */}
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full animate-[shine_2.5s_infinite]" />
+              🙏 Donate Now
+            </button>
+          </div>
         </div>
       </div>
 
@@ -207,6 +248,114 @@ export default function JinsharnamTirthPage() {
         </div>
       </div>
 
+      {/* 🖼️ Jinsharnam Chhatrawas Gallery */}
+      <div className="bg-gradient-to-b from-[#FFF8E7] to-[#FFECC7] py-14 border-t border-amber-300">
+        <div className="max-w-7xl mx-auto px-6">
+
+          <h2 className="text-3xl text-center font-serif text-[#4B1E00] font-semibold mb-8">
+            Shri Digambar Jain Jinsharnam "Chhatravas"
+          </h2>
+
+          {/* 🖼️ Jinsharnam Chhatrawas Gallery */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+            {hostelGallery.map((img, i) => (
+              <img
+                key={i}
+                src={img}
+                alt={`Gallery ${i + 1}`}
+                onClick={() => {
+                  setActiveImage(img);
+                  setActiveIndex(i);
+                }}
+                className="
+                  cursor-pointer
+                  h-[300px]
+                  w-auto
+                  mx-auto
+                  object-contain
+                  rounded-lg
+                  border-2 border-amber-400
+                  shadow-[0_0_25px_rgba(251,191,36,0.6)]
+                  hover:scale-105
+                  transition-all
+                "
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+      {/* 🔍 Image Zoom Modal */}
+      {activeImage && (
+        <div className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center">
+
+          {/* CLOSE */}
+          <button
+            onClick={() => setActiveImage(null)}
+            className="absolute top-6 right-100 text-white text-4xl hover:scale-110 transition z-50"
+          >
+            ✕
+          </button>
+
+          {/* PREVIOUS */}
+          <button
+            onClick={() =>
+              setActiveIndex((prev) => {
+                const newIndex = prev === 0 ? hostelGallery.length - 1 : prev - 1;
+                setActiveImage(hostelGallery[newIndex]);
+                return newIndex;
+              })
+            }
+            className="absolute left-100 text-white text-5xl hover:scale-110 transition z-50"
+          >
+            ‹
+          </button>
+
+          {/* IMAGE ONLY – NO BOX */}
+          <img
+            src={activeImage}
+            alt="Preview"
+            className="
+              max-h-[90vh]
+              max-w-[90vw]
+              object-contain
+            "
+          />
+
+          {/* NEXT */}
+          <button
+            onClick={() =>
+              setActiveIndex((prev) => {
+                const newIndex = prev === hostelGallery.length - 1 ? 0 : prev + 1;
+                setActiveImage(hostelGallery[newIndex]);
+                return newIndex;
+              })
+            }
+            className="absolute right-100 text-white text-5xl hover:scale-110 transition z-50"
+          >
+            ›
+          </button>
+
+          {/* DOWNLOAD */}
+          <a
+            href={activeImage}
+            download
+            className="
+              absolute bottom-6
+              px-6 py-3
+              rounded-full
+              bg-yellow-400
+              text-[#4B1E00]
+              font-semibold
+              shadow-lg
+              hover:scale-105
+              transition
+            "
+          >
+            ⬇ Download
+          </a>
+
+        </div>
+      )}
       {/* 📍 Location Section */}
       <div className="bg-gradient-to-b from-[#FFF8E7] to-[#FFECC7] py-16 border-t border-amber-200">
         <div className="max-w-6xl mx-auto px-6 text-center">
@@ -221,40 +370,85 @@ export default function JinsharnamTirthPage() {
           <p className="text-lg text-[#4B1E00]/90 mb-10">
             <strong>Contact: </strong>+91-7987176553, 8799598079
           </p>
+          {/* 🏞️ Nearby Tourist Attractions & Connectivity */}
+          <div className="bg-gradient-to-b from-[#FFFDF6] to-[#FFF1D6] py-16 border-t border-amber-300">
+            <div className="max-w-6xl mx-auto px-6 text-center">
+              <h2 className="text-3xl font-serif text-[#4B1E00] font-semibold mb-10">
+                Nearby Tourist Places & Connectivity
+              </h2>
 
-          <div className="grid md:grid-cols-3 gap-8 text-[#4B1E00]/90">
-            <div className="flex flex-col items-center bg-white/70 p-6 rounded-xl shadow-md border border-amber-200">
-              <Plane className="text-amber-700 mb-3" size={32} />
-              <h3 className="font-semibold text-lg">Nearest Airports</h3>
-              <ul className="text-sm mt-2 space-y-1">
-                <li>Mumbai Intl. Airport — 140 km</li>
-                <li>Surat Airport — 140 km</li>
-                <li>Nashik Airport — 165 km</li>
-                <li>Pune Airport — 250 km</li>
-              </ul>
-            </div>
+              {/* Tourist Places */}
+              <div className="grid md:grid-cols-3 gap-8 mb-14">
+                <div className="bg-white/80 p-6 rounded-xl shadow-md border border-amber-200">
+                  <h3 className="font-semibold text-lg text-[#4B1E00] mb-3">
+                    🛕 Religious & Spiritual
+                  </h3>
+                  <ul className="text-sm space-y-2 text-[#4B1E00]/90">
+                    <li>Taranga Jain Temple — 120 km</li>
+                    <li>Palitana Jain Temples — 230 km</li>
+                    <li>Shri Mahavir Jain Temple, Vapi — 25 km</li>
+                  </ul>
+                </div>
 
-            <div className="flex flex-col items-center bg-white/70 p-6 rounded-xl shadow-md border border-amber-200">
-              <Train className="text-amber-700 mb-3" size={32} />
-              <h3 className="font-semibold text-lg">Nearest Railway Stations</h3>
-              <ul className="text-sm mt-2 space-y-1">
-                <li>Mumbai Central — 140 km</li>
-                <li>Surat — 140 km</li>
-                <li>Nashik — 150 km</li>
-                <li>Vapi — 20 km</li>
-              </ul>
-            </div>
+                <div className="bg-white/80 p-6 rounded-xl shadow-md border border-amber-200">
+                  <h3 className="font-semibold text-lg text-[#4B1E00] mb-3">
+                    🌿 Nature & Scenic
+                  </h3>
+                  <ul className="text-sm space-y-2 text-[#4B1E00]/90">
+                    <li>Dahanu Beach — 45 km</li>
+                    <li>Vansda National Park — 110 km</li>
+                    <li>Tithal Beach — 70 km</li>
+                    <li>Silvassa Gardens & Damanganga River — 30 km</li>
+                  </ul>
+                </div>
 
-            <div className="flex flex-col items-center bg-white/70 p-6 rounded-xl shadow-md border border-amber-200">
-              <Bus className="text-amber-700 mb-3" size={32} />
-              <h3 className="font-semibold text-lg">Nearest Bus Terminals</h3>
-              <ul className="text-sm mt-2 space-y-1">
-                <li>Vapi Bus Depot — 38 km</li>
-                <li>Dahanu Bus Stand — 45 km</li>
-                <li>Palghar ISBT — 55 km</li>
-                <li>Virar Bus Station — 70 km</li>
-                <li>Surat Central ISBT — 110 km</li>
-              </ul>
+                <div className="bg-white/80 p-6 rounded-xl shadow-md border border-amber-200">
+                  <h3 className="font-semibold text-lg text-[#4B1E00] mb-3">
+                    🏙️ Nearby Cities & Leisure
+                  </h3>
+                  <ul className="text-sm space-y-2 text-[#4B1E00]/90">
+                    <li>Vapi — 20 km</li>
+                    <li>Silvassa — 30 km</li>
+                    <li>Daman — 55 km</li>
+                    <li>Surat — 140 km</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="grid md:grid-cols-3 gap-8 text-[#4B1E00]/90">
+                <div className="flex flex-col items-center bg-white/70 p-6 rounded-xl shadow-md border border-amber-200">
+                  <Plane className="text-amber-700 mb-3" size={32} />
+                  <h3 className="font-semibold text-lg">Nearest Airports</h3>
+                  <ul className="text-sm mt-2 space-y-1">
+                    <li>Mumbai Intl. Airport — 140 km</li>
+                    <li>Surat Airport — 140 km</li>
+                    <li>Nashik Airport — 165 km</li>
+                    <li>Pune Airport — 250 km</li>
+                  </ul>
+                </div>
+
+                <div className="flex flex-col items-center bg-white/70 p-6 rounded-xl shadow-md border border-amber-200">
+                  <Train className="text-amber-700 mb-3" size={32} />
+                  <h3 className="font-semibold text-lg">Nearest Railway Stations</h3>
+                  <ul className="text-sm mt-2 space-y-1">
+                    <li>Mumbai Central — 140 km</li>
+                    <li>Surat — 140 km</li>
+                    <li>Nashik — 150 km</li>
+                    <li>Vapi — 20 km</li>
+                  </ul>
+                </div>
+
+                <div className="flex flex-col items-center bg-white/70 p-6 rounded-xl shadow-md border border-amber-200">
+                  <Bus className="text-amber-700 mb-3" size={32} />
+                  <h3 className="font-semibold text-lg">Nearest Bus Terminals</h3>
+                  <ul className="text-sm mt-2 space-y-1">
+                    <li>Vapi Bus Depot — 38 km</li>
+                    <li>Dahanu Bus Stand — 45 km</li>
+                    <li>Palghar ISBT — 55 km</li>
+                    <li>Virar Bus Station — 70 km</li>
+                    <li>Surat Central ISBT — 110 km</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -379,7 +573,10 @@ export default function JinsharnamTirthPage() {
       </div>
 
       {/* 🙏 Donation Section */}
-      <div className="bg-gradient-to-b from-amber-50 to-white py-20 border-t border-amber-300">
+      <div
+        id="donate-section"
+        className="bg-gradient-to-b from-amber-50 to-white py-20 border-t border-amber-300"
+      >
         <div className="max-w-7xl mx-auto px-6">
           {/* Heading */}
           <h2 className="text-4xl font-serif text-[#4B1E00] font-semibold mb-4 text-center flex justify-center items-center gap-3">
