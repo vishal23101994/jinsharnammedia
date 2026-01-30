@@ -16,6 +16,6 @@ export async function GET() {
     );
 
   return NextResponse.json(
-    files.map((file) => `/images/vatsalya/images/${file}`)
+    files.map((file) => `/images/gallery/vatsalya/${file}`)
   );
 }
