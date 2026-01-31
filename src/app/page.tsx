@@ -556,7 +556,7 @@ function PrintPublicationContactSection() {
                 uppercase
               "
             >
-              Print • Promotion • Publication
+              Promote your Advertisement
             </p>
           </div>
         </div>
