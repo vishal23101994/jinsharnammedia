@@ -119,7 +119,7 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
           >
             <Image
-              src="/images/founder/seema.jpeg"
+              src="/images/founder/seema3.jpeg"
               alt="Seema Jain"
               width={250}
               height={250}
