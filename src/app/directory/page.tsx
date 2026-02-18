@@ -200,48 +200,79 @@ export default function DirectoryPage() {
         </div>
 
         {/* DOWNLOAD SECTION */}
-        <div className="flex flex-wrap justify-center gap-4 mb-8">
+        <div className="py-20 flex justify-center mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 max-w-6xl">
 
-          {/* GENTS DIRECTORY */}
-          <a
-            href="/directory/Ekta_Directory_Gents_2025.pdf"
-            download
-            target="_blank"
-            className="px-6 py-3 rounded-full bg-[#6A0000] text-[#FFF1D6] font-semibold shadow hover:bg-[#8B0000] transition"
-          >
-            📄 Ekta Directory – Gents (2025)
-          </a>
+            {/* CARD COMPONENT STYLE */}
+            {[
+              {
+                title: "Ekta Directory – Gents (2025)",
+                subtitle: "View & Download PDF",
+                icon: "📄",
+                href: "/directory/Ekta_Directory_Gents_2025.pdf",
+                img: "/directory/ekta-gents.jpeg",
+              },
+              {
+                title: "Ekta Directory – Ladies (2025)",
+                subtitle: "View & Download PDF",
+                icon: "📄",
+                href: "/directory/Ekta_Directory_Ladies_2025.pdf",
+                img: "/directory/ekta-ladies.jpeg",
+              },
+              {
+                title: "Pulak Awards (2025)",
+                subtitle: "Award Ceremony List",
+                icon: "🏆",
+                href: "/directory/Pulak Award-2025.pdf",
+                img: "/directory/pulak-awards.png",
+              },
+              {
+                title: "Manch Masiki (2025)",
+                subtitle: "Monthly Magazine",
+                icon: "📰",
+                href: "/directory/Manch_Masiki-2025.pdf",
+                img: "/directory/manch-masiki.jpeg",
+              },
+            ].map((item, i) => (
+              <a
+                key={i}
+                href={item.href}
+                target="_blank"
+                className="group bg-white rounded-3xl shadow-xl border border-[#E7D6BF] overflow-hidden transition duration-500 hover:-translate-y-3 hover:shadow-2xl"
+              >
+                {/* IMAGE */}
+                <div className="flex justify-center bg-[#FBF5EE] p-4">
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    className="
+                      w-[220px]
+                      h-auto
+                      object-contain
+                      rounded-xl
+                      transition duration-500
+                      group-hover:scale-105
+                    "
+                  />
+                </div>
 
-          {/* LADIES DIRECTORY */}
-          <a
-            href="/directory/Ekta_Directory_Ladies_2025.pdf"
-            download
-            target="_blank"
-            className="px-6 py-3 rounded-full bg-[#D4AF37] text-[#6A0000] font-semibold shadow hover:bg-[#C9A227] transition"
-          >
-            📄 Ekta Directory – Ladies (2025)
-          </a>
+                {/* CONTENT */}
+                <div className="p-6 text-center">
+                  <div className="text-3xl mb-3">{item.icon}</div>
 
-          {/* PULAK AWARD */}
-          <a
-            href="/directory/Pulak Award 2025.pdf"
-            download
-            target="_blank"
-            className="px-6 py-3 rounded-full bg-[#1F2937] text-white font-semibold shadow hover:bg-[#111827] transition"
-          >
-            🏆 Pulak Awards (2025)
-          </a>
+                  <h3 className="font-serif text-lg text-[#6A0000] leading-snug">
+                    {item.title}
+                  </h3>
 
-          {/* MANCH MASIKI */}
-          <a
-            href="/directory/Manch Masiki 2025.pdf"
-            download
-            target="_blank"
-            className="px-6 py-3 rounded-full bg-[#065F46] text-white font-semibold shadow hover:bg-[#064E3B] transition"
-          >
-            📰 Manch Masiki (2025)
-          </a>
+                  <p className="text-sm text-gray-500 mt-2">
+                    {item.subtitle}
+                  </p>
+                </div>
+              </a>
+            ))}
+          </div>
         </div>
+
 
         {/* SECOND EXCEL TABLE */}
         <div className="mt-12 bg-white rounded-2xl shadow-xl border border-[#E7D6BF]">
