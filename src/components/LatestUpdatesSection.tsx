@@ -291,7 +291,7 @@ export default function LatestUpdatesSection() {
       <AnimatePresence>
         {zoomImage && (
           <motion.div
-            className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center overflow-hidden"
+            className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -301,8 +301,21 @@ export default function LatestUpdatesSection() {
               setPosition({ x: 0, y: 0 });
             }}
           >
+            {/* CLOSE BUTTON */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setZoomImage(null);
+                setZoomLevel(1);
+                setPosition({ x: 0, y: 0 });
+              }}
+              className="absolute top-6 left-6 text-white text-3xl font-bold z-30"
+            >
+              ✕
+            </button>
+
             {/* ZOOM CONTROLS */}
-            <div className="absolute top-6 right-6 flex gap-3 z-20">
+            <div className="absolute top-6 right-6 flex gap-3 z-30">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -318,11 +331,7 @@ export default function LatestUpdatesSection() {
                   e.stopPropagation();
                   setZoomLevel((prev) => {
                     const newZoom = Math.max(prev - 0.3, 1);
-
-                    if (newZoom === 1) {
-                      setPosition({ x: 0, y: 0 });
-                    }
-
+                    if (newZoom === 1) setPosition({ x: 0, y: 0 });
                     return newZoom;
                   });
                 }}
@@ -332,10 +341,10 @@ export default function LatestUpdatesSection() {
               </button>
             </div>
 
-            {/* IMAGE WRAPPER */}
+            {/* IMAGE CONTAINER */}
             <div
               className="w-full h-full flex items-center justify-center"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()} // IMPORTANT
             >
               <motion.img
                 src={zoomImage}
@@ -343,29 +352,25 @@ export default function LatestUpdatesSection() {
                 className="max-w-[90vw] max-h-[90vh] object-contain select-none"
                 style={{
                   transform: `translate(${position.x}px, ${position.y}px) scale(${zoomLevel})`,
-                  transition: "transform 0.2s ease-out",
+                  transition: isDragging.current ? "none" : "transform 0.2s ease-out",
                   cursor: zoomLevel > 1 ? "grab" : "default",
                 }}
                 draggable={false}
                 onWheel={(e) => {
                   e.stopPropagation();
-
                   setZoomLevel((prev) => {
                     const newZoom =
                       e.deltaY < 0
                         ? Math.min(prev + 0.2, 5)
                         : Math.max(prev - 0.2, 1);
 
-                    if (newZoom === 1) {
-                      setPosition({ x: 0, y: 0 });
-                    }
+                    if (newZoom === 1) setPosition({ x: 0, y: 0 });
 
                     return newZoom;
                   });
                 }}
                 onMouseDown={(e) => {
                   if (zoomLevel <= 1) return;
-
                   isDragging.current = true;
                   start.current = {
                     x: e.clientX - position.x,
@@ -374,23 +379,19 @@ export default function LatestUpdatesSection() {
                 }}
                 onMouseMove={(e) => {
                   if (!isDragging.current) return;
-
                   setPosition({
                     x: e.clientX - start.current.x,
                     y: e.clientY - start.current.y,
                   });
                 }}
-                onMouseUp={() => {
-                  isDragging.current = false;
-                }}
-                onMouseLeave={() => {
-                  isDragging.current = false;
-                }}
+                onMouseUp={() => (isDragging.current = false)}
+                onMouseLeave={() => (isDragging.current = false)}
               />
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
     </>
   );
 }
