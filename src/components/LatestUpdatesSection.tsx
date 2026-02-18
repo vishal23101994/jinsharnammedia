@@ -292,23 +292,23 @@ export default function LatestUpdatesSection() {
         {zoomImage && (
           <motion.div
             className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             onClick={() => {
               setZoomImage(null);
               setZoomLevel(1);
               setPosition({ x: 0, y: 0 });
             }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
           >
-            {/* Controls */}
+            {/* ZOOM CONTROLS */}
             <div className="absolute top-6 right-6 flex gap-3 z-20">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setZoomLevel((prev) => Math.min(prev + 0.3, 5));
                 }}
-                className="bg-white px-4 py-2 rounded-lg font-semibold"
+                className="bg-white px-4 py-2 rounded-lg font-semibold shadow"
               >
                 +
               </button>
@@ -326,47 +326,68 @@ export default function LatestUpdatesSection() {
                     return newZoom;
                   });
                 }}
-                className="bg-white px-4 py-2 rounded-lg font-semibold"
+                className="bg-white px-4 py-2 rounded-lg font-semibold shadow"
               >
                 −
               </button>
             </div>
 
-            <motion.img
-              src={zoomImage}
-              className="select-none"
-              animate={{
-                scale: zoomLevel,
-                x: position.x,
-                y: position.y,
-              }}
-              transition={{ type: "spring", stiffness: 200, damping: 30 }}
-              drag={zoomLevel > 1}
-              dragMomentum={false}
-              onDrag={(e, info) => {
-                setPosition({
-                  x: info.offset.x,
-                  y: info.offset.y,
-                });
-              }}
-              onWheel={(e) => {
-                e.stopPropagation();
-
-                setZoomLevel((prev) => {
-                  const newZoom =
-                    e.deltaY < 0
-                      ? Math.min(prev + 0.2, 5)
-                      : Math.max(prev - 0.2, 1);
-
-                  if (newZoom === 1) {
-                    setPosition({ x: 0, y: 0 });
-                  }
-
-                  return newZoom;
-                });
-              }}
+            {/* IMAGE WRAPPER */}
+            <div
+              className="w-full h-full flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}
-            />
+            >
+              <motion.img
+                src={zoomImage}
+                alt="Zoomed Update"
+                className="max-w-[90vw] max-h-[90vh] object-contain select-none"
+                style={{
+                  transform: `translate(${position.x}px, ${position.y}px) scale(${zoomLevel})`,
+                  transition: "transform 0.2s ease-out",
+                  cursor: zoomLevel > 1 ? "grab" : "default",
+                }}
+                draggable={false}
+                onWheel={(e) => {
+                  e.stopPropagation();
+
+                  setZoomLevel((prev) => {
+                    const newZoom =
+                      e.deltaY < 0
+                        ? Math.min(prev + 0.2, 5)
+                        : Math.max(prev - 0.2, 1);
+
+                    if (newZoom === 1) {
+                      setPosition({ x: 0, y: 0 });
+                    }
+
+                    return newZoom;
+                  });
+                }}
+                onMouseDown={(e) => {
+                  if (zoomLevel <= 1) return;
+
+                  isDragging.current = true;
+                  start.current = {
+                    x: e.clientX - position.x,
+                    y: e.clientY - position.y,
+                  };
+                }}
+                onMouseMove={(e) => {
+                  if (!isDragging.current) return;
+
+                  setPosition({
+                    x: e.clientX - start.current.x,
+                    y: e.clientY - start.current.y,
+                  });
+                }}
+                onMouseUp={() => {
+                  isDragging.current = false;
+                }}
+                onMouseLeave={() => {
+                  isDragging.current = false;
+                }}
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
