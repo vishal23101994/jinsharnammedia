@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Users, Heart, BookOpen, Layers, Phone, Download } from "lucide-react";
 
 const fadeUp = {
@@ -13,103 +14,67 @@ export default function PulakManchPage() {
     <section className="min-h-screen bg-gradient-to-b from-[#FAE3A3]/30 to-[#FFF8E7] text-[#4B1E00]">
 
       {/* HERO */}
-      <header className="relative overflow-hidden py-28 px-6 text-center bg-gradient-to-b from-[#FFF1C1]/70 via-[#FFF8E7] to-transparent">
-        
-        {/* glow */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(255,200,120,0.35),transparent_65%)]"
-          animate={{ opacity: [0.6, 1, 0.6] }}
-          transition={{ duration: 6, repeat: Infinity }}
-        />
+      <header className="relative overflow-hidden py-24 px-6 bg-gradient-to-br from-[#FFF3C4] via-[#FFF8E7] to-[#FFE7B3]">
 
-        {/* floating particles */}
-        {[...Array(10)].map((_, i) => (
-          <span
-            key={i}
-            className="absolute w-1 h-1 rounded-full bg-amber-300/60"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-            }}
-          />
-        ))}
+        {/* decorative blur shapes */}
+        <div className="absolute -top-40 -left-40 w-[400px] h-[400px] bg-amber-300/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-yellow-400/20 rounded-full blur-3xl" />
 
-        <div className="relative z-10 max-w-5xl mx-auto">
+        <div className="relative z-10 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+
+          {/* LEFT CONTENT */}
           <motion.div
-            initial={{ opacity: 0, y: 32 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-            className="flex flex-col items-center gap-4 mb-6"
+            transition={{ duration: 0.8 }}
+            className="text-center md:text-left space-y-6"
           >
-            {/* LOGO */}
-            <motion.img
-              src="/images/logo/pulakmanch.png"
-              alt="Pulak Manch Logo"
-              initial={{ scale: 0.85, opacity: 0 }}
-              animate={{
-                opacity: 1,
-                scale: [1, 1.06, 1],
-                rotate: [0, 1.5, 0],
-              }}
-              transition={{
-                opacity: { duration: 0.6, delay: 0.2 },
-                scale: {
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                },
-                rotate: {
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                },
-              }}
-              className="w-24 h-24 md:w-28 md:h-28 object-contain drop-shadow-xl"
-              style={{
-                filter: "drop-shadow(0 0 10px rgba(251,191,36,0.6))",
-              }}
-            />
-
-            {/* TITLE */}
-            <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-semibold text-center">
-              Pulak Manch Parivar
+            <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-semibold leading-tight">
+              Pulak Manch <br />
+              <span className="text-amber-700">Parivar</span>
             </h1>
+
+            <p className="text-lg md:text-xl leading-relaxed max-w-xl">
+              A nationwide spiritual and service-oriented youth movement inspired
+              by the blessings of{" "}
+              <strong>Acharya Shri Pulak Sagar Ji Maharaj</strong>,
+              dedicated to discipline, character building and national consciousness.
+            </p>
+
+            <div className="text-amber-800 font-semibold tracking-wide">
+              Breaking Not… Linking is Our Identity
+            </div>
           </motion.div>
 
-
+          {/* RIGHT IMAGE - MAHARAJ JI */}
           <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1 }}
-            className="h-[2px] w-48 mx-auto mb-6 bg-gradient-to-r from-transparent via-amber-400 to-transparent"
-          />
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="text-lg md:text-xl max-w-4xl mx-auto leading-relaxed"
+            className="relative flex justify-center items-center"
           >
-            A nationwide spiritual and service-oriented youth movement inspired
-            by the vision and blessings of{" "}
-            <strong>Acharya Shri Pulak Sagar Ji Maharaj</strong>,
-            dedicated to discipline, character building, selfless service, and
-            national consciousness.
-          </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="mt-6 text-amber-700 font-semibold tracking-wide"
-          >
-            Breaking Not… Linking is Our Identity
+            {/* Golden Aura */}
+            <div className="absolute w-80 h-80 bg-gradient-to-r from-amber-300/40 via-yellow-300/40 to-orange-300/40 rounded-full blur-3xl animate-pulse" />
+
+            {/* Glass Frame */}
+            <div className="relative p-3 rounded-3xl bg-white/40 backdrop-blur-md shadow-2xl border border-amber-200">
+              <Image
+                src="/images/gallery/maharaj/img4.jpeg"
+                alt="Acharya Shri Pulak Sagar Ji Maharaj"
+                width={420}
+                height={520}
+                className="rounded-2xl object-cover"
+                priority
+              />
+            </div>
+
           </motion.div>
         </div>
       </header>
 
       {/* CONTENT */}
-      <main className="max-w-6xl mx-auto px-6 pb-24 space-y-20">
+      <main className="max-w-6xl mx-auto py-20 px-6 pb-24 space-y-20">
 
         {/* ABOUT */}
         <motion.section
@@ -164,7 +129,8 @@ export default function PulakManchPage() {
               variants={fadeUp}
               transition={{ duration: 0.6, delay: i * 0.15 }}
               whileHover={{ y: -6, boxShadow: "0 20px 40px rgba(251,191,36,0.25)" }}
-              className="bg-amber-50 p-8 rounded-2xl border border-amber-200"
+              className="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all border border-amber-200/50"
+
             >
               <div className="mb-3">{card.icon}</div>
               <h3 className="text-xl font-semibold mb-3">{card.title}</h3>

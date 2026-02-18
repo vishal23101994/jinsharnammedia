@@ -13,6 +13,8 @@ import {
   Download,
 } from "lucide-react";
 import * as XLSX from "xlsx";
+import { motion } from "framer-motion";
+import { CheckCircle } from "lucide-react";
 
 export default function JinsharnamTirthPage() {
   const bookRef = useRef<any>(null);
@@ -123,27 +125,35 @@ export default function JinsharnamTirthPage() {
   return (
     <section className="text-gray-800 bg-gradient-to-b from-amber-50 to-white min-h-screen overflow-x-hidden">
       {/* 🌅 Hero Section */}
-      <div className="relative w-full h-[420px] md:h-[460px] mb-6">
+      <div className="relative w-full h-[500px] md:h-[600px] mb-6 overflow-hidden">
+
+        {/* Background Image */}
         <img
           src="/images/img13.jpg"
           alt="Jinsharnam Tirth"
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-amber-100 px-4">
-          <h1 className="text-4xl md:text-6xl font-serif font-semibold mb-3 drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]">
-            Shri Digambar Jain Jinsharnam Tirth Trust
-          </h1>
-          <p className="max-w-2xl text-lg md:text-xl font-light leading-relaxed drop-shadow-[0_3px_6px_rgba(0,0,0,0.8)]">
-            A serene sanctuary of peace and devotion guided by
-            <br className="hidden md:block" />
-            Acharya Shri Pulak Sagar Ji Maharaj
-          </p>
-          {/* 🌟 Eye-catching Donate Now Button */}
-          <div className="mt-8 relative">
-            {/* glowing ring */}
-            <span className="absolute inset-0 rounded-full blur-xl bg-yellow-400 opacity-70 animate-ping" />
 
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+
+        <div className="absolute inset-0 text-amber-100 px-4">
+
+          {/* Heading - positioned slightly upper */}
+          <div className="absolute top-[10%] left-1/2 -translate-x-1/2 text-center w-full px-4">
+            <h1 className="text-4xl md:text-6xl font-serif font-semibold mb-4 drop-shadow-[0_6px_18px_rgba(0,0,0,0.85)]">
+              Jinsharnam Tirth Dham
+            </h1>
+
+            <p className="max-w-2xl mx-auto text-lg md:text-xl font-light leading-relaxed drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
+              A serene sanctuary of peace and devotion guided by
+              <br className="hidden md:block" />
+              Acharya Shri Pulak Sagar Ji Maharaj
+            </p>
+          </div>
+
+          {/* Donate Button - positioned lower */}
+          <div className="absolute top-[85%] left-1/2 -translate-x-1/2">
             <button
               onClick={() =>
                 document
@@ -151,24 +161,21 @@ export default function JinsharnamTirthPage() {
                   ?.scrollIntoView({ behavior: "smooth" })
               }
               className="
-                relative z-10
                 px-10 py-4
-                text-lg md:text-xl font-semibold
+                text-lg md:text-l font-semibold
                 rounded-full
                 text-[#4B1E00]
                 bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-300
-                shadow-[0_0_40px_rgba(251,191,36,0.9)]
-                hover:shadow-[0_0_65px_rgba(251,191,36,1)]
-                hover:scale-110
+                shadow-[0_15px_40px_rgba(251,191,36,0.7)]
+                hover:shadow-[0_20px_60px_rgba(251,191,36,0.95)]
+                hover:-translate-y-1
                 transition-all duration-300
-                overflow-hidden
               "
             >
-              {/* shine sweep */}
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full animate-[shine_2.5s_infinite]" />
               🙏 Donate Now
             </button>
           </div>
+
         </div>
       </div>
 
@@ -253,7 +260,7 @@ export default function JinsharnamTirthPage() {
         <div className="max-w-7xl mx-auto px-6">
 
           <h2 className="text-3xl text-center font-serif text-[#4B1E00] font-semibold mb-8">
-            Shri Digambar Jain Jinsharnam "Chhatravas"
+            Jinsharnam Chatravas
           </h2>
 
           {/* 🖼️ Jinsharnam Chhatrawas Gallery */}
@@ -360,7 +367,7 @@ export default function JinsharnamTirthPage() {
       <div className="bg-gradient-to-b from-[#FFF8E7] to-[#FFECC7] py-16 border-t border-amber-200">
         <div className="max-w-6xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-serif text-[#4B1E00] font-semibold mb-8">
-            📍 Location — Shri Digambar Jain Jinsharnam Tirth Trust
+            📍 Location — Shri Digambar Jain Jinsharnam Tirth Trust (Regd.)
           </h2>
 
           <p className="text-lg text-[#4B1E00]/90 mb-10">
@@ -664,6 +671,16 @@ export default function JinsharnamTirthPage() {
               <p className="text-base">
                 <span className="font-semibold">Branch:</span> Silvassa (DN)
               </p>
+              <br/>
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="mt-6 flex items-center justify-center gap-2 text-emerald-700 text-lg font-semibold"
+              >
+                <CheckCircle size={30} strokeWidth={2.5} className="text-emerald-600" />
+                Eligible for 80G Tax Exemption
+              </motion.div>
             </div>
 
             {/* RIGHT — QR Code */}

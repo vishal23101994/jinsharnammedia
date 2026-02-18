@@ -387,7 +387,7 @@ function PulakSagarHighlights() {
           transition={{ duration: 0.8 }}
           className="text-4xl font-serif text-[#4B1E00] mb-14"
         >
-          Glimpse of Acharya Ji’s Life
+          Glimpse of Acharya Shree Ji Life
         </motion.h2>
 
         {/* BIOGRAPHY SNAPSHOT */}

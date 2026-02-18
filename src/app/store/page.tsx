@@ -314,7 +314,7 @@ export default function StorePage() {
       <section className="w-full py-28 flex items-center justify-center text-center bg-gradient-to-b from-amber-100 to-amber-50">
         <div className="px-6">
           <h1 className="text-4xl md:text-5xl font-serif text-amber-800 font-semibold mb-4">
-            Sahitya
+            Sahitya of Pulak Sagar Ji
           </h1>
           <p className="text-amber-700 text-lg mb-6 max-w-2xl mx-auto">
             Sacred literature and spiritual offerings for inner growth and peace.

@@ -35,6 +35,10 @@ export default function LatestUpdatesSection() {
   const [index, setIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const touchStartX = useRef<number | null>(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const isDragging = useRef(false);
+  const start = useRef({ x: 0, y: 0 });
 
   /* ================= FETCH ================= */
 
@@ -247,7 +251,12 @@ export default function LatestUpdatesSection() {
 
                         <div
                           className="h-60 flex items-center justify-center cursor-zoom-in"
-                          onClick={() => setZoomImage(u.imageUrl || null)}
+                          onClick={() => {
+                            setZoomImage(u.imageUrl || null);
+                            setZoomLevel(1);
+                            setPosition({ x: 0, y: 0 });
+                          }}
+
                         >
                           {u.imageUrl && (
                             <img
@@ -282,12 +291,51 @@ export default function LatestUpdatesSection() {
       <AnimatePresence>
         {zoomImage && (
           <motion.div
-            className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center"
+            className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center overflow-hidden"
             onClick={() => setZoomImage(null)}
           >
+            {/* Controls */}
+            <div className="absolute top-6 right-6 flex gap-3 z-20">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setZoomLevel((z) => Math.min(z + 0.3, 5));
+                }}
+                className="bg-white px-4 py-2 rounded-lg font-semibold"
+              >
+                +
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setZoomLevel((z) => Math.max(z - 0.3, 1));
+                  if (zoomLevel <= 1.3) setPosition({ x: 0, y: 0 });
+                }}
+                className="bg-white px-4 py-2 rounded-lg font-semibold"
+              >
+                −
+              </button>
+            </div>
+
             <motion.img
               src={zoomImage}
-              className="max-h-[92vh] max-w-[92vw] rounded-2xl shadow-2xl"
+              className="cursor-grab active:cursor-grabbing select-none"
+              style={{
+                scale: zoomLevel,
+                x: position.x,
+                y: position.y,
+              }}
+              drag={zoomLevel > 1}
+              dragMomentum={false}
+              onDragStart={(e) => e.stopPropagation()}
+              onWheel={(e) => {
+                e.stopPropagation();
+                if (e.deltaY < 0) {
+                  setZoomLevel((z) => Math.min(z + 0.2, 5));
+                } else {
+                  setZoomLevel((z) => Math.max(z - 0.2, 1));
+                }
+              }}
               onClick={(e) => e.stopPropagation()}
             />
           </motion.div>

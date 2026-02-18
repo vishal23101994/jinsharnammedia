@@ -194,7 +194,7 @@ export default function DirectoryPage() {
         {/* HEADER */}
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-serif text-[#6A0000]">
-            Jinsharnam Directory
+            Ekta Directory 2025
           </h1>
           <div className="w-24 h-[2px] bg-[#D4AF37] mx-auto mt-3" />
         </div>

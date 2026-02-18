@@ -12,6 +12,7 @@ import {
   Phone,
   ClipboardCopy,
   Download,
+  CheckCircle,
 } from "lucide-react";
 
 /**
@@ -45,25 +46,25 @@ export default function VatsalyaDharaPage() {
       name: "सीमा जैन",
       address:
         "D-49 बी, ललिता पार्क, शकरपुर एक्सटें., लक्ष्मी नगर, दिल्ली - 110092",
-      phone: "9625604001",
+      phone: "9910987666",
     },
     {
       role: "महामंत्री",
       name: "अंकित जैन ‘प्रिंस’",
       address:
-        "पुलक निवास, 4/2771, गली नं. 3, बिहारी कॉलोनी, शाहदरा, दिल्ली - 32",
+        "पुलक निवास, 4/2771, गली नं. 3, बिहारी कॉलोनी, शाहदरा, दिल्ली - 110032",
       phone: "9810900699",
     },
     {
       role: "कोषाध्यक्ष",
-      name: "संदीप जैन",
-      address: "मकान नं. 1154, सेक्टर-16, फरीदाबाद (हरि.)",
+      name: "संदीप जैन (सी.ए.)",
+      address: "मकान नं. 1154, सेक्टर-16, फरीदाबाद, हरियाणा",
       phone: "9810772312",
     },
     {
       role: "ट्रस्टी",
       name: "राजू व्यास",
-      address: "116, लख्मी की पोल, जोधपुर (राज.)",
+      address: "116, लख्मी की पोल, जोधपुर, राजस्थान",
       phone: "9414243770",
     },
   ];
@@ -98,167 +99,134 @@ export default function VatsalyaDharaPage() {
   return (
     <section className="min-h-screen bg-gradient-to-b from-[#FAE3A3]/30 to-[#FFF8E7] text-[#4B1E00]">
       
-      {/* DIVINE HERO */}
-      <header className="relative overflow-hidden py-24 px-6 text-center bg-gradient-to-b from-[#FFF1C1]/70 via-[#FFF8E7] to-transparent">
+      <header className="relative min-h-[100vh] flex items-center justify-center text-white overflow-hidden">
 
-        {/* soft radial glow */}
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(255,200,120,0.25),transparent_65%)]" />
-
-        {/* subtle floating particles */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 2 }}
-        >
-          {[...Array(10)].map((_, i) => (
-            <span
-              key={i}
-              className="absolute w-1 h-1 rounded-full bg-amber-300/60"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-              }}
-            />
-          ))}
-        </motion.div>
-
-        {/* CONTENT */}
-        <div className="relative z-10 max-w-4xl mx-auto">
-
+        {/* Background Animation */}
+        <div className="absolute inset-0 overflow-hidden">
           <motion.div
-            initial={{ opacity: 0, y: 32 }}
+            initial={{ scale: 1 }}
+            animate={{ scale: 1.1 }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut",
+            }}
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: "url('/images/hero.jpg')" }}
+          />
+
+          <div className="absolute inset-0 bg-black/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-700/20 via-transparent to-amber-400/20 animate-pulse" />
+        </div>
+
+        <div className="relative z-10 text-center max-w-4xl px-6">
+
+          <motion.h1
+            initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
-            className="flex flex-col items-center gap-4 mb-6"
+            className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight"
           >
-            {/* LOGO */}
-            <motion.img
-              src="/images/logo/vatsalya.png"
-              alt="Pulak Manch Logo"
-              initial={{ scale: 0.85, opacity: 0 }}
-              animate={{
-                opacity: 1,
-                scale: [1, 1.06, 1],
-                rotate: [0, 1.5, 0],
-              }}
-              transition={{
-                opacity: { duration: 0.6, delay: 0.2 },
-                scale: {
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                },
-                rotate: {
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                },
-              }}
-              className="w-24 h-24 md:w-28 md:h-28 object-contain drop-shadow-xl"
-              style={{
-                filter: "drop-shadow(0 0 10px rgba(251,191,36,0.6))",
-              }}
-            />
+            Serving Humanity
+            <span className="block text-amber-400 mt-2">
+              With "Compassion & Care"
+            </span>
+          </motion.h1>
 
-            {/* TITLE */}
-            <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-semibold text-center">
-              Vatsalya Dhara Trust
-            </h1>
-          </motion.div>
-
-          {/* Lotus Divider */}
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="flex justify-center mb-6"
-          >
-            <div className="h-[2px] w-40 bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
-          </motion.div>
-
-          {/* Description */}
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.7 }}
-            className="max-w-3xl mx-auto text-lg md:text-xl leading-relaxed text-[#4B1E00]/90 text-justify md:text-center"
+            transition={{ delay: 0.4, duration: 1 }}
+            className="mt-6 text-lg md:text-xl text-gray-200"
           >
-            Guided by the blessings of{" "}
-            <span className="font-semibold text-amber-800">
-              Acharya Shri Pulak Sagar Ji Maharaj
-            </span>,{" "}
-            Vatsalya Dhara is a movement rooted in compassion, selfless service,
-            and human welfare — nurturing education, healthcare, animal care,
-            emergency support, and community upliftment.
+            Food • Healthcare • Ambulance • Education • Gau Seva
           </motion.p>
 
-          {/* Blessing Line */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 1 }}
-            className="mt-8 text-sm text-amber-700 tracking-wide"
-          >
-            सेवा • करुणा • मानवता
-          </motion.div>
+          {/* KEEP YOUR ORIGINAL CTA BUTTONS */}
+          <div className="mt-10 flex flex-col sm:flex-row gap-5 justify-center">
 
-        </div>
-        {/* FREE-FLOATING CTA BUTTONS */}
-        <div className="mt-10 text-center space-y-6">
+            <a
+              href="https://www.vatsalyadharatrust.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                inline-flex items-center gap-3
+                px-8 py-4
+                rounded-full
+                text-lg font-semibold
+                text-white
+                bg-white/15
+                backdrop-blur-md
+                border border-white/40
+                shadow-lg
+                hover:bg-white/25
+                hover:scale-105
+                transition-all duration-300
+              "
+            >
+              🌐 Visit Vatsalya Dhara Trust
+            </a>
 
-          {/* VISIT WEBSITE */}
-          <a
-            href="https://www.vatsalyadharatrust.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="
-              inline-flex items-center gap-3
-              px-10 py-3
-              rounded-full
-              text-lg font-semibold
-              border-2 border-amber-500
-              text-amber-900
-              bg-white/80
-              hover:bg-amber-100
-              hover:scale-105
-              transition-all duration-300
-              shadow-lg
-            "
-          >
-            🌐 Visit "Vatsalya Dhara Trust" Website
-          </a>
 
-          {/* DONATE */}
-          <div>
+            {/* Donate Scroll Button */}
             <button
               onClick={() =>
                 document
-                  .getElementById('donate-section')
-                  ?.scrollIntoView({ behavior: 'smooth' })
+                  .getElementById("donate-section")
+                  ?.scrollIntoView({ behavior: "smooth" })
               }
-              className="
-                relative
-                px-14 py-4
-                text-xl font-bold
-                rounded-full
-                text-[#4B1E00]
-                bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-300
-                shadow-[0_0_55px_rgba(251,191,36,0.95)]
-                hover:shadow-[0_0_85px_rgba(251,191,36,1)]
-                hover:scale-110
-                transition-all duration-300
-                overflow-hidden
-              "
+              className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-2xl hover:scale-105 transition"
             >
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full animate-[shine_2.5s_infinite]" />
-              🙏 Donate Now
+              ❤️ Donate Now
             </button>
+          </div>
+
+          {/* Trust Line + 80G Badge */}
+          <div className="mt-8 flex flex-col items-center gap-4">
+
+            <div className="text-sm text-gray-300 tracking-wide">
+              Registered Trust • Transparent • Community Driven
+            </div>
+
+            {/* 80G Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1 }}
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-full 
+                         bg-green-600/20 border border-green-400/40 
+                         backdrop-blur-md text-green-200 text-sm font-medium 
+                         shadow-[0_0_15px_rgba(34,197,94,0.4)]"
+            >
+              <CheckCircle size={16} className="text-green-300" />
+              Eligible for 80G Tax Exemption
+            </motion.div>
           </div>
 
         </div>
       </header>
+      <div className="max-w-6xl mx-auto px-6 py-20">
+        <div className="grid md:grid-cols-4 gap-10 text-center">
 
+          {[
+            { number: "1,00,000+", label: "Meals Served" },
+            { number: "2,000+", label: "Medical Beneficiaries" },
+            { number: "1,000+", label: "Students Supported" },
+            { number: "24/7", label: "Ambulance Service" },
+          ].map((item, i) => (
+            <div
+              key={i}
+              className="bg-white rounded-2xl p-10 shadow-lg border border-amber-200 hover:shadow-2xl transition"
+            >
+              <h3 className="text-4xl font-bold text-amber-700 mb-2">
+                {item.number}
+              </h3>
+              <p className="text-[#3B1D00]/80">{item.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
       {/* SACRED HORIZONTAL SCROLL */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#FFF1C1] to-transparent py-14">
 
@@ -613,42 +581,51 @@ export default function VatsalyaDharaPage() {
           </div>
         </motion.section>
 
-        {/* TRUSTEE SECTION */}
-        <motion.section
-          initial={{ opacity: 0, y: 10 }}
+        {/* 👥 BOARD OF TRUSTEES */}
+        <motion.div
+          className="relative max-w-7xl mx-auto mt-28 px-6 z-10"
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="bg-white/70 backdrop-blur-md p-8 rounded-2xl shadow-lg border border-amber-200"
+          transition={{ duration: 0.8 }}
         >
-          <h2 className="text-3xl md:text-4xl font-serif font-semibold text-center mb-10">
-            Vatsalya Dhara Trust (Regd.)
-          </h2>
+          <div className="text-center mb-14">
+            <h2 className="text-4xl font-serif font-bold text-[#8B0000] mb-3">
+              Board of Trustees
+            </h2>
+            <p className="text-[#4B2200] max-w-3xl mx-auto">
+              Dedicated individuals guiding the mission of Vatsalya Dhara Trust with
+              transparency, responsibility, and compassion.
+            </p>
+          </div>
 
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-4 gap-8">
             {trustees.map((t) => (
               <div
                 key={t.name}
-                className="bg-amber-50 p-5 rounded-xl border border-amber-200 shadow-sm text-center"
+                className="bg-gradient-to-br from-[#FFF8E1] to-[#FFE8B2] p-6 rounded-2xl border border-[#ECA400]/40 shadow-lg text-center hover:shadow-2xl hover:scale-[1.03] transition"
               >
-                <p className="text-sm text-amber-700 font-semibold mb-1">
+                <p className="text-sm text-[#C45A00] font-semibold mb-1">
                   {t.role}
                 </p>
-                <h3 className="text-lg font-semibold mb-2">{t.name}</h3>
 
-                <p className="text-sm text-[#4B1E00]/80 leading-relaxed mb-3">
+                <h3 className="text-lg font-serif font-semibold text-[#8B0000] mb-3">
+                  {t.name}
+                </h3>
+
+                <p className="text-sm text-[#3A0A00] leading-relaxed mb-4">
                   {t.address}
                 </p>
 
                 <a
                   href={`tel:${t.phone}`}
-                  className="inline-block bg-amber-100 px-3 py-1 rounded-full text-sm font-medium"
+                  className="inline-block bg-[#FFD580] px-4 py-2 rounded-full text-sm font-medium hover:scale-105 transition"
                 >
                   📞 {t.phone}
                 </a>
               </div>
             ))}
           </div>
-        </motion.section>
+        </motion.div>
 
         {/* DONATION SECTION */}
         <motion.section
@@ -716,6 +693,16 @@ export default function VatsalyaDharaPage() {
 
                 <p className="text-sm"><strong>Bank:</strong> {donation.bankName}</p>
                 <p className="text-sm"><strong>Branch:</strong> {donation.branch}</p>
+                <br/>
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="mt-6 flex items-center justify-center gap-2 text-emerald-700 text-lg font-semibold"
+                >
+                  <CheckCircle size={30} strokeWidth={2.5} className="text-emerald-600" />
+                  Eligible for 80G Tax Exemption
+                </motion.div>
               </div>
             </div>
 

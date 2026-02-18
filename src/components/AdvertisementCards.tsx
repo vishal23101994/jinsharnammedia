@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { CheckCircle } from "lucide-react";
 
 /* -------------------------------------------
   Animation variants
@@ -73,7 +74,7 @@ export default function AdvertisementCards() {
         {/* ---------------- CARD 1 ---------------- */}
         <TempleCard index={0}>
           <h3 className="text-2xl font-serif text-[#4B1E00] mb-4">
-            Shri Digambar Jain <br/>Jinsharnam Tirth Trust
+            Shri Digambar Jain <br/>Jinsharnam Tirth Trust (Regd.)
           </h3>
 
           <p className="text-[#4B1E00]/85 mb-8 leading-relaxed flex-1">
@@ -84,12 +85,21 @@ export default function AdvertisementCards() {
           <QR src="/images/donation/jinsharnam_qr1.jpg" />
 
           <FooterText />
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mt-6 flex items-center justify-center gap-2 text-emerald-700 text-lg font-semibold"
+          >
+            <CheckCircle size={30} strokeWidth={2.5} className="text-emerald-600" />
+            Eligible for 80G Tax Exemption
+          </motion.div>
         </TempleCard>
 
         {/* ---------------- CARD 2 ---------------- */}
         <TempleCard index={1}>
           <h3 className="text-2xl font-serif text-[#4B1E00] mb-4">
-            Vatsalya Dhara Trust
+            Vatsalya Dhara Trust (Regd.)
           </h3>
 
           <p className="text-[#4B1E00]/85 mb-8 leading-relaxed flex-1">
@@ -99,6 +109,15 @@ export default function AdvertisementCards() {
           <QR src="/images/donation/vatsalya_qr.jpeg" />
 
           <FooterText />
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mt-6 flex items-center justify-center gap-2 text-emerald-700 text-lg font-semibold"
+          >
+            <CheckCircle size={30} strokeWidth={2.5} className="text-emerald-600" />
+            Eligible for 80G Tax Exemption
+          </motion.div>
         </TempleCard>
       </div>
     </section>

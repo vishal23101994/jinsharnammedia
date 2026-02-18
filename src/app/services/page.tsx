@@ -387,7 +387,7 @@ export default function ServicesPage() {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-4xl md:text-5xl font-serif text-[#A43B00] font-semibold mb-4">
-            Why Choose <span className="text-[#C45A00]">Jinsharnam Media?</span>
+            Why Choose <span className="text-[#C45A00]">Pulak Graphics?</span>
           </h2>
           <p className="text-lg max-w-3xl mx-auto text-[#4B2200] leading-relaxed">
             We combine <b>spiritual devotion</b>, <b>creative vision</b>, and <b>modern technology</b> to spread Jain values through every medium — from live Pravachans to global media campaigns.
