@@ -292,24 +292,39 @@ export default function LatestUpdatesSection() {
         {zoomImage && (
           <motion.div
             className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center overflow-hidden"
-            onClick={() => setZoomImage(null)}
+            onClick={() => {
+              setZoomImage(null);
+              setZoomLevel(1);
+              setPosition({ x: 0, y: 0 });
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
             {/* Controls */}
             <div className="absolute top-6 right-6 flex gap-3 z-20">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setZoomLevel((z) => Math.min(z + 0.3, 5));
+                  setZoomLevel((prev) => Math.min(prev + 0.3, 5));
                 }}
                 className="bg-white px-4 py-2 rounded-lg font-semibold"
               >
                 +
               </button>
+
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setZoomLevel((z) => Math.max(z - 0.3, 1));
-                  if (zoomLevel <= 1.3) setPosition({ x: 0, y: 0 });
+                  setZoomLevel((prev) => {
+                    const newZoom = Math.max(prev - 0.3, 1);
+
+                    if (newZoom === 1) {
+                      setPosition({ x: 0, y: 0 });
+                    }
+
+                    return newZoom;
+                  });
                 }}
                 className="bg-white px-4 py-2 rounded-lg font-semibold"
               >
@@ -319,22 +334,36 @@ export default function LatestUpdatesSection() {
 
             <motion.img
               src={zoomImage}
-              className="cursor-grab active:cursor-grabbing select-none"
-              style={{
+              className="select-none"
+              animate={{
                 scale: zoomLevel,
                 x: position.x,
                 y: position.y,
               }}
+              transition={{ type: "spring", stiffness: 200, damping: 30 }}
               drag={zoomLevel > 1}
               dragMomentum={false}
-              onDragStart={(e) => e.stopPropagation()}
+              onDrag={(e, info) => {
+                setPosition({
+                  x: info.offset.x,
+                  y: info.offset.y,
+                });
+              }}
               onWheel={(e) => {
                 e.stopPropagation();
-                if (e.deltaY < 0) {
-                  setZoomLevel((z) => Math.min(z + 0.2, 5));
-                } else {
-                  setZoomLevel((z) => Math.max(z - 0.2, 1));
-                }
+
+                setZoomLevel((prev) => {
+                  const newZoom =
+                    e.deltaY < 0
+                      ? Math.min(prev + 0.2, 5)
+                      : Math.max(prev - 0.2, 1);
+
+                  if (newZoom === 1) {
+                    setPosition({ x: 0, y: 0 });
+                  }
+
+                  return newZoom;
+                });
               }}
               onClick={(e) => e.stopPropagation()}
             />
