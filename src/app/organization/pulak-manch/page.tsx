@@ -167,7 +167,7 @@ export default function PulakManchPage() {
 
             {/* GENERAL FORM */}
             <motion.a
-              href="/forms/Pulak Manch Membership Form Oct 2024.pdf"
+              href="/forms/membership_form.pdf"
               download
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.96 }}
