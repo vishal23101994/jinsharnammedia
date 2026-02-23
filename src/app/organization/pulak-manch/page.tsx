@@ -143,6 +143,7 @@ export default function PulakManchPage() {
           ))}
         </motion.section>
 
+
         {/* MEMBERSHIP & DOWNLOAD */}
         <motion.section
           variants={fadeUp}
@@ -222,7 +223,32 @@ export default function PulakManchPage() {
                 Gents Membership Form
               </p>
             </motion.a>
+          </div>
+          <div className="flex justify-center mt-10">
+            <motion.a
+              href="/organization/pulak-manch/register"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.96 }}
+              className="
+                relative group inline-flex items-center justify-center
+                px-12 py-4 rounded-full
+                text-lg font-semibold text-white
+                bg-gradient-to-r from-[#6A0000] via-[#8B0000] to-[#A00000]
+                shadow-xl hover:shadow-2xl
+                transition-all duration-300
+                overflow-hidden
+              "
+            >
+              {/* Glow */}
+              <span className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-amber-300/20 to-orange-400/20 opacity-0 group-hover:opacity-100 transition duration-500 blur-xl" />
 
+              {/* Shine */}
+              <span className="absolute left-[-100%] top-0 h-full w-1/2 bg-white/20 skew-x-[-20deg] group-hover:left-[120%] transition-all duration-700" />
+
+              <span className="relative flex items-center gap-3">
+                Register Online
+              </span>
+            </motion.a>
           </div>
         </motion.section>
 
