@@ -51,49 +51,7 @@ export default function RegisterPage() {
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-
-    const fd = new FormData();
-
-    const finalPosition =
-      form.position === "Other" ? otherPosition : form.position;
-
-    const finalZone =
-      form.zone === "Any other Zone" ? otherZone : form.zone;
-
-    const finalOrganization =
-      form.organization === "Any Other"
-        ? otherOrganization
-        : form.organization;
-
-    Object.entries({
-      ...form,
-      position: finalPosition,
-      zone: finalZone,
-      organization: finalOrganization,
-    }).forEach(([k, v]) => v && fd.append(k, v));
-
-    if (file) fd.append("photo", file);
-
-    try {
-      const res = await fetch("/api/directory/register", {
-        method: "POST",
-        body: fd,
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Registration failed");
-
-      toast.success("Registered — pending admin approval");
-    } catch (err: any) {
-      toast.error(err.message || "Failed");
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
+  
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
