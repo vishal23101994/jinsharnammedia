@@ -10,138 +10,64 @@ export default function GalleryPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  const [vatsalyaImages, setVatsalyaImages] = useState<string[]>([]);
+  const [images, setImages] = useState<string[]>([]);
+
+  const categories = [
+    "Pulak Sagar Ji",
+    "Motivational Thoughts",
+    "Jinsharnam Tirth",
+    "Vatsalya Dhara Trust",
+    "Logos & Identity",
+  ];
 
   useEffect(() => {
-    fetch("/api/gallery/vatsalya")
+    const folderMap: Record<string, string> = {
+      "Pulak Sagar Ji": "maharaj",
+      "Motivational Thoughts": "thoughts",
+      "Jinsharnam Tirth": "tirth",
+      "Vatsalya Dhara Trust": "vatsalya",
+      "Logos & Identity": "logo",
+    };
+
+    const folder = folderMap[activeCategory];
+
+    fetch(`/api/gallery/${folder}`)
       .then((res) => res.json())
-      .then((data) => setVatsalyaImages(data))
-      .catch(console.error);
-  }, []);
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setImages(data);
+        } else {
+          console.error("Gallery API returned invalid data:", data);
+          setImages([]); // prevent crash
+        }
+      })
+      .catch((err) => {
+        console.error("Gallery fetch error:", err);
+        setImages([]);
+      });
 
-  // ✅ FIX: Add type so TS allows dynamic indexing
-  const categories: Record<string, string[]> = {
-    "Pulak Sagar Ji": [
-      "/images/gallery/maharaj/1.jpeg", "/images/gallery/maharaj/2.jpg",
-      "/images/gallery/maharaj/3.jpg", "/images/gallery/maharaj/4.jpg",
-      "/images/gallery/maharaj/5.jpg", "/images/gallery/maharaj/6.jpg",
-      "/images/gallery/maharaj/7.jpg", "/images/gallery/maharaj/8.jpg",
-      "/images/gallery/maharaj/9.jpg", "/images/gallery/maharaj/10.jpg",
-      "/images/gallery/maharaj/11.jpg", "/images/gallery/maharaj/12.jpg",
-      "/images/gallery/maharaj/13.jpg", "/images/gallery/maharaj/14.jpg",
-      "/images/gallery/maharaj/15.jpg", "/images/gallery/maharaj/16.jpg",
-      "/images/gallery/maharaj/17.jpg", "/images/gallery/maharaj/18.jpg",
-      "/images/gallery/maharaj/19.jpg", "/images/gallery/maharaj/20.jpg",
-      "/images/gallery/maharaj/21.jpg", "/images/gallery/maharaj/22.jpg",
-      "/images/gallery/maharaj/23.jpg", "/images/gallery/maharaj/24.jpg",
-      "/images/gallery/maharaj/25.jpg", "/images/gallery/maharaj/26.jpg",
-      "/images/gallery/maharaj/27.jpg", "/images/gallery/maharaj/28.jpg",
-      "/images/gallery/maharaj/29.jpg", "/images/gallery/maharaj/30.jpg",
-      "/images/gallery/maharaj/31.jpg", "/images/gallery/maharaj/32.jpg",
-      "/images/gallery/maharaj/33.jpg", "/images/gallery/maharaj/34.jpg",
-      "/images/gallery/maharaj/35.jpg", "/images/gallery/maharaj/36.jpg",
-      "/images/gallery/maharaj/37.jpg", "/images/gallery/maharaj/38.jpg",
-      "/images/gallery/maharaj/39.jpg", "/images/gallery/maharaj/40.jpg",
-      "/images/gallery/maharaj/41.jpg", "/images/gallery/maharaj/42.jpg",
-      "/images/gallery/maharaj/43.jpg", "/images/gallery/maharaj/44.jpg",
-      "/images/gallery/maharaj/45.jpg", "/images/gallery/maharaj/img1.jpeg",
-      "/images/gallery/maharaj/img2.jpeg", "/images/gallery/maharaj/img3.jpeg",
-      "/images/gallery/maharaj/img4.jpeg", "/images/gallery/maharaj/img5.jpeg",
-      "/images/gallery/maharaj/img6.jpeg", "/images/gallery/maharaj/img7.jpeg",
-      "/images/gallery/maharaj/img8.jpeg", "/images/gallery/maharaj/img9.jpeg",
-      "/images/gallery/maharaj/img10.jpeg", "/images/gallery/maharaj/img11.jpeg",
-      "/images/gallery/maharaj/img12.jpeg", "/images/gallery/maharaj/img13.jpeg",
-      "/images/gallery/maharaj/img14.jpeg", "/images/gallery/maharaj/img15.jpeg",
-      "/images/gallery/maharaj/img16.jpeg", "/images/gallery/maharaj/img17.jpeg",
-      "/images/gallery/maharaj/img18.jpeg"
-    ],
+  }, [activeCategory]);
 
-    "Motivational Thoughts": [
-      "/images/gallery/thoughts/1.jpg", "/images/gallery/thoughts/2.jpg", "/images/gallery/thoughts/3.jpg",
-      "/images/gallery/thoughts/4.jpg", "/images/gallery/thoughts/5.jpg", "/images/gallery/thoughts/6.jpg",
-      "/images/gallery/thoughts/7.jpg", "/images/gallery/thoughts/8.jpg", "/images/gallery/thoughts/9.jpg",
-      "/images/gallery/thoughts/10.jpg", "/images/gallery/thoughts/11.jpg", "/images/gallery/thoughts/12.jpg",
-      "/images/gallery/thoughts/13.jpg", "/images/gallery/thoughts/14.jpg", "/images/gallery/thoughts/15.jpg",
-      "/images/gallery/thoughts/16.jpg", "/images/gallery/thoughts/17.jpg", "/images/gallery/thoughts/18.jpg",
-      "/images/gallery/thoughts/19.jpg", "/images/gallery/thoughts/20.jpg", "/images/gallery/thoughts/21.jpg",
-      "/images/gallery/thoughts/22.jpg", "/images/gallery/thoughts/23.jpg", "/images/gallery/thoughts/24.jpg",
-      "/images/gallery/thoughts/25.jpg", "/images/gallery/thoughts/26.jpg", "/images/gallery/thoughts/27.jpg",
-      "/images/gallery/thoughts/28.jpg", "/images/gallery/thoughts/29.jpg", "/images/gallery/thoughts/30.jpg",
-
-      "/images/gallery/thoughts/31.jpg", "/images/gallery/thoughts/32.jpg", "/images/gallery/thoughts/33.jpg",
-      "/images/gallery/thoughts/34.jpg", "/images/gallery/thoughts/35.jpg", "/images/gallery/thoughts/36.jpg",
-      "/images/gallery/thoughts/37.jpg", "/images/gallery/thoughts/38.jpg", "/images/gallery/thoughts/39.jpg",
-      "/images/gallery/thoughts/40.jpg", "/images/gallery/thoughts/41.jpg", "/images/gallery/thoughts/42.jpg",
-      "/images/gallery/thoughts/43.jpg", "/images/gallery/thoughts/44.jpg", "/images/gallery/thoughts/45.jpg",
-      "/images/gallery/thoughts/46.jpg", "/images/gallery/thoughts/47.jpg", "/images/gallery/thoughts/48.jpg",
-      "/images/gallery/thoughts/49.jpg", "/images/gallery/thoughts/50.jpg", "/images/gallery/thoughts/51.jpg",
-      "/images/gallery/thoughts/52.jpg", "/images/gallery/thoughts/53.jpg", "/images/gallery/thoughts/54.jpg",
-      "/images/gallery/thoughts/55.jpg", "/images/gallery/thoughts/56.jpg", "/images/gallery/thoughts/57.jpg",
-      "/images/gallery/thoughts/58.jpg", "/images/gallery/thoughts/59.jpg", "/images/gallery/thoughts/60.jpg",
-
-      "/images/gallery/thoughts/61.jpg", "/images/gallery/thoughts/62.jpg", "/images/gallery/thoughts/63.jpg",
-      "/images/gallery/thoughts/64.jpg", "/images/gallery/thoughts/65.jpg", "/images/gallery/thoughts/66.jpg",
-      "/images/gallery/thoughts/67.jpg", "/images/gallery/thoughts/68.jpg", "/images/gallery/thoughts/69.jpg",
-      "/images/gallery/thoughts/70.jpg", "/images/gallery/thoughts/71.jpg", "/images/gallery/thoughts/72.jpg",
-      "/images/gallery/thoughts/73.jpg", "/images/gallery/thoughts/74.jpg", "/images/gallery/thoughts/75.jpg",
-      "/images/gallery/thoughts/76.jpg", "/images/gallery/thoughts/77.jpg", "/images/gallery/thoughts/78.jpg",
-      "/images/gallery/thoughts/79.jpg", "/images/gallery/thoughts/80.jpg", "/images/gallery/thoughts/81.jpg",
-      "/images/gallery/thoughts/82.jpg", "/images/gallery/thoughts/83.jpg", "/images/gallery/thoughts/84.jpg",
-      "/images/gallery/thoughts/85.jpg", "/images/gallery/thoughts/86.jpg", "/images/gallery/thoughts/87.png",
-      "/images/gallery/thoughts/88.png", "/images/gallery/thoughts/89.png", "/images/gallery/thoughts/90.png",
-      "/images/gallery/thoughts/91.png", "/images/gallery/thoughts/92.png", "/images/gallery/thoughts/93.png"
-    ],
-
-    "Jinsharnam Tirth": [
-      "/images/gallery/tirth/1.jpeg", "/images/gallery/tirth/2.jpeg", "/images/gallery/tirth/3.jpeg",
-      "/images/gallery/tirth/4.jpeg", "/images/gallery/tirth/5.jpeg", "/images/gallery/tirth/6.jpeg",
-      "/images/gallery/tirth/7.jpeg", "/images/gallery/tirth/8.jpeg", "/images/gallery/tirth/9.jpeg",
-      "/images/gallery/tirth/10.jpeg", "/images/gallery/tirth/11.jpeg", "/images/gallery/tirth/12.jpeg",
-      "/images/gallery/tirth/13.jpg", "/images/gallery/tirth/14.jpeg", "/images/gallery/tirth/15.jpeg",
-      "/images/gallery/tirth/16.jpeg", "/images/gallery/tirth/17.jpeg", "/images/gallery/tirth/18.jpeg",
-      "/images/gallery/tirth/19.jpeg", "/images/gallery/tirth/20.jpeg", "/images/gallery/tirth/21.jpeg",
-      "/images/gallery/tirth/22.jpeg", "/images/gallery/tirth/23.jpeg", "/images/gallery/tirth/24.jpeg",
-      "/images/gallery/tirth/25.jpeg", "/images/gallery/tirth/26.jpeg", "/images/gallery/tirth/27.jpeg",
-      "/images/gallery/tirth/28.jpeg", "/images/gallery/tirth/29.jpeg", "/images/gallery/tirth/30.jpeg",
-      "/images/gallery/tirth/31.jpeg", "/images/gallery/tirth/32.jpeg", "/images/gallery/tirth/33.jpeg",
-      "/images/gallery/tirth/34.jpeg", "/images/gallery/tirth/35.jpeg", "/images/gallery/tirth/36.jpeg",
-      "/images/gallery/tirth/37.jpeg", "/images/gallery/tirth/38.jpeg", "/images/gallery/tirth/39.jpeg",
-      "/images/gallery/tirth/40.jpeg", "/images/gallery/tirth/41.jpeg", "/images/gallery/tirth/42.jpeg",
-      "/images/gallery/tirth/43.jpeg", "/images/gallery/tirth/44.jpeg", "/images/gallery/tirth/45.jpeg",
-      "/images/gallery/tirth/46.jpeg",      
-    ],
-
-    "Vatsalya Dhara Trust": vatsalyaImages, // ✅ NEW
-
-    "Logos & Identity": [
-      "/images/gallery/logo/jinsharnam.jpg",
-      "/images/gallery/logo/jinsharnamtirth.png",
-      "/images/gallery/logo/vatsalya.png",
-      "/images/gallery/logo/pulakmanch.png",
-      "/images/gallery/logo/pulakjan.png",
-      "/images/gallery/logo/jainmahila.png",
-    ],
-  };
 
   const openImage = (index: number) => {
-    setSelectedImage(categories[activeCategory][index]);
+    setSelectedImage(images[index]);
     setCurrentIndex(index);
   };
 
   const closeLightbox = () => setSelectedImage(null);
 
   const nextImage = () => {
-    const total = categories[activeCategory].length;
+    const total = images.length;
     const newIndex = (currentIndex + 1) % total;
     setCurrentIndex(newIndex);
-    setSelectedImage(categories[activeCategory][newIndex]);
+    setSelectedImage(images[newIndex]);
   };
 
   const prevImage = () => {
-    const total = categories[activeCategory].length;
+    const total = images.length;
     const newIndex = (currentIndex - 1 + total) % total;
     setCurrentIndex(newIndex);
-    setSelectedImage(categories[activeCategory][newIndex]);
+    setSelectedImage(images[newIndex]);
   };
 
   const downloadImage = () => {
@@ -167,7 +93,7 @@ export default function GalleryPage() {
 
       {/* Category Buttons */}
       <div className="flex flex-wrap justify-center gap-4 mb-12 relative z-10">
-        {Object.keys(categories).map((cat) => (
+        {categories.map((cat) => (
           <motion.button
             key={cat}
             whileHover={{ scale: 1.05 }}
@@ -191,7 +117,7 @@ export default function GalleryPage() {
         transition={{ duration: 0.8 }}
         className="max-w-7xl mx-auto px-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-5 relative z-10"
       >
-        {categories[activeCategory].map((src, i) => (
+        {Array.isArray(images) && images.map((src, i) => (
           <motion.div
             key={i}
             whileHover={{ scale: 1.04 }}

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
-import { User, Mail, Phone, MapPin, Building2, Calendar } from "lucide-react";
+import { User, Mail, Phone, MapPin, Building2, Calendar, Crown } from "lucide-react";
 import Script from "next/script";
 
 /* ================= OPTIONS ================= */
@@ -50,6 +50,19 @@ export default function RegisterPage() {
   const [otherOrganization, setOtherOrganization] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  // ✅ Check if required fields are filled (including DOB & DOM)
+  const isFormValid =
+    form.name.trim() !== "" &&
+    form.email.trim() !== "" &&
+    form.phone.trim() !== "" &&
+    form.address.trim() !== "" &&
+    form.organization.trim() !== "" &&
+    form.position.trim() !== "" &&
+    form.zone.trim() !== "" &&
+    form.state.trim() !== "" &&
+    form.branch.trim() !== "" &&
+    form.gender.trim() !== "" &&
+    form.dateOfBirth.trim() !== "";
 
   
   async function handleSubmit(e: React.FormEvent) {
@@ -152,6 +165,19 @@ export default function RegisterPage() {
             Become a part of the Jinsharnam spiritual family and contribute
             towards discipline, character building and national consciousness.
           </p>
+          {/* PRICE BADGE */}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.4, type: "spring" }}
+            className="mt-8 inline-flex items-center gap-3 px-8 py-4 rounded-full
+            bg-gradient-to-r from-[#6A0000] to-[#A00000] text-white shadow-2xl"
+          >
+            <Crown />
+            <span className="text-xl font-semibold">
+              Membership Fee ₹1100
+            </span>
+          </motion.div>
 
         </div>
 
@@ -301,14 +327,17 @@ export default function RegisterPage() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
-                disabled={submitting}
-                className="
+                disabled={submitting || !isFormValid}
+                className={`
                   relative group px-14 py-4 rounded-full
                   text-lg font-semibold text-white
-                  bg-gradient-to-r from-[#6A0000] via-[#8B0000] to-[#A00000]
-                  shadow-xl hover:shadow-2xl
                   transition-all duration-300 overflow-hidden
-                "
+                  ${
+                    submitting || !isFormValid
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-[#6A0000] via-[#8B0000] to-[#A00000] shadow-xl hover:shadow-2xl"
+                  }
+                `}
               >
                 {/* Glow */}
                 <span className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-amber-300/20 to-orange-400/20 opacity-0 group-hover:opacity-100 transition duration-500 blur-xl" />

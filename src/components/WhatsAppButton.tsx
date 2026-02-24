@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 export default function WhatsAppButton() {
-  const phoneNumber = "919810900699"; // 🔁 replace with real number
+  const phoneNumber = "919205587390"; // 🔁 replace with real number
   const message = encodeURIComponent(
     "Jai Jinendra 🙏 I would like to know more about your services."
   );

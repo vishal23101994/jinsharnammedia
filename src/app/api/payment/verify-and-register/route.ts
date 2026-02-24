@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!process.env.RAZORPAY_KEY_SECRET) {
+    if (!process.env.RAZORPAY_SECRET) {
       return NextResponse.json(
         { error: "Server configuration error" },
         { status: 500 }
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     const body = `${razorpay_order_id}|${razorpay_payment_id}`;
 
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .createHmac("sha256", process.env.RAZORPAY_SECRET)
       .update(body)
       .digest("hex");
 
