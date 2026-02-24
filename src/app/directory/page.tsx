@@ -223,7 +223,7 @@ export default function DirectoryPage() {
                 title: "Pulak Awards (2025)",
                 subtitle: "Award Ceremony List",
                 icon: "🏆",
-                href: "/directory/Pulak Award-2025.pdf",
+                href: "/directory/Pulak_Award-2025.pdf",
                 img: "/directory/pulak-awards.png",
               },
               {
