@@ -3,39 +3,27 @@ import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import fs from "fs";
 import path from "path";
+import { sendAdminNotification } from "@/lib/mailer";
 
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
 
-    /* ================= PAYMENT VALIDATION ================= */
-
     const razorpay_order_id = formData.get("razorpay_order_id")?.toString();
     const razorpay_payment_id = formData.get("razorpay_payment_id")?.toString();
     const razorpay_signature = formData.get("razorpay_signature")?.toString();
 
-    if (
-      !razorpay_order_id ||
-      !razorpay_payment_id ||
-      !razorpay_signature
-    ) {
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return NextResponse.json(
         { error: "Missing payment details" },
         { status: 400 }
       );
     }
 
-    if (!process.env.RAZORPAY_SECRET) {
-      return NextResponse.json(
-        { error: "Server configuration error" },
-        { status: 500 }
-      );
-    }
-
     const body = `${razorpay_order_id}|${razorpay_payment_id}`;
 
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_SECRET)
+      .createHmac("sha256", process.env.RAZORPAY_SECRET!)
       .update(body)
       .digest("hex");
 
@@ -45,8 +33,6 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-
-    /* ================= REQUIRED FIELD VALIDATION ================= */
 
     const name = formData.get("name")?.toString();
     const email = formData.get("email")?.toString();
@@ -58,10 +44,22 @@ export async function POST(req: Request) {
       );
     }
 
+    /* ================= DUPLICATE CHECK ================= */
+
+    const existingUser = await prisma.directoryMember.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "You are already registered." },
+        { status: 400 }
+      );
+    }
+
     /* ================= PHOTO UPLOAD ================= */
 
     let imageUrl: string | null = null;
-
     const photo = formData.get("photo") as File | null;
 
     if (photo && photo.size > 0) {
@@ -85,7 +83,7 @@ export async function POST(req: Request) {
       imageUrl = `/uploads/pulak-manch/${fileName}`;
     }
 
-    /* ================= SAVE TO DATABASE ================= */
+    /* ================= CREATE APPROVED MEMBER ================= */
 
     await prisma.directoryMember.create({
       data: {
@@ -106,9 +104,22 @@ export async function POST(req: Request) {
           ? new Date(formData.get("dateOfMarriage")!.toString())
           : null,
         imageUrl,
-        status: "APPROVED", // must match your Prisma enum
+        status: "APPROVED",
       },
     });
+
+    /* ================= SEND EMAIL SAFE ================= */
+
+    sendAdminNotification({
+      type: "ONLINE",
+      name,
+      email,
+      phone: formData.get("phone")?.toString() || null,
+      organization: formData.get("organization")?.toString() || null,
+      position: formData.get("position")?.toString() || null,
+    }).catch((err) =>
+      console.error("Email failed but registration saved:", err)
+    );
 
     return NextResponse.json({ success: true });
 

@@ -39,11 +39,43 @@ export default function RootLayout({
       >
         {/* 🌍 GLOBAL APP PROVIDERS */}
         <Providers>
-          {/* 🎧 GLOBAL AUDIO PROVIDER */}
+          {/* 🔔 GLOBAL TOASTER - Must be high in tree */}
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                borderRadius: "14px",
+                background: "#6A0000",
+                color: "#fff",
+                fontWeight: "500",
+                padding: "14px 18px",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
+              },
+              success: {
+                style: {
+                  background: "linear-gradient(135deg, #065f46, #10b981)",
+                },
+                iconTheme: {
+                  primary: "#fff",
+                  secondary: "#10b981",
+                },
+              },
+              error: {
+                style: {
+                  background: "linear-gradient(135deg, #7f1d1d, #dc2626)",
+                },
+                iconTheme: {
+                  primary: "#fff",
+                  secondary: "#dc2626",
+                },
+              },
+            }}
+          />
+
           <AudioPlayerProvider>
             <Navbar />
             <NewsTicker />
-            <Toaster />
             <RegistrationModal />
 
             <main className="min-h-screen">

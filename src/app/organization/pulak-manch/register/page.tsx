@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { User, Mail, Phone, MapPin, Building2, Calendar, Crown } from "lucide-react";
 import Script from "next/script";
+import Cropper from "react-easy-crop";
 
 /* ================= OPTIONS ================= */
 
@@ -13,13 +14,25 @@ const positions = [
   "Upadhyaksh","Adhyaksh","Sanyojak","Mahamantri","Koshadhyaksh",
   "Sanyojika","Sanskratik Mantri","Mantri","Adhyaksha","Pravakta",
   "Karyadhyaksh","Sahayak Mantri","Karyadhyaksha",
-  "Karyavyaksh","Karyadhyakshika","Other"
+  "Karyavyaksh","Karyadhyakshika","Sadasya","Sadasyaa","Other"
 ];
 
 const zones = [
   "Zone - 1","Zone - 2","Zone - 3","Zone - 4",
   "Zone - 5","Zone - 6","Zone - 7","Zone - 8",
   "Zone - 9","Any other Zone"
+];
+
+const indianStates = [
+  "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh",
+  "Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand",
+  "Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur",
+  "Meghalaya","Mizoram","Nagaland","Odisha","Punjab",
+  "Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura",
+  "Uttar Pradesh","Uttarakhand","West Bengal",
+  "Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry",
+  "Other"
 ];
 
 const organizations = [
@@ -34,6 +47,8 @@ export default function RegisterPage() {
     name: "",
     email: "",
     phone: "",
+    alternatePhones: [] as string[],
+    pincode: "",
     address: "",
     organization: "",
     position: "",
@@ -45,6 +60,12 @@ export default function RegisterPage() {
     dateOfMarriage: "",
   });
 
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+
+  const [otherState, setOtherState] = useState("");
   const [otherPosition, setOtherPosition] = useState("");
   const [otherZone, setOtherZone] = useState("");
   const [otherOrganization, setOtherOrganization] = useState("");
@@ -65,11 +86,25 @@ export default function RegisterPage() {
     form.dateOfBirth.trim() !== "";
 
   
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleOnlinePayment(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
 
     try {
+
+      // ✅ 1. Check if email already exists
+      const checkRes = await fetch("/api/directory/check-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email }),
+      });
+
+      if (!checkRes.ok) {
+        const errorData = await checkRes.json();
+        toast.error(errorData.message || "Registration not allowed");
+        setSubmitting(false);
+        return;
+      }
       // 1️⃣ Create Razorpay Order
       const orderRes = await fetch("/api/payment/create-order", {
         method: "POST",
@@ -99,8 +134,21 @@ export default function RegisterPage() {
               ? otherOrganization
               : form.organization;
 
+          const finalState = form.state === "Other" ? otherState : form.state;
+
+          const finalAddress = form.pincode
+            ? `${form.address}, Pincode: ${form.pincode}`
+            : form.address;
+
+          const finalPhone = form.alternatePhones.length > 0
+            ? `${form.phone} | Alt: ${form.alternatePhones.join(", ")}`
+            : form.phone;
+
           Object.entries({
             ...form,
+            phone: finalPhone,
+            address: finalAddress,
+            state: finalState,
             position: finalPosition,
             zone: finalZone,
             organization: finalOrganization,
@@ -117,7 +165,8 @@ export default function RegisterPage() {
           });
 
           if (!verifyRes.ok) {
-            toast.error("Payment verification failed");
+            const errorData = await verifyRes.json();
+            toast.error(errorData.message || "Registration failed");
             return;
           }
 
@@ -134,6 +183,88 @@ export default function RegisterPage() {
       toast.error("Something went wrong");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function handleOfflineSubmit() {
+    setSubmitting(true);
+
+    try {
+      const fd = new FormData();
+
+      const finalPosition =
+        form.position === "Other" ? otherPosition : form.position;
+
+      const finalZone =
+        form.zone === "Any other Zone" ? otherZone : form.zone;
+
+      const finalOrganization =
+        form.organization === "Any Other"
+          ? otherOrganization
+          : form.organization;
+
+      const finalState = form.state === "Other" ? otherState : form.state;
+
+      const finalAddress = form.pincode
+        ? `${form.address}, Pincode: ${form.pincode}`
+        : form.address;
+
+      const finalPhone = form.alternatePhones.length > 0
+        ? `${form.phone} | Alt: ${form.alternatePhones.join(", ")}`
+        : form.phone;
+
+      Object.entries({
+        ...form,
+        phone: finalPhone,
+        address: finalAddress,
+        state: finalState,
+        position: finalPosition,
+        zone: finalZone,
+        organization: finalOrganization,
+      }).forEach(([k, v]) => v && fd.append(k, v as string));
+
+      if (file) fd.append("photo", file);
+
+      const res = await fetch("/api/directory/register", {
+        method: "POST",
+        body: fd,
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        toast.error(errorData.message || "Registration failed");
+        setSubmitting(false);
+        return;
+      }
+
+      toast.success("Submitted for Admin Approval ✅");
+      window.location.href = "/pending";
+
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function detectStateFromPincode(pin: string) {
+    if (pin.length !== 6 || !/^\d{6}$/.test(pin)) return;
+
+    try {
+      toast.loading("Detecting state...", { id: "stateDetect" });
+
+      const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+      const data = await res.json();
+
+      if (data[0]?.Status === "Success") {
+        const stateName = data[0].PostOffice[0].State;
+        setForm(prev => ({ ...prev, state: stateName }));
+        toast.success("State auto detected ✔", { id: "stateDetect" });
+      } else {
+        toast.error("Invalid pincode", { id: "stateDetect" });
+      }
+    } catch {
+      toast.error("Could not detect state", { id: "stateDetect" });
     }
   }
 
@@ -189,7 +320,7 @@ export default function RegisterPage() {
           className="bg-white/70 backdrop-blur-xl border border-amber-200 rounded-3xl shadow-2xl p-10"
         >
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form className="space-y-8">
 
             {/* PERSONAL INFO */}
             <div>
@@ -204,15 +335,74 @@ export default function RegisterPage() {
                 />
                 <Input icon={<Mail size={18}/>} placeholder="Email"
                   value={form.email}
-                  onChange={(v:string)=>setForm({...form,email:v})}
+                  onChange={(v:string)=>setForm({...form,email:v.toLowerCase()})}
                 />
                 <Input icon={<Phone size={18}/>} placeholder="Mobile"
                   value={form.phone}
                   onChange={(v:string)=>setForm({...form,phone:v})}
                 />
+                {/* Alternate Phone Add Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (form.alternatePhones.length >= 3) {
+                      toast.error("Maximum 3 alternate numbers allowed");
+                      return;
+                    }
+
+                    setForm({
+                      ...form,
+                      alternatePhones: [...form.alternatePhones, ""],
+                    });
+                  }}
+                  className="text-sm text-blue-700 underline"
+                >
+                  + Add Alternate Phone
+                </button>
+
+                {/* Alternate Phone Inputs */}
+                {form.alternatePhones.map((phone, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="flex gap-2 items-center"
+                  >
+                    <Input
+                      placeholder={`Alternate Phone ${index + 1}`}
+                      value={phone}
+                      onChange={(v:string)=>{
+                        const updated = [...form.alternatePhones];
+                        updated[index] = v;
+                        const unique = [...new Set(updated.filter(p => p.trim() !== ""))];
+                        setForm({...form, alternatePhones: unique});
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={()=>{
+                        const updated = form.alternatePhones.filter((_,i)=>i!==index);
+                        setForm({...form, alternatePhones: updated});
+                      }}
+                      className="text-red-600 text-sm"
+                    >
+                      Remove
+                    </button>
+                  </motion.div>
+                ))}
                 <Input icon={<MapPin size={18}/>} placeholder="Address"
                   value={form.address}
                   onChange={(v:string)=>setForm({...form,address:v})}
+                />
+                <Input
+                  icon={<MapPin size={18}/>}
+                  placeholder="Pincode"
+                  value={form.pincode}
+                  onChange={(v:string)=>{
+                    setForm({...form,pincode:v});
+                    detectStateFromPincode(v);
+                  }}
                 />
               </div>
             </div>
@@ -230,23 +420,54 @@ export default function RegisterPage() {
                   options={organizations}
                   placeholder="Select Organization"
                 />
+                {form.organization === "Any Other" && (
+                  <Input
+                    placeholder="Enter Organization"
+                    value={otherOrganization}
+                    onChange={(v:string)=>setOtherOrganization(v)}
+                  />
+                )}
 
                 <Select value={form.position}
                   onChange={(v:string)=>setForm({...form,position:v})}
                   options={positions}
                   placeholder="Select Position"
                 />
+                {form.position === "Other" && (
+                  <Input
+                    placeholder="Enter Position"
+                    value={otherPosition}
+                    onChange={(v:string)=>setOtherPosition(v)}
+                  />
+                )}
 
                 <Select value={form.zone}
                   onChange={(v:string)=>setForm({...form,zone:v})}
                   options={zones}
                   placeholder="Select Zone"
                 />
+                {form.zone === "Any other Zone" && (
+                  <Input
+                    placeholder="Enter Zone"
+                    value={otherZone}
+                    onChange={(v:string)=>setOtherZone(v)}
+                  />
+                )}
 
-                <Input placeholder="State"
+                <Select
                   value={form.state}
                   onChange={(v:string)=>setForm({...form,state:v})}
+                  options={indianStates}
+                  placeholder="Select State"
                 />
+
+                {form.state === "Other" && (
+                  <Input
+                    placeholder="Enter State"
+                    value={otherState}
+                    onChange={(v:string)=>setOtherState(v)}
+                  />
+                )}
 
                 <Input placeholder="Branch"
                   value={form.branch}
@@ -309,27 +530,149 @@ export default function RegisterPage() {
                   id="photoUpload"
                   type="file"
                   accept="image/*"
-                  onChange={e => setFile(e.target.files?.[0] ?? null)}
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = () => setImageSrc(reader.result as string);
+                    reader.readAsDataURL(file);
+                  }}
                   className="hidden"
                 />
 
                 <div className="text-lg font-medium text-[#4B1E00]">
-                  {file ? file.name : "Click to choose file"}
+                  <div className="flex flex-col items-center">
+                    {file ? (
+                      <Image
+                        src={URL.createObjectURL(file)}
+                        alt="Profile"
+                        width={120}
+                        height={120}
+                        className="rounded-full object-cover border-4 border-amber-400"
+                      />
+                    ) : (
+                      <div className="text-lg font-medium text-[#4B1E00]">
+                        Click to choose file
+                      </div>
+                    )}
+                  </div>
                 </div>
-
                 <p className="text-sm text-gray-500 mt-2">
                   Upload a clear passport-size photo (JPG / PNG)
                 </p>
               </label>
+              {imageSrc && (
+                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+                  <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="bg-white rounded-3xl shadow-2xl w-[460px] p-8"
+                  >
+                    {/* Crop Container */}
+                    <div className="relative w-full max-w-[360px] h-[420px] mx-auto bg-gradient-to-br from-gray-800 to-black rounded-xl overflow-hidden shadow-inner">
+                      <Cropper
+                        image={imageSrc}
+                        crop={crop}
+                        zoom={zoom}
+                        aspect={3 / 4}
+                        cropShape="rect"
+                        showGrid={true}
+                        objectFit="contain"
+                        restrictPosition={false}
+                        minZoom={1}
+                        maxZoom={3}
+                        zoomSpeed={0.1}
+                        style={{
+                          cropAreaStyle: {
+                            border: "2px solid #ffffff",
+                            borderRadius: "8px",
+                          },
+                        }}
+                        onCropChange={setCrop}
+                        onZoomChange={setZoom}
+                        onCropComplete={(_, croppedAreaPixels) =>
+                          setCroppedAreaPixels(croppedAreaPixels)
+                        }
+                      />
+                    </div>
+
+                    {/* Save */}
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!croppedAreaPixels) return;
+
+                        const canvas = document.createElement("canvas");
+                        const img = new window.Image();
+                        img.src = imageSrc!;
+
+                        await new Promise((resolve) => {
+                          img.onload = resolve;
+                        });
+
+                        const outputWidth = 360;
+                        const outputHeight = 460;
+
+                        canvas.width = outputWidth;
+                        canvas.height = outputHeight;
+
+                        const ctx = canvas.getContext("2d");
+                        if (!ctx) return;
+
+                        ctx.drawImage(
+                          img,
+                          croppedAreaPixels.x,
+                          croppedAreaPixels.y,
+                          croppedAreaPixels.width,
+                          croppedAreaPixels.height,
+                          0,
+                          0,
+                          outputWidth,
+                          outputHeight
+                        );
+
+                        canvas.toBlob((blob) => {
+                          if (blob) {
+                            const croppedFile = new File([blob], "profile.jpg", {
+                              type: "image/jpeg",
+                            });
+
+                            setFile(croppedFile);
+                            setImageSrc(null);
+                            toast.success("Profile photo saved ✔");
+                          }
+                        }, "image/jpeg");
+                      }}
+                      className="mt-4 w-full bg-[#6A0000] text-white py-2 rounded-lg"
+                    >
+                      Save Photo
+                    </button>
+
+                    {/* Cancel */}
+                    <button
+                      type="button"
+                      onClick={() => setImageSrc(null)}
+                      className="mt-2 w-full border border-gray-300 py-2 rounded-lg text-gray-600 hover:bg-gray-100"
+                    >
+                      Cancel
+                    </button>
+                  </motion.div>
+                </div>
+              )}
             </div>
 
-            <div className="text-center pt-8">
+            <div className="text-center pt-8 grid md:grid-cols-2 gap-6">
+
+              {/* 💳 ONLINE PAYMENT */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
+                type="button"
+                onClick={handleOnlinePayment}
                 disabled={submitting || !isFormValid}
                 className={`
-                  relative group px-14 py-4 rounded-full
+                  relative group px-10 py-4 rounded-full
                   text-lg font-semibold text-white
                   transition-all duration-300 overflow-hidden
                   ${
@@ -339,16 +682,30 @@ export default function RegisterPage() {
                   }
                 `}
               >
-                {/* Glow */}
-                <span className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-amber-300/20 to-orange-400/20 opacity-0 group-hover:opacity-100 transition duration-500 blur-xl" />
-
-                {/* Shine */}
-                <span className="absolute left-[-100%] top-0 h-full w-1/2 bg-white/20 skew-x-[-20deg] group-hover:left-[120%] transition-all duration-700" />
-
-                <span className="relative">
-                  {submitting ? "Submitting..." : "Complete Registration"}
-                </span>
+                Pay ₹1100 & Register
               </motion.button>
+
+              {/* 🧾 OFFLINE PAYMENT */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+                type="button"
+                onClick={handleOfflineSubmit}
+                disabled={submitting || !isFormValid}
+                className={`
+                  relative group px-10 py-4 rounded-full
+                  text-lg font-semibold text-white
+                  transition-all duration-300 overflow-hidden
+                  ${
+                    submitting || !isFormValid
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500 shadow-xl hover:shadow-2xl"
+                  }
+                `}
+              >
+                Already Paid
+              </motion.button>
+
             </div>
 
           </form>

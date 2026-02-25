@@ -6,17 +6,20 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params; // params is a Promise now
+    const { id } = await params;
     const numericId = Number(id);
 
-    const updated = await prisma.directoryMember.update({
+    await prisma.directoryRequest.delete({
       where: { id: numericId },
-      data: { status: "REJECTED" }, // or whatever status you use
     });
 
-    return NextResponse.json({ success: true, updated });
+    return NextResponse.json({ success: true });
+
   } catch (err: any) {
     console.error("reject POST error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

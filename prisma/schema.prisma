@@ -110,6 +110,25 @@ model DirectoryMember {
   createdAt      DateTime         @default(now())
 }
 
+model DirectoryRequest {
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String   @unique
+  phone         String?
+  address       String?
+  organization  String?
+  position      String?
+  zone          String?
+  state         String?
+  branch        String?
+  gender        String?
+  dateOfBirth   DateTime?
+  dateOfMarriage DateTime?
+  imageUrl      String?
+  status        String   @default("PENDING")
+  createdAt     DateTime @default(now())
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            Int
