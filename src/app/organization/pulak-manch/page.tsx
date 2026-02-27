@@ -99,46 +99,56 @@ export default function PulakManchPage() {
 
         {/* ORGANIZATIONS + MEMBERSHIP */}
         <motion.section
-          className="grid md:grid-cols-2 gap-8"
+          className="grid md:grid-cols-2 gap-10"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
         >
-          {[{
-            icon: <Layers />,
-            title: "Organizations Under Pulak Manch",
-            items: [
-              "Akhil Bharatiya Pulak Jan Chetna Manch (Regd.)",
-              "Rashtriya Jain Mahila Jagriti Manch (Regd.)",
-              "Pulak Manch – Youth Wing",
-              "Pulak Manch – Girls Wing",
-              "Pulak Manch – Senior Group",
-              "Pulak Manch – Little Champs",
-            ],
-          },{
-            icon: <Users />,
-            title: "Membership Categories",
-            items: [
-              "Adult Members",
-              "Children & Students",
-              "Little Champs (Free Membership)",
-            ],
-          }].map((card, i) => (
+          {[
+            {
+              icon: <Layers size={26} className="text-amber-700" />,
+              title: "Organizations Under Pulak Manch",
+              items: [
+                "Akhil Bharatiya Pulak Jan Chetna Manch (Regd.)",
+                "Rashtriya Jain Mahila Jagriti Manch (Regd.)",
+                "Pulak Manch – Youth Wing",
+                "Pulak Manch – Girls Wing",
+                "Pulak Manch – Senior Group",
+                "Pulak Manch – Little Champs",
+              ],
+            },
+            {
+              icon: <Users size={26} className="text-amber-700" />,
+              title: "Membership Categories",
+              items: [
+                "Adult Members",
+                "Children & Students",
+                "Little Champs (Free Membership)",
+              ],
+            },
+          ].map((card, i) => (
             <motion.div
               key={i}
               variants={fadeUp}
-              transition={{ duration: 0.6, delay: i * 0.15 }}
-              whileHover={{ y: -6, boxShadow: "0 20px 40px rgba(251,191,36,0.25)" }}
-              className="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all border border-amber-200/50"
-
+              transition={{ duration: 0.6, delay: i * 0.2 }}
+              className="bg-white/80 backdrop-blur-lg p-8 rounded-3xl shadow-xl border border-amber-200"
             >
-              <div className="mb-3">{card.icon}</div>
-              <h3 className="text-xl font-semibold mb-3">{card.title}</h3>
-              <ul className="space-y-2">
-                {card.items.map((item) => (
-                  <li key={item}>• {item}</li>
+              <div className="flex items-center gap-3 mb-6">
+                {card.icon}
+                <h3 className="text-2xl font-semibold">{card.title}</h3>
+              </div>
+
+              <div className="grid gap-4">
+                {card.items.map((item, index) => (
+                  <motion.div
+                    key={index}
+                    whileHover={{ scale: 1.02 }}
+                    className="bg-gradient-to-r from-amber-50 to-white p-4 rounded-xl shadow border border-amber-100 hover:shadow-md transition"
+                  >
+                    {item}
+                  </motion.div>
                 ))}
-              </ul>
+              </div>
             </motion.div>
           ))}
         </motion.section>
@@ -288,26 +298,70 @@ export default function PulakManchPage() {
           whileInView="visible"
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
-          className="bg-white/70 p-10 rounded-3xl shadow-xl border border-amber-200"
+          className="bg-gradient-to-br from-white to-amber-50 p-12 rounded-3xl shadow-2xl border border-amber-200"
         >
-          <h2 className="text-2xl font-serif font-semibold mb-6 text-center">
+          <h2 className="text-3xl font-serif font-semibold mb-12 text-center">
             Contact & Offices
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-8 text-sm text-center">
-            <div>
-              <strong>National Office</strong><br />
-              Vatsalya Bhawan, P-75, Gali No. 5,<br />
-              Bihari Colony Extension, Bihari Colony, <br />Shahdara, Delhi – 110032<br />
-              📞 9810900699
-            </div>
-            <div>
-              <strong>National Support Office</strong><br />
-              Shri Digambar Jain Tirthdham,<br />
-              Mumbai–Surat Highway, Umargam Post,<br />
-              Talasari, Palghar (MH) – 401606<br />
-              📞 7987176553
-            </div>
+          <div className="grid md:grid-cols-2 gap-10 text-center">
+
+            {/* National Office */}
+            <motion.div
+              whileHover={{ y: -6 }}
+              className="bg-white p-10 rounded-2xl shadow-lg border border-amber-200"
+            >
+              <h3 className="text-xl font-semibold mb-6 text-amber-800">
+                National Office
+              </h3>
+
+              <div className="space-y-2 text-sm leading-relaxed">
+                <p className="text-amber-800">Vatsalya Bhawan</p>
+                <p>P-75, Street Number 5, Bihari Colony Extension,</p>
+                <p>Bihari Colony, Shahdara,</p>
+                <p>Delhi – 110032</p>
+
+                <div className="pt-4 space-y-2 flex flex-col items-center">
+                  <div className="flex items-center gap-2">
+                    <Phone size={16} className="text-amber-700" />
+                    9810900699
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Phone size={16} className="text-amber-700" />
+                    9810900042
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* National Support Office */}
+            <motion.div
+              whileHover={{ y: -6 }}
+              className="bg-white p-10 rounded-2xl shadow-lg border border-amber-200"
+            >
+              <h3 className="text-xl font-semibold mb-6 text-amber-800">
+                National Support Office
+              </h3>
+
+              <div className="space-y-2 text-sm leading-relaxed">
+                <p className="text-amber-800">Shri Digambar Jain Jinsharnam Tirth Trust (Regd.)</p>
+                <p>Mumbai-Surat Highway No 48, Uplat,</p>
+                <p>Tehsil Talasari, District Palghar,</p>
+                <p>Maharashtra – 401606</p>
+
+                <div className="pt-4 space-y-2 flex flex-col items-center">
+                  <div className="flex items-center gap-2">
+                    <Phone size={16} className="text-amber-700" />
+                    7987176553
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Phone size={16} className="text-amber-700" />
+                    8799598079
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
           </div>
         </motion.section>
 
