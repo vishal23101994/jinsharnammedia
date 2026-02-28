@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import fs from "fs/promises";
 import path from "path";
 import { sendAdminNotification } from "@/lib/mailer";
+import crypto from "crypto";
 
 function parseDMY(val?: string | null) {
   if (!val) return null;
@@ -93,6 +94,7 @@ export async function POST(req: Request) {
     }
 
     /* ================= CREATE REQUEST ================= */
+    const approvalToken = crypto.randomBytes(32).toString("hex");
 
     const created = await prisma.directoryRequest.create({
       data: {
@@ -110,6 +112,8 @@ export async function POST(req: Request) {
         dateOfMarriage: dom,
         imageUrl,
         status: "PENDING",
+        approvalToken,
+        approvalTokenExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
       },
     });
 
@@ -122,6 +126,14 @@ export async function POST(req: Request) {
       phone,
       organization,
       position,
+      address,
+      zone,
+      state,
+      branch,
+      gender,
+      dateOfBirth: dob,
+      dateOfMarriage: dom,
+      approvalToken,
     }).catch((err) =>
       console.error("Email failed but request saved:", err)
     );

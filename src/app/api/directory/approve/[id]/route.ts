@@ -20,7 +20,7 @@ export async function POST(
       );
     }
 
-    // Check duplicate
+    // Prevent duplicate member
     const existingMember = await prisma.directoryMember.findUnique({
       where: { email: request.email },
     });
@@ -32,7 +32,7 @@ export async function POST(
       );
     }
 
-    // Create approved member
+    // Create APPROVED member
     await prisma.directoryMember.create({
       data: {
         name: request.name,
@@ -52,7 +52,7 @@ export async function POST(
       },
     });
 
-    // Delete request
+    // Delete request after approval
     await prisma.directoryRequest.delete({
       where: { id: numericId },
     });

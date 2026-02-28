@@ -170,8 +170,8 @@ export default function RegisterPage() {
             return;
           }
 
-          toast.success("Registration Successful!");
-          window.location.href = `/success?name=${form.name}&email=${form.email}&phone=${form.phone}`;
+          toast.success("Payment received. Awaiting admin approval ✅");
+          window.location.href = "/pending";
         },
         theme: { color: "#6A0000" },
       };

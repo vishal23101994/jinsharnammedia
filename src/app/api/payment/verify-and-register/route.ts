@@ -34,8 +34,28 @@ export async function POST(req: Request) {
       );
     }
 
-    const name = formData.get("name")?.toString();
-    const email = formData.get("email")?.toString();
+    /* ================= GET FORM DATA ================= */
+
+    const name = formData.get("name")?.toString() || "";
+    const emailRaw = formData.get("email")?.toString()?.trim() || "";
+    const email = emailRaw.toLowerCase();
+
+    const phone = formData.get("phone")?.toString() || null;
+    const address = formData.get("address")?.toString() || null;
+    const organization = formData.get("organization")?.toString() || null;
+    const position = formData.get("position")?.toString() || null;
+    const zone = formData.get("zone")?.toString() || null;
+    const state = formData.get("state")?.toString() || null;
+    const branch = formData.get("branch")?.toString() || null;
+    const gender = formData.get("gender")?.toString() || null;
+
+    const dob = formData.get("dateOfBirth")
+      ? new Date(formData.get("dateOfBirth")!.toString())
+      : null;
+
+    const dom = formData.get("dateOfMarriage")
+      ? new Date(formData.get("dateOfMarriage")!.toString())
+      : null;
 
     if (!name || !email) {
       return NextResponse.json(
@@ -46,13 +66,24 @@ export async function POST(req: Request) {
 
     /* ================= DUPLICATE CHECK ================= */
 
-    const existingUser = await prisma.directoryMember.findUnique({
+    const existingMember = await prisma.directoryMember.findUnique({
       where: { email },
     });
 
-    if (existingUser) {
+    if (existingMember) {
       return NextResponse.json(
         { error: "You are already registered." },
+        { status: 400 }
+      );
+    }
+
+    const existingRequest = await prisma.directoryRequest.findUnique({
+      where: { email },
+    });
+
+    if (existingRequest) {
+      return NextResponse.json(
+        { error: "Your request is already pending approval." },
         { status: 400 }
       );
     }
@@ -79,46 +110,53 @@ export async function POST(req: Request) {
       const filePath = path.join(uploadDir, fileName);
 
       fs.writeFileSync(filePath, buffer);
-
       imageUrl = `/uploads/pulak-manch/${fileName}`;
     }
 
-    /* ================= CREATE APPROVED MEMBER ================= */
+    /* ================= CREATE REQUEST (NOT MEMBER) ================= */
 
-    await prisma.directoryMember.create({
+    const approvalToken = crypto.randomBytes(32).toString("hex");
+
+    await prisma.directoryRequest.create({
       data: {
         name,
         email,
-        phone: formData.get("phone")?.toString() || null,
-        address: formData.get("address")?.toString() || null,
-        organization: formData.get("organization")?.toString() || null,
-        position: formData.get("position")?.toString() || null,
-        zone: formData.get("zone")?.toString() || null,
-        state: formData.get("state")?.toString() || null,
-        branch: formData.get("branch")?.toString() || null,
-        gender: formData.get("gender")?.toString() || null,
-        dateOfBirth: formData.get("dateOfBirth")
-          ? new Date(formData.get("dateOfBirth")!.toString())
-          : null,
-        dateOfMarriage: formData.get("dateOfMarriage")
-          ? new Date(formData.get("dateOfMarriage")!.toString())
-          : null,
+        phone,
+        address,
+        organization,
+        position,
+        zone,
+        state,
+        branch,
+        gender,
+        dateOfBirth: dob,
+        dateOfMarriage: dom,
         imageUrl,
-        status: "APPROVED",
+        status: "PENDING",
+        approvalToken,
+        approvalTokenExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
       },
     });
 
-    /* ================= SEND EMAIL SAFE ================= */
+    /* ================= SEND EMAIL ================= */
 
     sendAdminNotification({
       type: "ONLINE",
       name,
       email,
-      phone: formData.get("phone")?.toString() || null,
-      organization: formData.get("organization")?.toString() || null,
-      position: formData.get("position")?.toString() || null,
+      phone,
+      organization,
+      position,
+      address,
+      zone,
+      state,
+      branch,
+      gender,
+      dateOfBirth: dob,
+      dateOfMarriage: dom,
+      approvalToken,
     }).catch((err) =>
-      console.error("Email failed but registration saved:", err)
+      console.error("Email failed but request saved:", err)
     );
 
     return NextResponse.json({ success: true });

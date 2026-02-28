@@ -108,6 +108,8 @@ model DirectoryMember {
   imageUrl       String?
   status         DirectoryStatus  @default(PENDING)
   createdAt      DateTime         @default(now())
+  approvalToken        String?  @unique
+  approvalTokenExpires DateTime?
 }
 
 model DirectoryRequest {
@@ -127,6 +129,8 @@ model DirectoryRequest {
   imageUrl      String?
   status        String   @default("PENDING")
   createdAt     DateTime @default(now())
+  approvalToken        String?  @unique
+  approvalTokenExpires DateTime?
 }
 
 model Account {
