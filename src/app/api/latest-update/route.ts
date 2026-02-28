@@ -8,5 +8,26 @@ export async function GET() {
     orderBy: { createdAt: "desc" },
   });
 
-  return Response.json({ ok: true, data: updates });
+  return new Response(
+    JSON.stringify({ ok: true, data: updates }),
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*", 
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    }
+  );
+}
+
+/* Handle preflight (important for some browsers) */
+export async function OPTIONS() {
+  return new Response(null, {
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
 }
