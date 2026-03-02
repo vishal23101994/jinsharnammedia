@@ -11,10 +11,11 @@ import Cropper from "react-easy-crop";
 /* ================= OPTIONS ================= */
 
 const positions = [
-  "Upadhyaksh","Adhyaksh","Sanyojak","Mahamantri","Koshadhyaksh",
-  "Sanyojika","Sanskratik Mantri","Mantri","Adhyaksha","Pravakta",
-  "Karyadhyaksh","Sahayak Mantri","Karyadhyaksha",
-  "Karyavyaksh","Karyadhyakshika","Sadasya","Sadasyaa","Other"
+  "Adhyaksh","Adhyaksha","Karyadhyaksha","Karyadhyakshika","Karyavyaksh",
+  "Koshadhyaksh","Mahamantri","Mantri","Mukhya Salahkar","Mukhya Sanyojak",
+  "Param Sanrakshak","Pravakta","Rashtriya Koshadhyaksh",
+  "Sadasya","Sadasyika","Sahayak Mantri","Sangathan Mantri","Sanskratik Mantri",
+  "Sanyojak","Sanyojika","Shiksha Mantri","Upadhyaksh","Varishth Upadhyaksh","Other"
 ];
 
 const zones = [
@@ -38,6 +39,7 @@ const indianStates = [
 const organizations = [
   "Akhil Bhartiya Pulak Jan Chetna Manch (Regd.)",
   "Rashtriya Jain Mahila Jagriti Manch (Regd.)",
+  "Rashtriya Karyakarini (Regd.)",
   "Any Other"
 ];
 

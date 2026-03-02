@@ -29,6 +29,23 @@ export default function PulakManchPage() {
             transition={{ duration: 0.8 }}
             className="text-center md:text-left space-y-6"
           >
+            {/* LOGO */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="flex justify-center md:justify-start"
+            >
+              <Image
+                src="/images/gallery/logo/pulakmanch.png"
+                alt="Pulak Manch Logo"
+                width={100}
+                height={100}
+                className="object-contain"
+                priority
+              />
+            </motion.div>
+
             <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-semibold leading-tight">
               Pulak Manch <br />
               <span className="text-amber-700">Parivar</span>
