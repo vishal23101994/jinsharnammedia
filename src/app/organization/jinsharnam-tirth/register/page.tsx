@@ -11,11 +11,9 @@ import { useRouter } from "next/navigation";
 /* ================= OPTIONS ================= */
 
 const designations = [
-  "Adhyaksh","Adhyaksha","Karyadhyaksha","Karyadhyakshika","Karyavyaksh",
-  "Koshadhyaksh","Mahamantri","Mantri","Mukhya Salahkar","Mukhya Sanyojak",
-  "Param Sanrakshak","Pravakta","Rashtriya Koshadhyaksh",
-  "Sadasya","Sadasyika","Sahayak Mantri","Sangathan Mantri","Sanskratik Mantri",
-  "Sanyojak","Sanyojika","Shiksha Mantri","Upadhyaksh","Varishth Upadhyaksh","Other"
+  "Adhyaksh","Karyadhyaksh","Koshyadhyaksh",
+  "Mahamantri","Mantri","Param Sanrakshak","Sanghpati and Sanrakshak Shiromani","Sanrakshak Shiromani",
+  "Sanyojak","Trustee","Upadhyaksh","Other"
 ];
 
 const indianStates = [

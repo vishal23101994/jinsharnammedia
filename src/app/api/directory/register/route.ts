@@ -134,6 +134,7 @@ export async function POST(req: Request) {
       dateOfBirth: dob,
       dateOfMarriage: dom,
       approvalToken,
+      imageUrl,
     }).catch((err) =>
       console.error("Email failed but request saved:", err)
     );

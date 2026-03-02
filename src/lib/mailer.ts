@@ -15,6 +15,7 @@ export async function sendAdminNotification({
   gender,
   dateOfBirth,
   dateOfMarriage,
+  imageUrl,
 }: {
   type: "ONLINE" | "OFFLINE";
   name: string;
@@ -29,6 +30,7 @@ export async function sendAdminNotification({
   gender?: string | null;
   dateOfBirth?: Date | null;
   dateOfMarriage?: Date | null;
+  imageUrl?: string | null;
   approvalToken: string;
 }) {
 
@@ -44,6 +46,10 @@ export async function sendAdminNotification({
 
   const siteUrl = process.env.NEXTAUTH_URL;
   const approvalLink = `${siteUrl}/api/admin/approve?token=${approvalToken}`;
+
+  const imageFullUrl = imageUrl
+    ? `${siteUrl}${imageUrl}`
+    : null;
 
   const badgeColor = type === "ONLINE" ? "#0E9F6E" : "#D97706";
 
@@ -78,6 +84,16 @@ export async function sendAdminNotification({
 
       <!-- Body -->
       <div style="padding:30px;">
+        ${
+          imageFullUrl
+            ? `<div style="text-align:center;margin-bottom:25px;">
+                <img src="${imageFullUrl}" alt="Profile Photo" 
+                style="width:130px;height:160px;object-fit:cover;
+                border-radius:10px;border:4px solid #f1f1f1;
+                box-shadow:0 4px 10px rgba(0,0,0,0.1);" />
+              </div>`
+            : ""
+        }
 
         <h3 style="margin-top:0;color:#333;">Member Details</h3>
 
