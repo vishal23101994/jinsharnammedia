@@ -479,10 +479,13 @@ export default function JinsharnamTirthPage() {
 
           {/* Heading + Export */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-            <h2 className="text-3xl font-serif text-[#4B1E00] font-semibold flex items-center gap-2">
-              <Users className="text-amber-700" size={30} />
-              Trustee Committee
-            </h2>
+            <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+
+              <h2 className="text-3xl font-serif text-[#4B1E00] font-semibold flex items-center gap-2">
+                <Users className="text-amber-700" size={30} />
+                Trustee Committee
+              </h2>
+            </div>
 
             <button
               onClick={handleExportToExcel}
@@ -576,6 +579,55 @@ export default function JinsharnamTirthPage() {
               </button>
             </div>
           )}
+
+          {/* ✨ Trustee Registration CTA */}
+          <div className="mt-14 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <button
+                onClick={() =>
+                  window.location.href =
+                    "/organization/jinsharnam-tirth/register"
+                }
+                className="
+                  relative
+                  px-12 py-5
+                  text-lg md:text-xl
+                  font-semibold
+                  rounded-full
+                  text-[#4B1E00]
+                  bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-300
+                  shadow-[0_20px_50px_rgba(251,191,36,0.7)]
+                  hover:shadow-[0_30px_70px_rgba(251,191,36,1)]
+                  hover:-translate-y-2
+                  transition-all duration-300
+                  overflow-hidden
+                "
+              >
+                <span className="relative z-10 flex items-center gap-3">
+                  Click here for Trustee Registration
+                </span>
+
+                {/* Glow Animation */}
+                <span
+                  className="
+                    absolute inset-0
+                    bg-gradient-to-r from-transparent via-white/40 to-transparent
+                    translate-x-[-100%]
+                    animate-[shine_3s_infinite]
+                  "
+                />
+              </button>
+
+              <p className="mt-12 text-[#4B1E00]/80 text-sm">
+                Join the sacred journey and serve Jinsharnam Tirth Trust.
+              </p>
+            </motion.div>
+          </div>
         </div>
       </div>
 

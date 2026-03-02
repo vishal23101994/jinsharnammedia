@@ -19,23 +19,6 @@ export default function PendingPage() {
         transition={{ duration: 0.8 }}
         className="relative max-w-xl w-full bg-white/70 backdrop-blur-2xl border border-amber-200 rounded-3xl shadow-2xl p-12 text-center"
       >
-
-        {/* Logo */}
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.3, type: "spring" }}
-          className="flex justify-center mb-6"
-        >
-          <Image
-            src="/images/logo/pulakmanch.png"
-            alt="Pulak Manch Logo"
-            width={110}
-            height={110}
-            className="drop-shadow-lg"
-          />
-        </motion.div>
-
         {/* Animated Icon */}
         <motion.div
           animate={{ rotate: [0, 10, -10, 0] }}
