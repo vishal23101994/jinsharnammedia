@@ -1,6 +1,23 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+/* ---------------- CORS HEADERS ---------------- */
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+/* ---------------- OPTIONS HANDLER ---------------- */
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 200,
+    headers: corsHeaders,
+  });
+}
+
 /**
  * GET /api/directory
  */
@@ -18,7 +35,7 @@ export async function GET(request: Request) {
               { address: { contains: q, mode: "insensitive" } },
               { phone: { contains: q, mode: "insensitive" } },
               { email: { contains: q, mode: "insensitive" } },
-              { zone: { contains: q, mode: "insensitive" } }, // ✅ ADDED
+              { zone: { contains: q, mode: "insensitive" } },
               { state: { contains: q, mode: "insensitive" } },
               { branch: { contains: q, mode: "insensitive" } },
             ],
@@ -27,12 +44,25 @@ export async function GET(request: Request) {
       orderBy: { name: "asc" },
     });
 
-    return NextResponse.json(members);
+    return new Response(JSON.stringify(members), {
+      headers: {
+        "Content-Type": "application/json",
+        ...corsHeaders,
+      },
+    });
+
   } catch (error) {
     console.error("Error fetching directory members:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch directory members" },
-      { status: 500 }
+
+    return new Response(
+      JSON.stringify({ error: "Failed to fetch directory members" }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+          ...corsHeaders,
+        },
+      }
     );
   }
 }
