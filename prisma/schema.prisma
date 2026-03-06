@@ -65,14 +65,26 @@ model Product {
 
 model Order {
   id            Int         @id @default(autoincrement())
-  userId        Int
+
+  userId        Int?   // 🔴 now optional for guest checkout
+
   totalCents    Int
   status        OrderStatus @default(CREATED)
   paymentId     String?
   paymentStatus String?
+
+  // 🔴 customer details (Pulak Sagar orders)
+  customerName  String?
+  customerPhone String?
+  address       String?
+  city          String?
+  pincode       String?
+
   createdAt     DateTime    @default(now())
+
   orderItems    OrderItem[]
-  user          User        @relation(fields: [userId], references: [id])
+
+  user          User?       @relation(fields: [userId], references: [id])
 }
 
 model OrderItem {
