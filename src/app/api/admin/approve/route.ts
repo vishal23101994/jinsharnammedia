@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendDirectoryApprovedEmail } from "@/lib/directory-user-mailer";
 
 export async function GET(req: Request) {
   try {
@@ -46,6 +47,11 @@ export async function GET(req: Request) {
           imageUrl: request.imageUrl,
           status: "APPROVED",
         },
+      });
+
+      await sendDirectoryApprovedEmail({
+        email: request.email,
+        name: request.name,
       });
     }
 

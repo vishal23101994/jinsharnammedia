@@ -61,7 +61,7 @@ export function Footer() {
                 text-center md:text-left">
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <img
-              src="/images/logo.jpg"
+              src="/images/logo_new.png"
               alt="Jinsharnam Media Logo"
               className="w-14 h-14 rounded-full border-2 border-yellow-400/50 shadow-lg"
             />

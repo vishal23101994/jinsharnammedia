@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import fs from "fs/promises";
 import path from "path";
 import { sendAdminNotification } from "@/lib/mailer";
+import { sendDirectoryPendingEmail } from "@/lib/directory-user-mailer";
 import crypto from "crypto";
 
 function parseDMY(val?: string | null) {
@@ -137,6 +138,13 @@ export async function POST(req: Request) {
       imageUrl,
     }).catch((err) =>
       console.error("Email failed but request saved:", err)
+    );
+
+    sendDirectoryPendingEmail({
+      email,
+      name,
+    }).catch((err) =>
+      console.error("Pending email failed:", err)
     );
 
     return NextResponse.json({ success: true, id: created.id });

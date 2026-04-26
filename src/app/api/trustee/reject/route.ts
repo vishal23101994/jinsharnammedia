@@ -1,6 +1,7 @@
 export const runtime = "nodejs";
 
 import { prisma } from "@/lib/prisma";
+import { sendTrusteeRejectedEmail } from "@/lib/trustee-user-mailer";
 
 export async function GET(req: Request) {
   try {
@@ -25,6 +26,11 @@ export async function GET(req: Request) {
     }
 
     // Option 1: Delete request completely
+    await sendTrusteeRejectedEmail({
+      email: request.email,
+      name: request.name,
+    });
+
     await prisma.trusteeRequest.delete({
       where: { id: request.id },
     });

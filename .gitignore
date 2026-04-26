@@ -7,4 +7,8 @@ public/videos/
 *.mp4
 # Large documents
 public/directory/*.pdf
-
+public/audio/*.wav
+# Audio files
+*.mp3
+*.wav
+public/audio/

@@ -2,6 +2,7 @@ export const runtime = "nodejs";
 import { prisma } from "@/lib/prisma";
 import { randomBytes } from "crypto";
 import { sendTrusteeApprovalMail } from "@/lib/trustee-mailer";
+import { sendTrusteePendingEmail } from "@/lib/trustee-user-mailer";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 
@@ -106,6 +107,10 @@ export async function POST(req: Request) {
     await sendTrusteeApprovalMail({
       ...trusteeRequest,
       approvalToken,
+    });
+    await sendTrusteePendingEmail({
+      email: trusteeRequest.email,
+      name: trusteeRequest.name,
     });
 
     return Response.json({ success: true });

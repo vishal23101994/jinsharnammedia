@@ -58,6 +58,7 @@ export default function PulakSagarPage() {
               </Link>
             </div>
           </motion.div>
+          
 
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -76,6 +77,34 @@ export default function PulakSagarPage() {
             />
           </motion.div>
         </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.8 }}
+          className="mt-12 w-full md:max-w-xl mx-auto"
+        >
+          <Link
+            href="https://pulaksagar.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block rounded-2xl border border-[#FFD700]/50 bg-gradient-to-r from-[#FFF8DC] via-[#FFE9A8] to-[#FFD580] p-5 shadow-[0_10px_30px_rgba(196,90,0,0.25)] hover:shadow-[0_15px_40px_rgba(196,90,0,0.35)] hover:scale-[1.02] transition-all duration-300"
+          >
+            <div className="flex items-center gap-4">
+              <div className="rounded-full bg-[#8B0000] p-3 text-white shadow-lg">
+                <Rss className="w-5 h-5" />
+              </div>
+
+              <div>
+                <p className="text-sm uppercase tracking-wider text-[#8B0000] font-semibold">
+                  Official Digital Presence
+                </p>
+                <h3 className="text-lg md:text-2xl font-bold text-[#5A1A00] group-hover:text-[#8B0000]">
+                  Visit Official Website of Pulak Sagar Ji
+                </h3>
+              </div>
+            </div>
+          </Link>
+        </motion.div>
       </header>
 
       {/* 🌟 BIOGRAPHY */}

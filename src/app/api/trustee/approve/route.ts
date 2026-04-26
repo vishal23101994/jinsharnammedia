@@ -1,6 +1,7 @@
 export const runtime = "nodejs";
 
 import { prisma } from "@/lib/prisma";
+import { sendTrusteeApprovedEmail } from "@/lib/trustee-user-mailer";
 
 export async function GET(req: Request) {
   try {
@@ -46,6 +47,10 @@ export async function GET(req: Request) {
           dateOfMarriage: request.dateOfMarriage,
           imageUrl: request.imageUrl,
         },
+      });
+      await sendTrusteeApprovedEmail({
+        email: request.email,
+        name: request.name,
       });
     }
 

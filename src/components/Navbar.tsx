@@ -205,7 +205,14 @@ export default function Navbar() {
     { name: "Services", path: "/services" },
     // { name: "Achievements", path: "/achievements" },
     { name: "Sahitya", path: "/store" },
-    { name: "Directory", path: "/directory" },
+    {
+      name: "Directory",
+      subLinks: [
+        { name: "Rashtriya Karyakarini List", path: "/directory/rashtriya-karyakarini" },
+        { name: "Ekta Directory", path: "/directory/ekta-directory" },
+        { name: "Downloads", path: "/directory/downloads" },
+      ],
+    },
     { name: "Contact", path: "/contact" },
   ];
 
@@ -216,7 +223,7 @@ export default function Navbar() {
       <div className="flex justify-between items-center px-6 md:px-12 py-2 border-b border-yellow-700/40 text-sm relative">
         <Link href="/" className="md:hidden flex items-center gap-2">
           <img
-            src="/images/logo.jpg"
+            src="/images/logo_new.png"
             alt="Logo"
             className="w-11 h-11 sm:w-12 sm:h-9 rounded-full"
           />
@@ -391,9 +398,9 @@ export default function Navbar() {
       <div className="hidden md:flex items-center justify-between px-6 md:px-12 py-3">
         <Link href="/" className="flex items-center gap-3">
           <img
-            src="/images/logo.jpg"
+            src="/images/logo_new.png"
             alt="Jinsharnam Media Logo"
-            className="w-14 h-12 rounded-full shadow-lg hover:scale-105 transition-transform"
+            className="w-14 h-14 rounded-full shadow-lg hover:scale-105 transition-transform"
           />
           <h1 className="font-serif text-2xl font-bold text-yellow-300">
             Jinsharnam <span className="text-yellow-400">Media</span>
