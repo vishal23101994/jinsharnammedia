@@ -146,7 +146,7 @@ export default function PulakSagarLiveSection() {
                 <div className="relative rounded-[36px] p-2 bg-gradient-to-br from-[#FFF6D6] to-[#D4AF37] shadow-[0_25px_60px_rgba(0,0,0,0.18)]">
                   <div className="overflow-hidden rounded-[30px] border border-white/40">
                     <img
-                      src={`http://localhost:3001${live.imageUrl}`}
+                      src={live.imageUrl}
                       alt={live.title}
                       className="w-full h-[800px] object-cover transition duration-700 group-hover:scale-105"
                     />
