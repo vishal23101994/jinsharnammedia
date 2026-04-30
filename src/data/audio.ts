@@ -10,6 +10,7 @@ export const audios = [
   { title: "Pulak Sagar Ki Jai", artist: "Acharya Pulak Sagar Ji", src: "/audio/Tin Kahaniya (8).mp3", },
   { title: "Guru Ka Naam Na Ho", artist: "Acharya Pulak Sagar Ji", src: "/audio/Tin Kahaniya (9).mp3", },
   { title: "Suno Mahima", artist: "Acharya Pulak Sagar Ji", src: "/audio/Tin Kahaniya (10).mp3", },
+  { title: "Pulak Sagar Ji Ka Dil Me Raaj", artist: "Acharya Pulak Sagar Ji", src: "/audio/pulak-sagar-ji.mp3", },
 
   { title: "Bhagwan Mera", artist: "Acharya Pulak Sagar Ji", src: "/audio/Bhagwan_Mera.mp3", },
   { title: "Bhagwan Mera 2", artist: "Acharya Pulak Sagar Ji", src: "/audio/Bhagwan_Mera_2.mp3", },

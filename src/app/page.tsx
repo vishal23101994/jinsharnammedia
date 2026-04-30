@@ -9,6 +9,7 @@ import AdvertisementCards from "@/components/AdvertisementCards";
 import LatestUpdatesSection from "@/components/LatestUpdatesSection";
 import UpcomingEventsSection from "@/components/UpcomingEventsSection";
 import FeedbackSection from "@/components/FeedbackSection";
+import PulakSagarLiveSection from "@/components/PulakSagarLiveSection";
 import { Phone, Mail, Printer } from "lucide-react";
 
 // 🎥 YouTube video type
@@ -45,6 +46,7 @@ export default function Home() {
   return (
     <>
       <HeroSection />
+      <PulakSagarLiveSection />
       <AboutSection />
       <OrganizationsSection />
       <PulakSagarHighlights />

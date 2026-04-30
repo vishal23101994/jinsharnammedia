@@ -473,6 +473,20 @@ export default function AdminDashboard() {
             {/* Directory Card (clickable) */}
             {/* 🔔 Latest Updates */}
             <div
+              onClick={() => router.push("/admin/pulak-sagar-live")}
+              className="group cursor-pointer rounded-2xl bg-[#4B1E00]/40 border border-[#C6A75E]/40 shadow-md hover:shadow-xl hover:border-[#C6A75E]/80 transition-all duration-200 p-6 relative overflow-hidden"
+            >
+              <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-br from-[#C6A75E] via-transparent to-[#FFD97A]" />
+
+              <h2 className="text-xl font-semibold text-[#C6A75E] mb-1">
+                📍 Pulak Sagar Live Updates
+              </h2>
+
+              <p className="text-sm text-[#FFF8E7]/80">
+                Manage current location, vihar updates, and live announcements for Pulak Sagar Ji.
+              </p>
+            </div>
+            <div
               onClick={() => router.push("/admin/updates")}
               className="group cursor-pointer rounded-2xl bg-[#4B1E00]/40 border border-[#FFD97A]/40 shadow-md hover:shadow-xl hover:border-[#FFD97A]/80 transition-all duration-200 p-6 relative overflow-hidden"
             >

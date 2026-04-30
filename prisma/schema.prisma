@@ -253,3 +253,23 @@ model TrusteeRequest {
   approvalToken        String?  @unique
   approvalTokenExpires DateTime?
 }
+
+model PulakSagarLiveUpdate {
+  id        String   @id @default(cuid())
+
+  title     String
+  location  String
+  state     String?
+  message   String
+
+  imageUrl  String?
+  mapLink   String?
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  isActive  Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
