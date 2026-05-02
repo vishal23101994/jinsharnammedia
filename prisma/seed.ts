@@ -447,16 +447,6 @@ async function main() {
         imageUrl: "/images/Products/Books/54-sarsb-bhag-2.jpg",
         active: true,
       },
-      {
-        id: "55",
-        sku: "BOOK-055",
-        title: "Ek Or Muktidoot",
-        category: "Book",
-        description: "An introduction to Jain dharma and principles.",
-        priceCents: 20000,
-        imageUrl: "/images/Products/Books/55-ek-aur-muktidoot.jpg",
-        active: true,
-      },
 
       {
         id: "CAL-009",
