@@ -46,6 +46,7 @@ export async function sendAdminNotification({
 
   const siteUrl = process.env.NEXTAUTH_URL;
   const approvalLink = `${siteUrl}/api/admin/approve?token=${approvalToken}`;
+  const editLink = `${siteUrl}/admin/review-member?token=${approvalToken}`;
 
   const imageFullUrl = imageUrl
     ? `${siteUrl}${imageUrl}`
@@ -122,8 +123,22 @@ export async function sendAdminNotification({
               font-size:15px;
               font-weight:bold;
               display:inline-block;
+              margin-right:10px;
           ">
             ✅ Approve Member
+          </a>
+
+          <a href="${editLink}" style="
+              background:#1D4ED8;
+              color:white;
+              padding:14px 28px;
+              text-decoration:none;
+              border-radius:8px;
+              font-size:15px;
+              font-weight:bold;
+              display:inline-block;
+          ">
+            ✏️ Edit / Review
           </a>
         </div>
 
