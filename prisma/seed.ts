@@ -86,7 +86,17 @@ async function main() {
         priceCents: 15000,
         imageUrl: "/images/Products/Books/63-prabhu-gungaan.jpeg",
         active: true,
-      },   
+      },
+      {
+        id: "64",
+        sku: "BOOK-064",
+        title: "Sarvagya Vaani",
+        category: "Book",
+        description: "An introduction to Jain dharma and principles.",
+        priceCents: 35000,
+        imageUrl: "/images/Products/Books/64-sarvagya-vaani.jpeg",
+        active: true,
+      }, 
       {
         id: "1",
         sku: "BOOK-001",
