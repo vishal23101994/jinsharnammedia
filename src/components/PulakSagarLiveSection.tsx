@@ -228,7 +228,7 @@ export default function PulakSagarLiveSection() {
           {/* Image Viewer */}
           <div className="relative w-[90vw] h-[90vh] overflow-hidden flex items-center justify-center">
             <img
-              src={`http://localhost:3001${live.imageUrl}`}
+              src={live.imageUrl}
               alt={live.title}
               style={{
                 transform: `scale(${zoom})`,
