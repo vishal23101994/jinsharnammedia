@@ -114,7 +114,7 @@ export async function POST(req: Request) {
         imageUrl,
         status: "PENDING",
         approvalToken,
-        approvalTokenExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        approvalTokenExpires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       },
     });
 

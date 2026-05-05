@@ -38,6 +38,7 @@ export async function sendTrusteeApprovalMail(data: TrusteeMailData) {
   const baseUrl = process.env.NEXTAUTH_URL;
   const approveUrl = `${baseUrl}/api/trustee/approve?token=${data.approvalToken}`;
   const rejectUrl = `${baseUrl}/api/trustee/reject?token=${data.approvalToken}`;
+  const reviewUrl = `${baseUrl}/admin/review-trustee?token=${data.approvalToken}`;
 
   // 🔥 FIX: Convert image to FULL URL for email
   const imageFullUrl = data.imageUrl
@@ -90,8 +91,15 @@ export async function sendTrusteeApprovalMail(data: TrusteeMailData) {
           <a href="${approveUrl}" 
             style="background:#28a745;color:white;padding:14px 28px;
             text-decoration:none;border-radius:8px;
-            font-weight:bold;margin-right:15px;display:inline-block;">
+            font-weight:bold;margin-right:10px;display:inline-block;">
             ✅ Approve
+          </a>
+
+          <a href="${reviewUrl}" 
+            style="background:#2563EB;color:white;padding:14px 28px;
+            text-decoration:none;border-radius:8px;
+            font-weight:bold;margin-right:10px;display:inline-block;">
+            ✏️ Edit / Review
           </a>
 
           <a href="${rejectUrl}" 
