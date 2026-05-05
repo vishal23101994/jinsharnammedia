@@ -11,6 +11,7 @@ import UpcomingEventsSection from "@/components/UpcomingEventsSection";
 import FeedbackSection from "@/components/FeedbackSection";
 import PulakSagarLiveSection from "@/components/PulakSagarLiveSection";
 import { Phone, Mail, Printer } from "lucide-react";
+import { createPortal } from "react-dom";
 
 // 🎥 YouTube video type
 type Video = { id: string; title: string; thumbnail?: string; publishedAt?: string };
@@ -18,6 +19,12 @@ type Video = { id: string; title: string; thumbnail?: string; publishedAt?: stri
 export default function Home() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedAdImage, setSelectedAdImage] = useState<{
+    src: string;
+    title: string;
+  } | null>(null);
+
+  const [adZoom, setAdZoom] = useState(1);
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -50,7 +57,12 @@ export default function Home() {
       <AboutSection />
       <OrganizationsSection />
       <PulakSagarHighlights />
-      <PrintPublicationContactSection />
+      <PrintPublicationContactSection
+        selectedAdImage={selectedAdImage}
+        setSelectedAdImage={setSelectedAdImage}
+        adZoom={adZoom}
+        setAdZoom={setAdZoom}
+      />
       <LatestUpdatesSection />
       <UpcomingEventsSection />
       <AdvertisementCards />
@@ -508,113 +520,56 @@ function LatestVideosSection({
   );
 }
 
-function PrintPublicationContactSection() {
+function PrintPublicationContactSection({
+  selectedAdImage,
+  setSelectedAdImage,
+  adZoom,
+  setAdZoom,
+}: {
+  selectedAdImage: { src: string; title: string } | null;
+  setSelectedAdImage: React.Dispatch<
+    React.SetStateAction<{ src: string; title: string } | null>
+  >;
+  adZoom: number;
+  setAdZoom: React.Dispatch<React.SetStateAction<number>>;
+}) {
   return (
     <section className="relative py-32 bg-gradient-to-b from-[#FFE6A6] via-[#FFD97A] to-[#FFE6A6]">
 
-      {/* TOP DIVIDER */}
-      <div className="absolute top-0 inset-x-0 h-[6px] bg-gradient-to-r from-transparent via-[#B8860B] to-transparent" />
-
+      {/* Existing Section Content */}
       <div className="max-w-7xl mx-auto px-6">
+        <div className="relative rounded-[48px] p-12 bg-white/70 backdrop-blur border border-[#D4AF37] shadow-[0_40px_120px_rgba(212,175,55,0.55)]">
 
-        {/* PREMIUM SECTION HEADER (COMPACT) */}
-        <div className="relative flex justify-center mb-20">
-
-          {/* Soft glow aura */}
-          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-20
-            bg-gradient-to-r from-transparent via-[#FFD97A]/60 to-transparent
-            blur-2xl opacity-70" />
-
-          {/* Header badge */}
-          <div
-            className="
-              relative px-12 py-3
-              rounded-full
-              bg-gradient-to-br from-[#6A0000] via-[#8B0000] to-[#6A0000]
-              border border-[#FFD97A]
-              shadow-[0_0_45px_rgba(255,217,122,0.9)]
-            "
-          >
-            <h2
-              className="
-                text-2xl md:text-3xl
-                font-serif
-                text-[#FFF8E7]
-                tracking-[0.18em]
-                text-center
-                drop-shadow-[0_0_15px_rgba(255,217,122,0.9)]
-              "
-            >
-              ADVERTISEMENT
-            </h2>
-
-            <p
-              className="
-                mt-1
-                text-xs md:text-sm
-                text-[#FFD97A]/90
-                tracking-widest
-                text-center
-                uppercase
-              "
-            >
-              Promote your Advertisement
-            </p>
-          </div>
-        </div>
-
-        {/* MAIN FEATURE BOX */}
-        <div className="relative rounded-[48px] p-12 bg-white/70 backdrop-blur
-          border border-[#D4AF37]
-          shadow-[0_40px_120px_rgba(212,175,55,0.55)]">
-
-          {/* SOFT HALO */}
-          <div className="absolute -inset-4 rounded-[56px]
-            bg-gradient-to-br from-[#FFD97A]/60 via-transparent to-[#FFD97A]/40
-            blur-3xl pointer-events-none" />
-
-          {/* TWO EQUAL CARDS */}
           <div className="relative grid md:grid-cols-2 gap-16 items-stretch">
 
-            {/* LEFT — IMAGE CARD */}
+            {/* CLICKABLE IMAGE */}
             <div className="relative h-full flex items-center justify-center">
               <div className="absolute inset-0 rounded-3xl bg-[#FFD97A] blur-3xl opacity-80" />
 
-              <div className="relative rounded-3xl overflow-hidden
-                border-4 border-[#B8860B]
-                bg-white
-                shadow-[0_0_70px_rgba(255,217,122,0.9)]">
+              <div
+                onClick={() => {
+                  setAdZoom(1);
+                  setSelectedAdImage({
+                    src: "/images/pulak-graphics.jpeg",
+                    title: "Pulak Graphics – Printing & Publication",
+                  });
+                }}
+                className="relative rounded-3xl overflow-hidden border-4 border-[#B8860B] bg-white shadow-[0_0_70px_rgba(255,217,122,0.9)] cursor-pointer group"
+              >
                 <Image
                   src="/images/pulak-graphics.jpeg"
                   alt="Pulak Graphics – Printing & Publication"
                   width={900}
                   height={450}
-                  className="w-full h-auto object-cover"
+                  className="w-full h-auto object-cover transition duration-500 group-hover:scale-105"
                   priority
                 />
               </div>
             </div>
 
-            {/* RIGHT — CONTACT CARD */}
-            <div
-              className="
-                relative h-full
-                rounded-3xl
-                bg-gradient-to-br from-[#FFFDF0] to-[#FFE9B5]
-                border-4 border-dashed border-[#B8860B]
-                shadow-[0_0_70px_rgba(255,217,122,0.7)]
-                flex flex-col
-                items-center
-                justify-center
-                text-center
-                px-14
-              "
-            >
-              <div className="absolute inset-0 rounded-3xl bg-[#FFD97A]/30 blur-2xl -z-10" />
-
-              <h3 className="text-3xl md:text-4xl font-serif text-[#6A0000]
-                drop-shadow-[0_0_12px_rgba(255,217,122,0.8)]
-                mb-6">
+            {/* CONTACT CARD */}
+            <div className="relative h-full rounded-3xl bg-gradient-to-br from-[#FFFDF0] to-[#FFE9B5] border-4 border-dashed border-[#B8860B] shadow-[0_0_70px_rgba(255,217,122,0.7)] flex flex-col items-center justify-center text-center px-14">
+              <h3 className="text-3xl md:text-4xl font-serif text-[#6A0000] mb-6">
                 Contact for Advertisement
               </h3>
 
@@ -623,32 +578,86 @@ function PrintPublicationContactSection() {
                 Jinsharnam Media.
               </p>
 
-              {/* FIXED BUTTON ALIGNMENT */}
               <Link
                 href="/contact"
-                className="
-                  inline-flex items-center justify-center
-                  px-12 py-4
-                  rounded-full
-                  bg-gradient-to-r from-[#6A0000] to-[#8B0000]
-                  text-[#FFF8E7]
-                  font-semibold
-                  tracking-wide
-                  shadow-[0_0_40px_rgba(139,0,0,0.85)]
-                  hover:scale-105
-                  transition-all
-                "
+                className="inline-flex items-center justify-center px-12 py-4 rounded-full bg-gradient-to-r from-[#6A0000] to-[#8B0000] text-[#FFF8E7] font-semibold shadow-[0_0_40px_rgba(139,0,0,0.85)] hover:scale-105 transition-all"
               >
                 Get in Touch →
               </Link>
             </div>
-
           </div>
         </div>
       </div>
 
-      {/* BOTTOM DIVIDER */}
-      <div className="absolute bottom-0 inset-x-0 h-[6px] bg-gradient-to-r from-transparent via-[#B8860B] to-transparent" />
+      {/* IMAGE MODAL */}
+      {selectedAdImage &&
+        createPortal(
+          <div className="fixed inset-0 z-[2147483647] bg-black/90 backdrop-blur-lg flex items-center justify-center">
+
+            {/* TOOLBAR */}
+            <div
+              className="
+                fixed top-6 right-6 z-[2147483648]
+                flex items-center gap-3
+                bg-black/60 backdrop-blur-md
+                border border-white/20
+                px-3 py-2 rounded-full
+                shadow-2xl
+              "
+            >
+              <button
+                onClick={() => setAdZoom((z) => Math.min(z + 0.2, 4))}
+                className="w-10 h-10 rounded-full bg-amber-400 text-black font-bold hover:scale-110 transition"
+              >
+                +
+              </button>
+
+              <button
+                onClick={() => setAdZoom((z) => Math.max(z - 0.2, 1))}
+                className="w-10 h-10 rounded-full bg-amber-400 text-black font-bold hover:scale-110 transition"
+              >
+                −
+              </button>
+
+              <button
+                onClick={() => setAdZoom(1)}
+                className="px-4 py-2 rounded-full bg-white/10 text-white text-sm hover:bg-white/20 transition"
+              >
+                Reset
+              </button>
+
+              <button
+                onClick={() => setSelectedAdImage(null)}
+                className="w-10 h-10 rounded-full bg-red-500 text-white hover:bg-red-600 transition"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* IMAGE */}
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.35 }}
+              className="flex flex-col items-center max-w-[90vw] max-h-[90vh]"
+            >
+              <img
+                src={selectedAdImage.src}
+                alt={selectedAdImage.title}
+                style={{
+                  transform: `scale(${adZoom})`,
+                  transition: "transform 0.3s ease",
+                }}
+                className="max-h-[80vh] object-contain rounded-2xl shadow-2xl"
+              />
+
+              <p className="text-amber-200 text-lg mt-6 tracking-wide text-center">
+                {selectedAdImage.title}
+              </p>
+            </motion.div>
+          </div>,
+          document.body
+        )}
     </section>
   );
 }

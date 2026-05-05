@@ -1,6 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -18,7 +20,73 @@ import {
   Users,
 } from 'lucide-react';
 
+const achievements = [
+  {
+    title: "Bharat Gaurav",
+    image: "/images/awards/Bharat Gaurav.jpeg",
+    description:
+      "Honored with the prestigious Bharat Gaurav recognition for exceptional spiritual leadership and inspiring millions.",
+    details:
+      "This honor symbolizes national pride and is conferred upon individuals whose life and service elevate the moral and cultural fabric of the nation.",
+  },
+  {
+    title: "Rashtra Sant",
+    image: "/images/awards/Rashtra Sant Alankaran.jpeg",
+    description:
+      "Sacred title awarded for unwavering dedication to moral upliftment and spiritual transformation.",
+    details:
+      "This distinction recognizes extraordinary efforts in guiding society toward ethical living, discipline, and spiritual awakening rooted in Jain philosophy.",
+  },
+  {
+    title: "Vishva Sant",
+    image: "/images/awards/Vishva Sant Alankaran.jpeg",
+    description:
+      "A distinguished national honor acknowledging global spiritual influence and humanitarian vision.",
+    details:
+      "Bestowed upon revered saints whose teachings transcend regional boundaries, spreading universal values of peace, compassion, and non-violence across communities.",
+  },
+  {
+    title: "Shanti Doot Sammaan",
+    image: "/images/awards/Shaanti Doot.jpeg",
+    description:
+      "An esteemed recognition celebrating the embodiment of peace, dharma, and spiritual guidance.",
+    details:
+      "Presented to distinguished saints whose divine discourse and humanitarian service nurture inner transformation, ethical living, and the timeless principles of Jain Dharma.",
+  },
+  {
+    title: "Rajkiya Atithi (Multiple States)",
+    image: "/images/awards/award.png",
+    description:
+      "Welcomed as State Guest in multiple regions.",
+    details:
+      "This distinction reflects governmental respect for contributions toward social harmony, culture, and spiritual unity.",
+  },
+  {
+    title: "Author of Spiritual Literature",
+    image: "/images/awards/img3.jpeg",
+    description:
+      "Authored dozens of impactful spiritual books.",
+    details:
+      "His writings guide seekers toward discipline, self-realization, meditation, and inner awakening.",
+  },
+  {
+    title: "Founder Inspiration – Pulak Manch",
+    image: "/images/awards/pulakmanch.png",
+    description:
+      "Founder inspiration behind a nationwide spiritual movement.",
+    details:
+      "A movement dedicated to character building, youth empowerment, and ethical transformation across India.",
+  },
+];
+
 export default function PulakSagarPage() {
+
+  const [selectedImage, setSelectedImage] = useState<{
+    src: string;
+    title: string;
+  } | null>(null);
+
+  const [zoom, setZoom] = useState(1);
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[#FFF9EF] via-[#FFE8B2] to-[#FFD580] text-[#3A0A00]">
       {/* Subtle background pattern */}
@@ -370,6 +438,157 @@ export default function PulakSagarPage() {
           Jaipur, Indore, Nagpur, Mumbai, Surat, Udaipur, Banswara, Sikar, Ajmer, Baramati, Pune, Aurangabad, and
           multiple stays at Jinsharnam Teerthdham (M.H.), among others.
         </p>
+      </section>
+
+      {/* ACHIEVEMENTS & HONORS */}
+      <section className="relative z-10 max-w-7xl mx-auto px-6 py-16">
+
+        <motion.h2
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="
+            text-4xl md:text-5xl font-serif text-center
+            bg-gradient-to-r from-[#8B0000] via-[#C45A00] to-[#8B0000]
+            bg-clip-text text-transparent
+            mb-4
+          "
+        >
+          Achievements & Honors
+        </motion.h2>
+
+        <p className="text-center text-[#6B3F00] mb-14 text-lg">
+          A divine journey recognized with national reverence and spiritual respect
+        </p>
+
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+          {achievements.map((item, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+              whileHover={{ y: -10 }}
+              className="
+                relative rounded-[30px] p-8 min-h-[620px]
+                bg-gradient-to-b
+                from-[#FFF7DA]
+                via-[#FFE9A8]
+                to-[#FFD580]
+                border border-[#ECA400]/40
+                shadow-[0_25px_60px_rgba(196,90,0,0.18)]
+                hover:shadow-[0_30px_70px_rgba(196,90,0,0.28)]
+                transition-all duration-500
+                overflow-hidden group
+              "
+            >
+              {/* Decorative Glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#FFD700]/10 via-transparent to-[#C45A00]/10 opacity-0 group-hover:opacity-100 transition duration-500" />
+
+              <div className="relative z-10 flex flex-col h-full">
+
+                {/* IMAGE */}
+                <div
+                  onClick={() => {
+                    setZoom(1);
+                    setSelectedImage({
+                      src: item.image,
+                      title: item.title,
+                    });
+                  }}
+                  className="cursor-pointer mb-6 group/image"
+                >
+                  <div className="rounded-2xl overflow-hidden border border-[#C45A00]/20 shadow-lg bg-white">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-[240px] object-contain p-4 transition duration-500 group-hover/image:scale-105"
+                    />
+                  </div>
+                </div>
+
+                {/* TITLE */}
+                <h3 className="text-2xl font-semibold text-[#8B0000] mb-4">
+                  {item.title}
+                </h3>
+
+                {/* DESCRIPTION */}
+                <p className="text-[#5A2E00] text-sm leading-relaxed mb-4">
+                  {item.description}
+                </p>
+
+                {/* DETAILS */}
+                {"details" in item && (
+                  <p className="text-[#5A2E00] text-sm leading-relaxed border-l-2 border-[#C45A00]/30 pl-4 mt-5">
+                    {item.details}
+                  </p>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+        {selectedImage &&
+        createPortal(
+          <div className="fixed inset-0 z-[2147483647] bg-black/90 backdrop-blur-lg flex items-center justify-center">
+
+            {/* Toolbar */}
+            <div className="absolute top-6 right-6 flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-2 rounded-full shadow-xl">
+
+              <button
+                onClick={() => setZoom((z) => Math.min(z + 0.2, 4))}
+                className="w-10 h-10 rounded-full bg-amber-400 text-black font-bold hover:scale-110 transition"
+              >
+                +
+              </button>
+
+              <button
+                onClick={() => setZoom((z) => Math.max(z - 0.2, 1))}
+                className="w-10 h-10 rounded-full bg-amber-400 text-black font-bold hover:scale-110 transition"
+              >
+                −
+              </button>
+
+              <button
+                onClick={() => setZoom(1)}
+                className="px-4 py-2 rounded-full bg-white/10 text-white text-sm hover:bg-white/20 transition"
+              >
+                Reset
+              </button>
+
+              <button
+                onClick={() => setSelectedImage(null)}
+                className="w-10 h-10 rounded-full bg-red-500 text-white hover:bg-red-600 transition"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Image */}
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.35 }}
+              className="flex flex-col items-center max-w-[90vw] max-h-[90vh]"
+            >
+              <img
+                src={selectedImage.src}
+                alt={selectedImage.title}
+                style={{
+                  transform: `scale(${zoom})`,
+                  transition: "transform 0.3s ease",
+                }}
+                className="max-h-[80vh] object-contain rounded-2xl shadow-2xl"
+              />
+
+              <p className="text-amber-200 text-lg mt-6 tracking-wide text-center">
+                {selectedImage.title}
+              </p>
+            </motion.div>
+          </div>,
+          document.body
+        )}
       </section>
 
       {/* SOCIAL / PROFILE HANDLER */}
