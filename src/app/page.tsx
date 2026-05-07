@@ -550,14 +550,14 @@ function PrintPublicationContactSection({
                 onClick={() => {
                   setAdZoom(1);
                   setSelectedAdImage({
-                    src: "/images/pulak-graphics.jpeg",
+                    src: "/images/pulak-graphics1.jpeg",
                     title: "Pulak Graphics – Printing & Publication",
                   });
                 }}
                 className="relative rounded-3xl overflow-hidden border-4 border-[#B8860B] bg-white shadow-[0_0_70px_rgba(255,217,122,0.9)] cursor-pointer group"
               >
                 <Image
-                  src="/images/pulak-graphics.jpeg"
+                  src="/images/pulak-graphics1.jpeg"
                   alt="Pulak Graphics – Printing & Publication"
                   width={900}
                   height={450}
@@ -569,21 +569,27 @@ function PrintPublicationContactSection({
 
             {/* CONTACT CARD */}
             <div className="relative h-full rounded-3xl bg-gradient-to-br from-[#FFFDF0] to-[#FFE9B5] border-4 border-dashed border-[#B8860B] shadow-[0_0_70px_rgba(255,217,122,0.7)] flex flex-col items-center justify-center text-center px-14">
-              <h3 className="text-3xl md:text-4xl font-serif text-[#6A0000] mb-6">
-                Contact for Advertisement
-              </h3>
+              <div className="absolute inset-0 rounded-3xl bg-[#FFD97A] blur-3xl opacity-80" />
 
-              <p className="text-lg text-[#4B1E00]/95 max-w-sm mb-10">
-                Promote your spiritual, cultural, or community initiatives with
-                Jinsharnam Media.
-              </p>
-
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center px-12 py-4 rounded-full bg-gradient-to-r from-[#6A0000] to-[#8B0000] text-[#FFF8E7] font-semibold shadow-[0_0_40px_rgba(139,0,0,0.85)] hover:scale-105 transition-all"
+              <div
+                onClick={() => {
+                  setAdZoom(1);
+                  setSelectedAdImage({
+                    src: "/images/advertisement/image1.jpeg",
+                    title: "Pulak Graphics – Printing & Publication",
+                  });
+                }}
+                className="relative rounded-3xl overflow-hidden border-4 border-[#B8860B] bg-white shadow-[0_0_70px_rgba(255,217,122,0.9)] cursor-pointer group"
               >
-                Get in Touch →
-              </Link>
+                <Image
+                  src="/images/advertisement/image1.jpeg"
+                  alt="Pulak Graphics – Printing & Publication"
+                  width={900}
+                  height={450}
+                  className="w-full h-auto object-cover transition duration-500 group-hover:scale-105"
+                  priority
+                />
+              </div>
             </div>
           </div>
         </div>
