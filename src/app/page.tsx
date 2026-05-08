@@ -538,6 +538,22 @@ function PrintPublicationContactSection({
 
       {/* Existing Section Content */}
       <div className="max-w-7xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-20"
+        >
+          <h2 className="text-4xl md:text-5xl font-serif text-[#6A0000]">
+            Contact for Advertisement
+          </h2>
+
+          {/* Elegant Divider */}
+          <div className="mt-4 flex justify-center">
+            <div className="w-32 h-[3px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent rounded-full" />
+          </div>
+        </motion.div>
         <div className="relative rounded-[48px] p-12 bg-white/70 backdrop-blur border border-[#D4AF37] shadow-[0_40px_120px_rgba(212,175,55,0.55)]">
 
           <div className="relative grid md:grid-cols-2 gap-16 items-stretch">
@@ -554,21 +570,23 @@ function PrintPublicationContactSection({
                     title: "Pulak Graphics – Printing & Publication",
                   });
                 }}
-                className="relative rounded-3xl overflow-hidden border-4 border-[#B8860B] bg-white shadow-[0_0_70px_rgba(255,217,122,0.9)] cursor-pointer group"
+                className="relative w-full h-[200px] md:h-[300px] lg:h-[350px]
+                          rounded-3xl overflow-hidden border-4 border-[#B8860B]
+                          bg-white shadow-[0_0_70px_rgba(255,217,122,0.9)]
+                          cursor-pointer group"
               >
                 <Image
                   src="/images/pulak-graphics1.jpeg"
                   alt="Pulak Graphics – Printing & Publication"
-                  width={900}
-                  height={450}
-                  className="w-full h-auto object-cover transition duration-500 group-hover:scale-105"
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
                   priority
                 />
               </div>
             </div>
 
             {/* CONTACT CARD */}
-            <div className="relative h-full rounded-3xl bg-gradient-to-br from-[#FFFDF0] to-[#FFE9B5] border-4 border-dashed border-[#B8860B] shadow-[0_0_70px_rgba(255,217,122,0.7)] flex flex-col items-center justify-center text-center px-14">
+            <div className="relative h-full flex items-center justify-center">
               <div className="absolute inset-0 rounded-3xl bg-[#FFD97A] blur-3xl opacity-80" />
 
               <div
@@ -579,14 +597,16 @@ function PrintPublicationContactSection({
                     title: "Pulak Graphics – Printing & Publication",
                   });
                 }}
-                className="relative rounded-3xl overflow-hidden border-4 border-[#B8860B] bg-white shadow-[0_0_70px_rgba(255,217,122,0.9)] cursor-pointer group"
+                className="relative w-full h-[200px] md:h-[300px] lg:h-[350px]
+                          rounded-3xl overflow-hidden border-4 border-[#B8860B]
+                          bg-white shadow-[0_0_70px_rgba(255,217,122,0.9)]
+                          cursor-pointer group"
               >
                 <Image
                   src="/images/advertisement/image2.jpeg"
                   alt="Pulak Graphics – Printing & Publication"
-                  width={900}
-                  height={450}
-                  className="w-full h-auto object-cover transition duration-500 group-hover:scale-105"
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
                   priority
                 />
               </div>
