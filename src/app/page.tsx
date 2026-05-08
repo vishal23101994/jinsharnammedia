@@ -575,14 +575,14 @@ function PrintPublicationContactSection({
                 onClick={() => {
                   setAdZoom(1);
                   setSelectedAdImage({
-                    src: "/images/advertisement/image1.jpeg",
+                    src: "/images/advertisement/image2.jpeg",
                     title: "Pulak Graphics – Printing & Publication",
                   });
                 }}
                 className="relative rounded-3xl overflow-hidden border-4 border-[#B8860B] bg-white shadow-[0_0_70px_rgba(255,217,122,0.9)] cursor-pointer group"
               >
                 <Image
-                  src="/images/advertisement/image1.jpeg"
+                  src="/images/advertisement/image2.jpeg"
                   alt="Pulak Graphics – Printing & Publication"
                   width={900}
                   height={450}
