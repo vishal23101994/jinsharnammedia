@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import {
   FaYoutube,
   FaFacebookF,
@@ -11,9 +14,42 @@ import {
   FaMapMarkerAlt,
   FaPhoneAlt,
   FaEnvelope,
+  FaGlobeAsia,
 } from "react-icons/fa";
 
 export function Footer() {
+  const [visitors, setVisitors] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchVisitors = async () => {
+      try {
+        const alreadyVisited = localStorage.getItem("visited");
+
+        // Increment only first time
+        if (!alreadyVisited) {
+          const postRes = await fetch("/api/visitors", {
+            method: "POST",
+          });
+
+          const postData = await postRes.json();
+
+          setVisitors(postData.count);
+
+          localStorage.setItem("visited", "true");
+        } else {
+          const getRes = await fetch("/api/visitors");
+
+          const getData = await getRes.json();
+
+          setVisitors(getData.count);
+        }
+      } catch (error) {
+        console.error("Visitor counter error:", error);
+      }
+    };
+
+    fetchVisitors();
+  }, []);
   const footerLinks = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
@@ -154,12 +190,57 @@ export function Footer() {
           </div>
         </div>
 
-        {/* 🌸 4. Copyright */}
-        <div className="text-xs text-yellow-300/80 font-light text-center pt-4 pb-2">
-          © {new Date().getFullYear()}{" "}
-          <span className="font-semibold text-yellow-400">Jinsharnam Media</span> ·
-          Spreading Peace · Faith · Knowledge 🌼
+        {/* 👀 Visitors Section */}
+        <div className="flex justify-center">
+          <div
+            className="group relative overflow-hidden
+                      bg-gradient-to-r from-yellow-500/10 to-yellow-300/5
+                      border border-yellow-500/30
+                      rounded-2xl px-8 py-4
+                      shadow-xl backdrop-blur-md"
+          >
+            {/* Glow */}
+            <div className="absolute inset-0 bg-yellow-400/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+
+            <div className="relative flex items-center gap-4">
+              <div
+                className="w-12 h-12 rounded-full bg-yellow-400/10
+                          flex items-center justify-center
+                          border border-yellow-400/20"
+              >
+                <FaGlobeAsia className="text-yellow-400 text-2xl" />
+              </div>
+
+              <div className="text-left">
+                <p className="text-xs uppercase tracking-[3px] text-yellow-300/70">
+                  Global Visitors
+                </p>
+
+                <h3 className="text-2xl font-bold text-yellow-400 tracking-wider">
+                  {visitors !== null
+                    ? visitors.toLocaleString()
+                    : "Loading..."}
+                  +
+                </h3>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {/* 🌸 Bottom Copyright */}
+        <div className="text-center pt-2 pb-4">
+          <p className="text-xs text-yellow-300/80 tracking-wide">
+            © {new Date().getFullYear()}{" "}
+            <span className="font-semibold text-yellow-400">
+              Jinsharnam Media
+            </span>
+          </p>
+
+          <p className="text-[11px] text-yellow-200/60 mt-1">
+            Spreading Peace · Faith · Knowledge 🌼
+          </p>
+        </div>
+
       </div>
     </footer>
   );
