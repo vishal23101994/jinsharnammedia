@@ -1,13 +1,26 @@
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://pulaksagar.com",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://pulaksagar.com",
+  "https://jinsharnamtirth.com",
+];
 
-export async function GET() {
+function getCorsHeaders(origin: string | null) {
+  return {
+    "Access-Control-Allow-Origin":
+      origin && allowedOrigins.includes(origin)
+        ? origin
+        : allowedOrigins[1],
+    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
+
+export async function GET(req: NextRequest) {
+  const origin = req.headers.get("origin");
+
   try {
     const live = await prisma.pulakSagarLiveUpdate.findFirst({
       where: { isActive: true },
@@ -15,7 +28,7 @@ export async function GET() {
     });
 
     return NextResponse.json(live, {
-      headers: corsHeaders,
+      headers: getCorsHeaders(origin),
     });
   } catch (error) {
     console.error("Pulak Sagar Live API Error:", error);
@@ -24,15 +37,17 @@ export async function GET() {
       { error: "Failed to fetch live data" },
       {
         status: 500,
-        headers: corsHeaders,
+        headers: getCorsHeaders(origin),
       }
     );
   }
 }
 
-export async function OPTIONS() {
+export async function OPTIONS(req: NextRequest) {
+  const origin = req.headers.get("origin");
+
   return new NextResponse(null, {
     status: 200,
-    headers: corsHeaders,
+    headers: getCorsHeaders(origin),
   });
 }
