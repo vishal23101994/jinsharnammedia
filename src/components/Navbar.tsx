@@ -218,9 +218,9 @@ export default function Navbar() {
 
   // === COMPONENT RETURN ===
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-gradient-to-r from-[#2d0000]/95 via-[#500000]/95 to-[#1a0000]/95 border-b border-yellow-700/40 shadow-lg min-h-[56px] md:min-h-[80px]">
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-gradient-to-r from-[#2d0000]/95 via-[#500000]/95 to-[#1a0000]/95 border-b border-yellow-700/40 shadow-lg">
       {/* === TOP SECTION === */}
-      <div className="flex justify-between items-center px-6 md:px-12 py-2 border-b border-yellow-700/40 text-sm relative">
+      <div className="flex items-center justify-between gap-3 px-3 sm:px-4 md:px-6 lg:px-10 py-2 border-b border-yellow-700/40 text-sm relative">
         <Link href="/" className="md:hidden flex items-center gap-2">
           <img
             src="/images/logo_new.png"
@@ -231,8 +231,16 @@ export default function Navbar() {
         {/* SEARCH BOX */}
         <div
           ref={searchBoxRef}
-          className="relative flex items-center gap-2 bg-[#400101]/70 border border-yellow-700/50 rounded-md px-2 py-[3px]
-           w-full max-w-[220px] sm:max-w-xs md:w-64"
+          className="
+            relative flex items-center gap-2
+            bg-[#400101]/70 border border-yellow-700/50
+            rounded-md px-2 py-1
+            flex-1 max-w-[140px]
+            sm:max-w-xs
+            md:max-w-sm
+            lg:max-w-md
+            xl:max-w-lg
+          "
         >
           <Search size={16} className="text-yellow-400" />
           <input
