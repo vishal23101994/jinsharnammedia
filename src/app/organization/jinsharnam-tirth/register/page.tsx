@@ -126,41 +126,72 @@ export default function RegisterPage() {
   async function detectStateFromPincode(pin: string) {
     if (pin.length !== 6 || !/^\d{6}$/.test(pin)) {
       setLocationLocked(false);
+
+      setForm((prev) => ({
+        ...prev,
+        city: "",
+        state: "",
+      }));
+
       return;
     }
 
     try {
-      toast.loading("Detecting location...", { id: "stateDetect" });
+      toast.loading("Detecting location...", {
+        id: "stateDetect",
+      });
 
       const res = await fetch(
-        `https://api.postalpincode.in/pincode/${pin}`
+        `/api/pincode?pin=${pin}`
       );
 
       const data = await res.json();
 
-      if (data[0]?.Status === "Success") {
-        const postOffice = data[0].PostOffice[0];
+      console.log(data);
 
+      if (res.ok && data.city && data.state) {
         setForm((prev) => ({
           ...prev,
-          state: postOffice.State,
-          city: postOffice.District,
+          city: data.city,
+          state: data.state,
         }));
 
         setLocationLocked(true);
 
-        toast.success("State & City auto detected ✔", {
-          id: "stateDetect",
-        });
+        toast.success(
+          "State & City auto detected ✔",
+          {
+            id: "stateDetect",
+          }
+        );
       } else {
         setLocationLocked(false);
-        toast.error("Invalid pincode", { id: "stateDetect" });
+
+        setForm((prev) => ({
+          ...prev,
+          city: "",
+          state: "",
+        }));
+
+        toast.error(
+          "Invalid pincode",
+          {
+            id: "stateDetect",
+          }
+        );
       }
-    } catch {
+
+    } catch (err) {
+      console.error(err);
+
       setLocationLocked(false);
-      toast.error("Could not detect location", {
-        id: "stateDetect",
-      });
+
+      toast.error(
+        "Could not detect location",
+        {
+          id: "stateDetect",
+        }
+      );
     }
   }
 
@@ -233,11 +264,19 @@ export default function RegisterPage() {
                   value={form.address}
                   onChange={(v:string)=>setForm({...form,address:v})}
                 />
-                <Input icon={<MapPin size={18}/>} placeholder="Pincode"
+                <Input
+                  icon={<MapPin size={18}/>}
+                  placeholder="Pincode"
                   value={form.pincode}
                   onChange={(v:string)=>{
-                    setForm({...form,pincode:v});
-                    detectStateFromPincode(v);
+                    setForm((prev)=>({
+                      ...prev,
+                      pincode:v
+                    }));
+
+                    if(v.length===6){
+                      detectStateFromPincode(v);
+                    }
                   }}
                 />
                 <Input
