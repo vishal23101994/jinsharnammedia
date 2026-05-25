@@ -4,41 +4,121 @@ export async function GET(req: Request) {
   try {
     const pin =
       new URL(req.url)
-      .searchParams
-      .get("pin");
+        .searchParams
+        .get("pin");
 
-    if (!pin) {
+    if (
+      !pin ||
+      !/^\d{6}$/.test(pin)
+    ) {
       return NextResponse.json(
-        {},
-        { status: 400 }
+        {
+          success: false,
+          message: "Invalid pincode",
+        },
+        {
+          status: 400,
+        }
       );
     }
 
-    const res = await fetch(
-      `https://api.zippopotam.us/IN/${pin}`,
-      {
-        cache: "no-store",
-      }
-    );
+    const response =
+      await fetch(
+        `https://api.postalpincode.in/pincode/${pin}`,
+        {
+          cache: "no-store",
+          headers: {
+            Accept:
+              "application/json",
+          },
+        }
+      );
 
-    if (!res.ok) {
+    const text =
+      await response.text();
+
+    let data;
+
+    try {
+      data =
+        JSON.parse(
+          text
+        );
+    } catch {
       return NextResponse.json(
-        {},
-        { status: 404 }
+        {
+          success: false,
+          message:
+            "Invalid response",
+        },
+        {
+          status: 500,
+        }
       );
     }
 
-    const data = await res.json();
+    if (
+      !data?.[0] ||
+      data[0].Status !==
+        "Success"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Pincode not found",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    const office =
+      data[0]
+        .PostOffice?.[0];
+
+    let state =
+      office.State ||
+      "";
+
+    if (
+      state
+        .toLowerCase()
+        .includes(
+          "new delhi"
+        )
+    ) {
+      state =
+        "Delhi";
+    }
 
     return NextResponse.json({
-      city: data.places?.[0]?.["place name"],
-      state: data.places?.[0]?.state,
+      success: true,
+      city:
+        office.District ||
+        "",
+      state,
     });
 
-  } catch {
+  } catch (
+    err: any
+  ) {
+
+    console.error(
+      "PIN API:",
+      err
+    );
+
     return NextResponse.json(
-      {},
-      { status: 500 }
+      {
+        success: false,
+        message:
+          err.message,
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

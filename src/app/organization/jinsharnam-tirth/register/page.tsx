@@ -54,7 +54,7 @@ export default function RegisterPage() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [locationLocked, setLocationLocked] = useState(false);
+  // const [locationLocked, setLocationLocked] = useState(false);
   const router = useRouter();
 
   const isFormValid =
@@ -68,7 +68,7 @@ export default function RegisterPage() {
     form.city.trim() !== "" &&
     form.state.trim() !== "" &&
     form.pincode.trim() !== "" &&
-    locationLocked &&
+    // locationLocked &&
     file !== null;   // 🔥 PHOTO REQUIRED
 
   async function handleSubmit() {
@@ -123,77 +123,123 @@ export default function RegisterPage() {
     }
   }
 
-  async function detectStateFromPincode(pin: string) {
-    if (pin.length !== 6 || !/^\d{6}$/.test(pin)) {
-      setLocationLocked(false);
+  // async function detectStateFromPincode(pin: string) {
 
-      setForm((prev) => ({
-        ...prev,
-        city: "",
-        state: "",
-      }));
+  //   if (pin.length !== 6) {
+  //     setLocationLocked(false);
 
-      return;
-    }
+  //     setForm(prev => ({
+  //       ...prev,
+  //       city: "",
+  //       state: "",
+  //     }));
 
-    try {
-      toast.loading("Detecting location...", {
-        id: "stateDetect",
-      });
+  //     return;
+  //   }
 
-      const res = await fetch(
-        `/api/pincode?pin=${pin}`
-      );
+  //   try {
 
-      const data = await res.json();
+  //     toast.loading(
+  //       "Detecting location...",
+  //       {
+  //         id: "stateDetect",
+  //       }
+  //     );
 
-      console.log(data);
+  //     const res =
+  //       await fetch(
+  //         `/api/pincode?pin=${pin}`
+  //       );
 
-      if (res.ok && data.city && data.state) {
-        setForm((prev) => ({
-          ...prev,
-          city: data.city,
-          state: data.state,
-        }));
+  //     const data =
+  //       await res.json();
 
-        setLocationLocked(true);
+  //     console.log("PIN:", data);
 
-        toast.success(
-          "State & City auto detected ✔",
-          {
-            id: "stateDetect",
-          }
-        );
-      } else {
-        setLocationLocked(false);
+  //     if (
+  //       res.ok &&
+  //       data.success
+  //     ) {
 
-        setForm((prev) => ({
-          ...prev,
-          city: "",
-          state: "",
-        }));
+  //       let stateName =
+  //         (data.state || "")
+  //           .trim();
 
-        toast.error(
-          "Invalid pincode",
-          {
-            id: "stateDetect",
-          }
-        );
-      }
+  //       if (
+  //         stateName
+  //           .toLowerCase()
+  //           .includes("new delhi")
+  //       ) {
+  //         stateName = "Delhi";
+  //       }
 
-    } catch (err) {
-      console.error(err);
+  //       const normalizedState =
+  //         indianStates.find(
+  //           s =>
+  //             s.toLowerCase()
+  //             ===
+  //             stateName.toLowerCase()
+  //         ) ||
+  //         "Other";
 
-      setLocationLocked(false);
+  //       setForm(prev => ({
+  //         ...prev,
+  //         city: data.city || "",
+  //         state: normalizedState,
+  //       }));
 
-      toast.error(
-        "Could not detect location",
-        {
-          id: "stateDetect",
-        }
-      );
-    }
-  }
+  //       if (
+  //         normalizedState === "Other"
+  //       ) {
+  //         setOtherState(
+  //           data.state
+  //         );
+  //       }
+
+  //       setLocationLocked(true);
+
+  //       toast.success(
+  //         "State & City detected ✔",
+  //         {
+  //           id:
+  //             "stateDetect",
+  //         }
+  //       );
+
+  //     } else {
+
+  //       setLocationLocked(false);
+
+  //       setForm(prev => ({
+  //         ...prev,
+  //         city: "",
+  //         state: "",
+  //       }));
+
+  //       toast.error(
+  //         "Invalid pincode",
+  //         {
+  //           id:
+  //             "stateDetect",
+  //         }
+  //       );
+  //     }
+
+  //   } catch (err) {
+
+  //     console.error(err);
+
+  //     setLocationLocked(false);
+
+  //     toast.error(
+  //       "Could not detect location",
+  //       {
+  //         id:
+  //           "stateDetect",
+  //       }
+  //     );
+  //   }
+  // }
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-[#FFF3C4] via-[#FFF8E7] to-[#FFE7B3] py-20 px-6">
@@ -268,30 +314,26 @@ export default function RegisterPage() {
                   icon={<MapPin size={18}/>}
                   placeholder="Pincode"
                   value={form.pincode}
-                  onChange={(v:string)=>{
-                    setForm((prev)=>({
+                  onChange={(v:string)=>
+                    setForm(prev=>({
                       ...prev,
                       pincode:v
-                    }));
-
-                    if(v.length===6){
-                      detectStateFromPincode(v);
-                    }
-                  }}
+                    }))
+                  }
                 />
                 <Input
                   icon={<Building2 size={18}/>}
                   placeholder="City"
                   value={form.city}
                   onChange={(v:string)=>setForm({...form,city:v})}
-                  disabled={locationLocked}
+                  disabled={false}
                 />
                 <Select
                   value={form.state}
                   onChange={(v:string)=>setForm({...form,state:v})}
                   options={indianStates}
                   placeholder="Select State"
-                  disabled={locationLocked}
+                  disabled={false}
                 />
 
                 {form.state === "Other" && (
