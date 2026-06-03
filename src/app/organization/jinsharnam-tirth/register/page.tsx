@@ -59,11 +59,11 @@ export default function RegisterPage() {
 
   const isFormValid =
     form.name.trim() !== "" &&
-    form.email.trim() !== "" &&
+    // form.email.trim() !== "" &&
     form.phone.trim() !== "" &&
     form.gender.trim() !== "" &&
     form.designation.trim() !== "" &&
-    form.dateOfBirth.trim() !== "" &&
+    // form.dateOfBirth.trim() !== "" &&
     form.address.trim() !== "" &&
     form.city.trim() !== "" &&
     form.state.trim() !== "" &&
@@ -85,7 +85,9 @@ export default function RegisterPage() {
         form.state === "Other" ? otherState : form.state;
 
       fd.append("name", form.name);
-      fd.append("email", form.email.toLowerCase());
+      if (form.email.trim()) {
+        fd.append("email", form.email.toLowerCase());
+      }
       fd.append("phone", form.phone);
       fd.append("alternatePhone", form.alternatePhone);
       fd.append("gender", form.gender);
@@ -94,7 +96,9 @@ export default function RegisterPage() {
       fd.append("city", form.city);
       fd.append("state", finalState);
       fd.append("pincode", form.pincode);
-      fd.append("dateOfBirth", form.dateOfBirth);
+      if (form.dateOfBirth) {
+        fd.append("dateOfBirth", form.dateOfBirth);
+      }
 
       if (form.dateOfMarriage)
         fd.append("dateOfMarriage", form.dateOfMarriage);

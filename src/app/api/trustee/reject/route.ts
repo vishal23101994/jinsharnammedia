@@ -26,10 +26,12 @@ export async function GET(req: Request) {
     }
 
     // Option 1: Delete request completely
-    await sendTrusteeRejectedEmail({
-      email: request.email,
-      name: request.name,
-    });
+    if (request.email) {
+      await sendTrusteeRejectedEmail({
+        email: request.email,
+        name: request.name,
+      });
+    }
 
     await prisma.trusteeRequest.delete({
       where: { id: request.id },

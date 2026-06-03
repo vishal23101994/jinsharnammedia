@@ -26,9 +26,13 @@ export async function GET(req: Request) {
     }
 
     // ✅ Prevent duplicate trustee creation
-    const existingTrustee = await prisma.trustee.findUnique({
-      where: { email: request.email },
-    });
+    let existingTrustee = null;
+
+    if (request.email) {
+      existingTrustee = await prisma.trustee.findUnique({
+        where: { email: request.email },
+      });
+    }
 
     if (!existingTrustee) {
       await prisma.trustee.create({
@@ -48,10 +52,12 @@ export async function GET(req: Request) {
           imageUrl: request.imageUrl,
         },
       });
-      await sendTrusteeApprovedEmail({
-        email: request.email,
-        name: request.name,
-      });
+      if (request.email) {
+        await sendTrusteeApprovedEmail({
+          email: request.email,
+          name: request.name,
+        });
+      }
     }
 
     // Delete request after approval

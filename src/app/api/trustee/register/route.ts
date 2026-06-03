@@ -10,11 +10,16 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData();
 
-    const email = formData.get("email") as string;
+    const email =
+      (formData.get("email") as string)?.trim() || null;
 
-    const existingApproved = await prisma.trustee.findUnique({
-      where: { email },
-    });
+    let existingApproved = null;
+
+    if (email) {
+      existingApproved = await prisma.trustee.findUnique({
+        where: { email },
+      });
+    }
 
     if (existingApproved) {
       return new Response(
@@ -25,9 +30,13 @@ export async function POST(req: Request) {
 
     /* ================= CHECK EXISTING REQUEST ================= */
 
-    const existingRequest = await prisma.trusteeRequest.findUnique({
-      where: { email },
-    });
+    let existingRequest = null;
+
+    if (email) {
+      existingRequest = await prisma.trusteeRequest.findUnique({
+        where: { email },
+      });
+    }
 
     if (existingRequest) {
       return new Response(
@@ -104,14 +113,19 @@ export async function POST(req: Request) {
       data,
     });
 
-    await sendTrusteeApprovalMail({
-      ...trusteeRequest,
-      approvalToken,
-    });
-    await sendTrusteePendingEmail({
-      email: trusteeRequest.email,
-      name: trusteeRequest.name,
-    });
+    if (trusteeRequest.email) {
+      await sendTrusteeApprovalMail({
+        ...trusteeRequest,
+        email: trusteeRequest.email,
+        approvalToken,
+      });
+    }
+    if (trusteeRequest.email) {
+      await sendTrusteePendingEmail({
+        email: trusteeRequest.email,
+        name: trusteeRequest.name,
+      });
+    }
 
     return Response.json({ success: true });
 

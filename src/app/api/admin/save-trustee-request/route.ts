@@ -50,7 +50,8 @@ export async function POST(req: Request) {
       where: { id: request.id },
       data: {
         name: formData.get("name") as string,
-        email: formData.get("email") as string,
+        email:
+          (formData.get("email") as string)?.trim() || null,
         phone: formData.get("phone") as string,
         alternatePhone: formData.get("alternatePhone") as string,
         gender: formData.get("gender") as string,
@@ -70,7 +71,10 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.redirect(
-        `${process.env.NEXTAUTH_URL}/admin/review-trustee/saved?token=${token}`
+      new URL(
+        `/admin/review-trustee/saved?token=${token}`,
+        process.env.NEXTAUTH_URL
+      )
     );
 
   } catch (err) {

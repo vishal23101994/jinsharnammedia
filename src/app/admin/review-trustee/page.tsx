@@ -45,7 +45,11 @@ export default async function ReviewTrusteePage({
 
             <div className="grid md:grid-cols-2 gap-5">
               <Input label="Full Name" name="name" defaultValue={request.name} />
-              <Input label="Email" name="email" defaultValue={request.email} />
+              <Input
+                label="Email"
+                name="email"
+                defaultValue={request.email || ""}
+              />
               <Input label="Phone" name="phone" defaultValue={request.phone || ""} />
               <Input label="Alternate Phone" name="alternatePhone" defaultValue={request.alternatePhone || ""} />
               <Input label="Gender" name="gender" defaultValue={request.gender || ""} />
