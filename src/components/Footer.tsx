@@ -90,19 +90,25 @@ export function Footer() {
 
   return (
     <footer className="bg-gradient-to-b from-[#2d0000] via-[#4B0000] to-[#1a0000] text-yellow-100 border-t border-yellow-700/30 pt-10">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 space-y-8">
         {/* 🌼 1. Logo + Message */}
-        <div className="flex flex-col md:flex-row items-center md:items-start 
-                justify-between gap-4 border-b border-yellow-700/30 pb-6
-                text-center md:text-left">
+        <div className="
+        flex flex-col md:flex-row
+        items-center md:items-start
+        justify-between
+        gap-3 md:gap-4
+        border-b border-yellow-700/30
+        pb-6
+        text-center md:text-left
+        ">
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <img
               src="/images/logo_new.png"
               alt="Jinsharnam Media Logo"
-              className="w-14 h-14 rounded-full border-2 border-yellow-400/50 shadow-lg"
+              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-yellow-400/50 shadow-lg"
             />
             <div>
-              <h2 className="font-serif text-2xl font-bold text-yellow-300">
+              <h2 className="font-serif text-xl sm:text-2xl font-bold text-yellow-300">
                 Jinsharnam <span className="text-yellow-400">Media</span>
               </h2>
               <p className="text-sm text-yellow-100/90 leading-relaxed">
@@ -113,10 +119,13 @@ export function Footer() {
         </div>
 
         {/* 🌿 2. Explore Section */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 
                         gap-y-4 text-sm border-b border-yellow-700/30 pb-6">
           {footerLinks.map((item, idx) => (
-            <div key={idx}>
+            <div
+              key={idx}
+              className="text-center sm:text-left"
+            >
               {item.subLinks ? (
                 <>
                   <p className="font-semibold text-yellow-200 mb-1">{item.name}</p>
@@ -145,14 +154,29 @@ export function Footer() {
         {/* 🌐 3. Contact (Left) + Social (Right) */}
         <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 border-b border-yellow-700/30 pb-6 text-center md:text-left">
           {/* Left: Contact */}
-          <div className="text-xs sm:text-sm text-yellow-100/90 leading-relaxed 
-                          space-y-3 w-full md:w-1/2
-                          text-center md:text-left">
-            <p className="flex items-center gap-2">
+          <div className="
+          text-xs sm:text-sm
+          text-yellow-100/90
+          leading-relaxed
+          space-y-4
+          w-full md:w-1/2
+          text-center md:text-left
+          ">
+            <p className="
+            flex flex-col sm:flex-row
+            items-center sm:items-start
+            gap-2
+            text-center sm:text-left
+            ">
               <FaMapMarkerAlt className="text-yellow-400" />
               Vatsalya Bhawan, P-75, Street Number 5, Near Dua Chai Waale, Bihari Colony Extension, Bihari Colony, Shahdara, Delhi – 110032
             </p>
-            <p className="flex items-center gap-2">
+            <p className="
+            flex flex-col sm:flex-row
+            items-center sm:items-start
+            gap-2
+            text-center sm:text-left
+            ">
               <FaPhoneAlt className="text-yellow-400" />
               <a
                 href="tel:+919876543210"
@@ -161,7 +185,12 @@ export function Footer() {
                 +91 9910987666, 9810900699
               </a>
             </p>
-            <p className="flex items-center gap-2">
+            <p className="
+            flex flex-col sm:flex-row
+            items-center sm:items-start
+            gap-2
+            text-center sm:text-left
+            ">
               <FaEnvelope className="text-yellow-400" />
               <a
                 href="mailto:contact@jinsharnammedia.com"
@@ -173,7 +202,7 @@ export function Footer() {
           </div>
 
           {/* Right: Social Icons with Glow */}
-          <div className="flex flex-wrap justify-center md:justify-end gap-6 w-full md:w-1/2">
+          <div className="flex flex-wrap justify-center md:justify-end gap-4 sm:gap-6 w-full md:w-1/2">
             {socialLinks.map((s, i) => (
               <Link
                 key={i}
@@ -182,7 +211,7 @@ export function Footer() {
                 className="transition-transform transform hover:scale-125 relative group"
                 style={{ color: s.color }}
               >
-                <span className="text-2xl drop-shadow-md transition-all duration-300 group-hover:drop-shadow-[0_0_10px_#FFD700]">
+                <span className="text-xl sm:text-2xl drop-shadow-md transition-all duration-300 group-hover:drop-shadow-[0_0_10px_#FFD700]">
                   {s.icon}
                 </span>
               </Link>
@@ -196,7 +225,7 @@ export function Footer() {
             className="group relative overflow-hidden
                       bg-gradient-to-r from-yellow-500/10 to-yellow-300/5
                       border border-yellow-500/30
-                      rounded-2xl px-8 py-4
+                      rounded-2xl px-5 sm:px-8 py-4
                       shadow-xl backdrop-blur-md"
           >
             {/* Glow */}
@@ -204,11 +233,11 @@ export function Footer() {
 
             <div className="relative flex items-center gap-4">
               <div
-                className="w-12 h-12 rounded-full bg-yellow-400/10
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-yellow-400/10
                           flex items-center justify-center
                           border border-yellow-400/20"
               >
-                <FaGlobeAsia className="text-yellow-400 text-2xl" />
+                <FaGlobeAsia className="text-yellow-400 text-xl sm:text-2xl" />
               </div>
 
               <div className="text-left">
@@ -228,8 +257,13 @@ export function Footer() {
         </div>
 
         {/* 🌸 Bottom Copyright */}
-        <div className="text-center pt-2 pb-4">
-          <p className="text-xs text-yellow-300/80 tracking-wide">
+        <div className="
+        text-center
+        pt-4
+        pb-5
+        border-t border-yellow-700/20
+        ">
+          <p className="text-[12px] sm:text-xs text-yellow-300/80 tracking-wide">
             © {new Date().getFullYear()}{" "}
             <span className="font-semibold text-yellow-400">
               Jinsharnam Media

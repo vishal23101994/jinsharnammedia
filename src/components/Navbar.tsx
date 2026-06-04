@@ -220,7 +220,16 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-gradient-to-r from-[#2d0000]/95 via-[#500000]/95 to-[#1a0000]/95 border-b border-yellow-700/40 shadow-lg">
       {/* === TOP SECTION === */}
-      <div className="flex items-center justify-between gap-3 px-3 sm:px-4 md:px-6 lg:px-10 py-2 border-b border-yellow-700/40 text-sm relative">
+      <div 
+        className="
+          flex items-center justify-between
+          px-3 sm:px-4 md:px-6 lg:px-10
+          py-2
+          border-b border-yellow-700/40
+          text-sm relative
+          gap-2
+        "
+      >
         <Link href="/" className="md:hidden flex items-center gap-2">
           <img
             src="/images/logo_new.png"
@@ -235,8 +244,9 @@ export default function Navbar() {
             relative flex items-center gap-2
             bg-[#400101]/70 border border-yellow-700/50
             rounded-md px-2 py-1
-            flex-1 max-w-[140px]
-            sm:max-w-xs
+            w-full
+            max-w-[130px]
+            sm:max-w-[220px]
             md:max-w-sm
             lg:max-w-md
             xl:max-w-lg
@@ -245,11 +255,11 @@ export default function Navbar() {
           <Search size={16} className="text-yellow-400" />
           <input
             type="text"
-            placeholder="Search pages, media, store..."
+            placeholder="Search..."
             value={searchValue}
             onChange={handleSearchChange}
             onKeyDown={handleSearchKeyDown}
-            className="bg-transparent outline-none text-yellow-100 placeholder-yellow-300/70 text-sm flex-1"
+            className="bg-transparent outline-none text-yellow-100 placeholder-yellow-300/70 text-xs sm:text-sm flex-1"
           />
 
           {(results.length > 0 || searchError || isSearching) && (
@@ -325,7 +335,9 @@ export default function Navbar() {
                     {userName.charAt(0).toUpperCase()}
                   </div>
                 )}
-                <span className="hidden sm:inline">{userName}</span>
+                <span className="hidden md:inline max-w-[100px] truncate">
+                  {userName}
+                </span>
                 <span className="text-yellow-400/70 text-xs">▼</span>
               </button>
 
@@ -381,13 +393,15 @@ export default function Navbar() {
                 href="/auth/login"
                 className="flex items-center gap-1 text-yellow-200 hover:text-yellow-400 text-sm transition"
               >
-                <LogIn size={16} /> Login
+                <LogIn size={16} />
+                <span className="hidden sm:inline">Login</span>
               </Link>
               <Link
                 href="/auth/signup"
                 className="flex items-center gap-1 bg-yellow-400 text-[#4B1E00] px-3 py-[3px] rounded-md font-semibold text-sm hover:bg-yellow-300 transition"
               >
-                <UserPlus size={16} /> Signup
+                <UserPlus size={16} />
+                <span className="hidden sm:inline">Signup</span>
               </Link>
             </>
           )}
@@ -491,72 +505,141 @@ export default function Navbar() {
       {/* MOBILE NAV MENU */}
       <AnimatePresence>
         {menuOpen && (
-          <motion.nav
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="md:hidden px-6 py-3 bg-[#300000]/95 border-t border-yellow-700/40 space-y-2 text-sm"
-          >
-            {links.map((link, index) => (
-              <div key={index} className="flex flex-col">
-                {link.subLinks ? (
-                  <>
-                    <button
-                      onClick={() =>
-                        setMobileDropdown(
-                          mobileDropdown === link.name ? null : link.name
-                        )
-                      }
-                      className="flex justify-between w-full font-semibold text-yellow-300 py-2"
-                    >
-                      {link.name}
-                      <ChevronDown
-                        size={16}
-                        className={`transition ${
-                          mobileDropdown === link.name ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
+          <>
+            {/* Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 z-40 md:hidden"
+              onClick={() => setMenuOpen(false)}
+            />
 
-                    <AnimatePresence>
-                      {mobileDropdown === link.name && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="pl-4"
-                        >
-                          {link.subLinks.map((sublink, subIndex) => (
-                            <Link
-                              key={subIndex}
-                              href={sublink.path}
-                              className="block py-1 text-yellow-200"
-                              onClick={() => setMenuOpen(false)}
-                            >
-                              {sublink.name}
-                            </Link>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </>
-                ) : (
-                  <Link
-                    href={link.path}
-                    className={`py-1 ${
-                      pathname === link.path
-                        ? "text-yellow-400"
-                        : "text-yellow-200"
-                    } hover:text-yellow-300`}
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
-                )}
+            {/* Drawer */}
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ duration: 0.3 }}
+              className="
+              fixed top-0 left-0
+              h-screen w-[85%]
+              max-w-[340px]
+              bg-[#2D0000]
+              z-50
+              overflow-y-auto
+              md:hidden
+              shadow-2xl
+            "
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-5 border-b border-yellow-700/30">
+                <div className="flex items-center gap-3">
+                  <img
+                    src="/images/logo_new.png"
+                    alt="Logo"
+                    className="w-12 h-12 rounded-full"
+                  />
+                  <span className="font-serif text-yellow-300 text-lg">
+                    Jinsharnam
+                  </span>
+                </div>
+
+                <button onClick={() => setMenuOpen(false)}>
+                  <X className="text-yellow-300" />
+                </button>
               </div>
-            ))}
-          </motion.nav>
+
+              {/* Links */}
+              <div className="p-4">
+                {links.map((link, index) => (
+                  <div
+                    key={index}
+                    className="border-b border-yellow-700/20"
+                  >
+                    {link.subLinks ? (
+                      <>
+                        <button
+                          onClick={() =>
+                            setMobileDropdown(
+                              mobileDropdown === link.name
+                                ? null
+                                : link.name
+                            )
+                          }
+                          className="
+                          flex justify-between items-center
+                          w-full py-4
+                          text-yellow-200
+                          font-medium
+                        "
+                        >
+                          {link.name}
+
+                          <ChevronDown
+                            size={16}
+                            className={`transition ${
+                              mobileDropdown === link.name
+                                ? "rotate-180"
+                                : ""
+                            }`}
+                          />
+                        </button>
+
+                        <AnimatePresence>
+                          {mobileDropdown === link.name && (
+                            <motion.div
+                              initial={{
+                                height: 0,
+                                opacity: 0,
+                              }}
+                              animate={{
+                                height: "auto",
+                                opacity: 1,
+                              }}
+                              exit={{
+                                height: 0,
+                                opacity: 0,
+                              }}
+                              className="pl-4 pb-3"
+                            >
+                              {link.subLinks.map((sub, i) => (
+                                <Link
+                                  key={i}
+                                  href={sub.path}
+                                  onClick={() =>
+                                    setMenuOpen(false)
+                                  }
+                                  className="
+                                  block py-2
+                                  text-yellow-300/80
+                                "
+                                >
+                                  {sub.name}
+                                </Link>
+                              ))}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </>
+                    ) : (
+                      <Link
+                        href={link.path}
+                        onClick={() => setMenuOpen(false)}
+                        className="
+                        block py-4
+                        text-yellow-200
+                        font-medium
+                      "
+                      >
+                        {link.name}
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>
